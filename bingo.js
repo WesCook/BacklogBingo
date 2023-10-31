@@ -186,8 +186,6 @@ function generateMarkdown(randomList) {
 
 /*
 TODO
-- Minimum selection check (24)
-- Test Firefox
 - Test results for correctness
-- Clean up spacing between rows?
+- Clean up spacing between rows
 */
