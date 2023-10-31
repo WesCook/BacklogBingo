@@ -4,7 +4,7 @@ const rows = 5;
 const cols = 5;
 const includeFreeTile = 1; // 0 or 1 for free star tile
 
-let availableList = [
+const listFull = [
 	"A game in a genre you don't normally play",
 	"A game someone on Tildes has recommended",
 	"A game you own on physical media",
@@ -39,25 +39,80 @@ let availableList = [
 	"Maecenas sit amet egestas mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 ];
 
-let selectedList = [];
-const bingoText = document.getElementById("bingo-text");
+// Entry point
+const elemStep1 = document.getElementById("step1");
+const elemStep2 = document.getElementById("step2");
+const elemStep3 = document.getElementById("step3");
+const elemSelectionRequired = document.getElementById("selectionRequired");
 
-// Get random selection of bingo entries
-for (let i=0; i<(rows * cols) - includeFreeTile; i++) {
-	let selectedIndex = Math.floor(Math.random() * availableList.length);
-	selectedList.push(availableList[selectedIndex]);
-	availableList.splice(selectedIndex, 1);
+elemSelectionRequired.innerText = (rows * cols) - includeFreeTile;
+populateList();
+
+
+function populateList() {
+	const listElem = document.getElementById("challenge-list");
+	listFull.forEach(val => {
+		let elemLi = document.createElement("li"); // List item
+ 		let elemLabel = document.createElement("label"); // Label
+
+		// Span
+		let elemSpan = document.createElement("span");
+		elemSpan.innerText = val;
+		
+		// Checkbox
+		let elemCheck = document.createElement("input");
+		elemCheck.type = "checkbox";
+		elemCheck.checked = true; // Default to on to encourage more experimenting
+
+		// Create elements
+		listElem.appendChild(elemLi);
+		elemLi.appendChild(elemLabel);
+		elemLabel.append(elemCheck);
+		elemLabel.append(elemSpan);
+	});
 }
 
-function generateMarkdown() {
+// Finished step 1
+function finishedSelection() {
+	elemStep1.style.display = "none";
+	elemStep2.style.display = "block";
+
+	// Build list of selected entries
+	const listSelectedElems = document.querySelectorAll("#challenge-list input[type='checkbox']:checked + span"); // Who needs IDs and mappings when you have CSS?
+	let listSelected = [];
+	listSelectedElems.forEach(elem => listSelected.push(elem.innerText));
+
+	// Get random item from selection, then remove from list
+	let randomList = [];
+	for (let i=0; i<(rows * cols) - includeFreeTile; i++) {
+		let selectedIndex = Math.floor(Math.random() * listSelected.length);
+		randomList.push(listSelected[selectedIndex]);
+		listSelected.splice(selectedIndex, 1);
+	}
+
+	// Add output to text field
+	const bingoText = document.getElementById("bingo-text");
+	bingoText.innerHTML = generateMarkdown(randomList);
+}
+
+// Finished step 2
+function finishedCopyMarkdown() {
+	elemStep2.style.display = "none";
+	elemStep3.style.display = "block";
+}
+
+function generateMarkdown(randomList) {
 	// Generate markdown
-	let output = "";
+	let output = "| ";
 
 	// Create header
-	output += "|Bingo!";
 	for (let i=0; i<cols; i++) {
-		output += "|"; // First row, empty header
+		if (i === Math.floor(cols / 2)) {
+			output += "Bingo! ";
+		}
+		output += "| "; // First row, empty header
 	}
+	output = output.slice(0, -1); // Trim final space
 	output += "\n";
 	for (let i=0; i<cols+1; i++) {
 		output += "|-"; // Second row, seperators
@@ -70,14 +125,14 @@ function generateMarkdown() {
 	let rowCount = 0;
 	const checkEndRow = function() {
 		if (colCount === cols) {
-			output += "|\n";
+			output += " |\n";
 			colCount = 0;
 			rowCount++;
 		}
 	}
 
 	// Add rows
-	selectedList.forEach(val => {
+	randomList.forEach(val => {
 		// Check for middle free tile
 		if (includeFreeTile) {
 			if (colCount === Math.floor(cols / 2) && rowCount === Math.floor(rows / 2)) {
@@ -88,7 +143,7 @@ function generateMarkdown() {
 		}
 
 		// Add regular value
-		output += "|" + val;
+		output += "| " + val;
 		colCount++;
 		checkEndRow();
 	});
@@ -96,6 +151,9 @@ function generateMarkdown() {
 	return output;
 }
 
-// Add output to text field
-const output = generateMarkdown();
-bingoText.innerHTML = output;
+/*
+TODO
+- Minimum selection check (24)
+- Test Firefox
+- Clean up spacing between rows?
+*/

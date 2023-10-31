@@ -9,8 +9,51 @@
 <body>
 
 <h1>Tildes Backlog Bingo</h1>
-<p>This has generated your uniquely-generated backlog bingo card.</p>
-<textarea id="bingo-text" class="bingo-text"></textarea>
+<p>Wish to participate in the Tildes Backlog Burner event?  Let's generate a bingo card for you!</p>
+
+<hr>
+
+<div id="step1" style="display: block;">
+	<h2>Step 1</h2>
+	<p>Select your list of applicable challenges.  Unchecked any that you don't believe are possible for you.</p>
+	<p>You need to select at least <span id="selectionRequired"></span> selections for a full Bingo card.</p>
+
+	<ul id="challenge-list"></ul>
+
+	<button onClick="finishedSelection()">Next step!</button>
+</div>
+
+<div id="step2" style="display: none;">
+	<h2>Step 2</h2>
+	<p>Great!  We've generated a unique bingo card for you.  Save this Markdown-formatted text to a separate file for safe keeping.</p>
+
+	<textarea id="bingo-text" class="bingo-text"></textarea>
+
+	<button onClick="finishedCopyMarkdown()">Next step!</button>
+</div>
+
+<div id="step3" style="display: none;">
+	<h2>Step 3</h2>
+	<p>Awesome!  Now you just need to start playing some games, then fill in your bingo card.</p>
+	<p>To mark an entry as complete, place an emoji checkmark ✅, then strike it out using <code>~~strikethroughs~~</code>.  Finally, add a <code>&lt;br&gt;</code> tag and the name of the game of the game in <code>**bold**</code>.  For example, change the following:</p>
+<textarea>
+| | |
+|-|-|
+| Recommended by someone on Tildes | In a genre you don't normally play |
+| Beatable in one sitting          | A licensed game |
+</textarea>
+
+	<p>Into this formatted version:</p>
+
+<textarea>
+| | |
+|-|-|
+| ✅ ~~Recommended by someone on Tildes~~ <br> **La Mulana** | In a genre you don't normally play |
+| ✅ ~~Beatable in one sitting~~ <br> **Super Hexagon**      | ✅ ~~A licensed game~~ <br> **Garfield Kart** |
+</textarea>
+
+	<p>You can preview the Markdown on Tildes using the preview tab in a comment, or use <a href="https://markdownlivepreview.com/" target="_blank">MarkdownLivePreview.com</a>.</p>
+</div>
 
 <script src="bingo.js"></script>
 
