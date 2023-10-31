@@ -16,11 +16,12 @@
 <div id="step1" style="display: block;">
 	<h2>Step 1</h2>
 	<p>Select your list of applicable challenges.  Unchecked any that you don't believe are possible for you.</p>
-	<p>You need to select at least <span id="selectionRequired"></span> selections for a full Bingo card.</p>
+	<p>You need to select at least <span class="selectionRequired">0</span> selections for a full Bingo card.</p>
 
 	<ul id="challenge-list"></ul>
 
-	<button onClick="finishedSelection()">Next step!</button>
+	<button id="step1-btn" onClick="finishedSelection()">Next step!</button>
+	<span class="required"><span id="selectionEntered">0</span> of <span class="selectionRequired">0</span> required</span>
 </div>
 
 <div id="step2" style="display: none;">
@@ -29,13 +30,14 @@
 
 	<textarea id="bingo-text" class="bingo-text"></textarea>
 
-	<button onClick="finishedCopyMarkdown()">Next step!</button>
+	<button onClick="finishedCopyMarkdown()">I've saved it!</button>
 </div>
 
 <div id="step3" style="display: none;">
 	<h2>Step 3</h2>
 	<p>Awesome!  Now you just need to start playing some games, then fill in your bingo card.</p>
-	<p>To mark an entry as complete, place an emoji checkmark ✅, then strike it out using <code>~~strikethroughs~~</code>.  Finally, add a <code>&lt;br&gt;</code> tag and the name of the game of the game in <code>**bold**</code>.  For example, change the following:</p>
+	<p>To mark an entry as complete, place an emoji checkmark ✅, then strike it out using <code>~~strikethroughs~~</code>.  Finally, add a <code>&lt;br&gt;</code> tag and the name of the game of the game in <code>**bold**</code>.</p>
+	<p>For example, change the following:</p>
 <textarea>
 | | |
 |-|-|

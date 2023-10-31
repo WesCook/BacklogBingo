@@ -2,6 +2,7 @@
 html {
 	box-sizing: border-box;
 }
+
 *, *:before, *:after {
 	box-sizing: inherit;
 }
@@ -17,6 +18,10 @@ body {
 	font-size: 1.1em;
 }
 
+.required {
+	color: grey;
+}
+
 /* Input */
 textarea {
 	display: block;
@@ -25,16 +30,24 @@ textarea {
 	font-family: monospace;
 	height: 120px;
 }
+
 .bingo-text {
 	height: 300px;
 }
+
 ul {
 	padding-left: 0;
 }
+
 li {
 	list-style: none;
 	line-height: 1.4;
 }
+
 input[type="checkbox"] {
 	margin-right: 10px;
+}
+
+button {
+	padding: 8px;
 }

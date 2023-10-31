@@ -43,12 +43,45 @@ const listFull = [
 const elemStep1 = document.getElementById("step1");
 const elemStep2 = document.getElementById("step2");
 const elemStep3 = document.getElementById("step3");
-const elemSelectionRequired = document.getElementById("selectionRequired");
+const elemsSelectionRequired = document.querySelectorAll(".selectionRequired");
+const elemSelectionEntered = document.getElementById("selectionEntered");
 
-elemSelectionRequired.innerText = (rows * cols) - includeFreeTile;
-populateList();
+const requiredChallenges = (rows * cols) - includeFreeTile;
+const step1Button = document.getElementById("step1-btn");
+
+init();
 
 
+function init() {
+	// Update required challenges in DOM
+	elemSelectionEntered.innerText = listFull.length;
+	elemsSelectionRequired.forEach(elem => {
+		elem.innerText = requiredChallenges;
+	});
+
+	populateList();
+
+	// Attach event listener to each checkbox so we can track the number checked
+	const checkboxElems = document.querySelectorAll("#challenge-list input[type='checkbox']");
+	checkboxElems.forEach(elem => {
+		elem.addEventListener("change", () => {
+			const activeCheckboxesElems = document.querySelectorAll("#challenge-list input[type='checkbox']:checked");
+			const activeCheckboxes = activeCheckboxesElems.length;
+
+			// Update button
+			if (activeCheckboxes >= requiredChallenges) {
+				step1Button.disabled = false;
+			} else {
+				step1Button.disabled = true;
+			}
+
+			// Update DOM
+			elemSelectionEntered.innerText = activeCheckboxes;
+		});
+	});
+}
+
+// Generate list of challenges and add to DOM
 function populateList() {
 	const listElem = document.getElementById("challenge-list");
 	listFull.forEach(val => {
@@ -155,5 +188,6 @@ function generateMarkdown(randomList) {
 TODO
 - Minimum selection check (24)
 - Test Firefox
+- Test results for correctness
 - Clean up spacing between rows?
 */
