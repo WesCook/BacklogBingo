@@ -165,6 +165,14 @@ function finishedSelection() {
 		listSelected.splice(selectedIndex, 1);
 	}
 
+	// Update list in DOM
+	const selectedListElem = document.getElementById("selected-list");
+	randomList.forEach(challenge => {
+		let elemLi = document.createElement("li");
+		elemLi.innerText = challenge;
+		selectedListElem.appendChild(elemLi);
+	});
+
 	// Add output to text field
 	storedOutput = generateMarkdown(randomList); // Update data in outer scope
 	const bingoText = document.getElementById("bingo-text");

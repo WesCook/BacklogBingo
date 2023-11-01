@@ -26,11 +26,15 @@
 
 <div id="step2" style="display: none;">
 	<h2>Step 2</h2>
-	<p>Great!  We've generated a unique bingo card for you.  Save this Markdown-formatted text to a separate file for safe keeping.</p>
+	<p>Great!  We've generated a unique bingo card for you.  Here's the list of categories you need to complete:</p>
+
+	<ul id="selected-list"></ul>
+
+	<p>And here's your Markdown-formatted bingo card.  Save this text to a separate file for safekeeping.</p>
 
 	<textarea id="bingo-text" class="bingo-text" readonly></textarea>
 
-	<button onClick="copyTable()" class="copy-btn">📋 Copy table</button>
+	<button onClick="copyTable()" class="copy-btn">📋 Copy Table</button>
 	<span id="copy-status" class="copy-status">Copied!</span>
 
 	<button onClick="finishedCopyMarkdown()" class="step3-btn">I've saved it!</button>
@@ -59,7 +63,7 @@
 
 	<p>You can preview the Markdown on Tildes using the preview tab in a comment, or use <a href="https://markdownlivepreview.com/" target="_blank">MarkdownLivePreview.com</a>.</p>
 
-	<p>Have fun, and don't forget to share your results at the end of the event!</p>
+	<h3>Have fun, and don't forget to share your progress at the end of the event!</h3>
 </div>
 
 <script src="bingo.js"></script>
