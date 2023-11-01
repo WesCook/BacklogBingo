@@ -246,9 +246,3 @@ function generateMarkdown(randomList) {
 
 	return output;
 }
-
-/*
-TODO
-- Test results for correctness
-- Clean up spacing between rows
-*/
