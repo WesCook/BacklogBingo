@@ -15,10 +15,10 @@
 
 <div id="step1" style="display: block;">
 	<h2>Step 1</h2>
-	<p>Select your list of applicable challenges.  Uncheck any that you don't believe are possible for you.</p>
-	<p>You need to select at least <span class="selectionRequired">0</span> selections for a full Bingo card.</p>
+	<p>Select your list of applicable categories.  Uncheck any that you don't believe are possible for you.</p>
+	<p>You need to select at least <span class="selectionRequired">0</span> categories for a full Bingo card.</p>
 
-	<ul id="challenge-list"></ul>
+	<ul id="challenge-list" class="challenge-list"></ul>
 
 	<button id="step1-btn" onClick="finishedSelection()">Next step!</button>
 	<span class="required"><span id="selectionEntered">0</span> of <span class="selectionRequired">0</span> required</span>
@@ -28,9 +28,12 @@
 	<h2>Step 2</h2>
 	<p>Great!  We've generated a unique bingo card for you.  Save this Markdown-formatted text to a separate file for safe keeping.</p>
 
-	<textarea id="bingo-text" class="bingo-text"></textarea>
+	<textarea id="bingo-text" class="bingo-text" readonly></textarea>
 
-	<button onClick="finishedCopyMarkdown()">I've saved it!</button>
+	<button onClick="copyTable()" class="copy-btn">📋 Copy table</button>
+	<span id="copy-status" class="copy-status">Copied!</span>
+
+	<button onClick="finishedCopyMarkdown()" class="step3-btn">I've saved it!</button>
 </div>
 
 <div id="step3" style="display: none;">
@@ -38,7 +41,7 @@
 	<p>Awesome!  Now you just need to start playing some games, then fill in your bingo card.</p>
 	<p>To mark an entry as complete, place an emoji checkmark ✅, then strike it out using <code>~~strikethroughs~~</code>.  Finally, add a <code>&lt;br&gt;</code> tag and the name of the game of the game in <code>**bold**</code>.</p>
 	<p>For example, change the following:</p>
-<textarea>
+<textarea readonly>
 | | |
 |-|-|
 | Recommended by someone on Tildes | In a genre you don't normally play |
@@ -47,7 +50,7 @@
 
 	<p>Into this formatted version:</p>
 
-<textarea>
+<textarea readonly>
 | | |
 |-|-|
 | ✅ ~~Recommended by someone on Tildes~~ <br> **La Mulana** | In a genre you don't normally play |
@@ -55,6 +58,8 @@
 </textarea>
 
 	<p>You can preview the Markdown on Tildes using the preview tab in a comment, or use <a href="https://markdownlivepreview.com/" target="_blank">MarkdownLivePreview.com</a>.</p>
+
+	<p>Have fun, and don't forget to share your results at the end of the event!</p>
 </div>
 
 <script src="bingo.js"></script>

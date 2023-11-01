@@ -7,26 +7,68 @@ html {
 	box-sizing: inherit;
 }
 
+
 /* Colors */
 body {
-	padding: 40px 0;
+	padding: 20px 50px 50px 50px;
 	color: #eee;
 	background-color: #1e1e1e;
-	max-width: 70%;
+	max-width: 1000px;
 	margin: 0 auto;
 	font-family: sans-serif;
 	font-size: 1.1em;
 }
 
+/* Elements */
+.challenge-list {
+	margin: 25px 0 20px 0;
+}
+@media (min-width: 800px) {
+	.challenge-list {
+		columns: 2;
+	}
+}
+
 .required {
 	color: grey;
+	font-size: 0.8em;
+	margin-left: 10px;
+}
+
+.copy-status {
+	margin-left: 10px;
+	animation-name: fadeOut;
+	animation-duration: 3.5s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite; /* We catch it with an event instead */
+	animation-play-state: paused;
+	visibility: hidden;
+	opacity: 0;
+}
+@keyframes fadeOut {
+	0% {
+		visibility: hidden;
+		opacity: 0;
+	}
+	15% {
+		visibility: visible;
+		opacity: 1;
+	}
+	70% {
+		visibility: visible;
+		opacity: 1;
+	}
+	100% {
+		visibility: hidden;
+		opacity: 0;
+	}
 }
 
 /* Input */
 textarea {
 	display: block;
 	width: 100%;
-	margin: 25px auto 20px auto;
+	margin: 25px auto 10px auto;
 	font-family: monospace;
 	height: 120px;
 }
@@ -49,5 +91,19 @@ input[type="checkbox"] {
 }
 
 button {
+	margin-top: 10px;
 	padding: 8px;
+}
+.step3-btn {
+	display: block;
+	margin-top: 28px;
+}
+
+.copy-btn {
+	all: unset;
+	cursor: pointer;
+}
+.copy-btn:hover,
+.copy-btn:focus {
+	color: #c3c3c3;
 }

@@ -91,6 +91,7 @@ const requiredChallenges = (rows * cols) - includeFreeTile;
 const step1Button = document.getElementById("step1-btn");
 
 init();
+let storedOutput = "";
 
 
 function init() {
@@ -165,8 +166,21 @@ function finishedSelection() {
 	}
 
 	// Add output to text field
+	storedOutput = generateMarkdown(randomList); // Update data in outer scope
 	const bingoText = document.getElementById("bingo-text");
-	bingoText.innerHTML = generateMarkdown(randomList);
+	bingoText.innerHTML = storedOutput;
+}
+
+function copyTable() {
+	// Play Copied! animation and pause at end of animation
+	const elemCopy = document.getElementById("copy-status");
+	elemCopy.style.animationPlayState = "running";
+	elemCopy.addEventListener("animationiteration", () => {
+		elemCopy.style.animationPlayState = "paused";
+	});
+
+	// Copy to clipboard
+	navigator.clipboard.writeText(storedOutput);
 }
 
 // Finished step 2
@@ -199,7 +213,7 @@ function generateMarkdown(randomList) {
 	let rowCount = 0;
 	const checkEndRow = function() {
 		if (colCount === cols) {
-			output += " |\n";
+			output += "|\n";
 			colCount = 0;
 			rowCount++;
 		}
@@ -217,7 +231,7 @@ function generateMarkdown(randomList) {
 		}
 
 		// Add regular value
-		output += "| " + val;
+		output += "| " + val + " ";
 		colCount++;
 		checkEndRow();
 	});
