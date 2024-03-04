@@ -4,6 +4,8 @@
 * Init *
 *******/
 
+// TODO: Must lock center star option once cats are generated
+
 // Predefined game modes
 const gameruleStandard = {
 	winCondition: "col-row-diag",
@@ -187,9 +189,6 @@ function setupGamerulesUI() {
 * Set up Category UI *
 *********************/
 
-// TODO: Temporary for testing
-//1 setUI("category");
-
 async function setupCategoryUI() {
 	// Categories should have long-since fetched, but we'll await the promise just to be sure
 	const categoriesFullList = await categoriesFullListPromise;
@@ -248,24 +247,43 @@ async function setupCategoryUI() {
 	populateList();
 
 	// Attach event listener to each checkbox so we can track the number checked
+	const btn = document.getElementById("generateCardBtn");
 	const checkboxElems = document.querySelectorAll(".category-list input[type='checkbox']");
 	checkboxElems.forEach(elem => {
 		elem.addEventListener("change", () => {
-			const activeCheckboxesElems = document.querySelectorAll(".category-list input[type='checkbox']:checked");
-			const activeCheckboxes = activeCheckboxesElems.length;
+			const elemsCatChecked = document.querySelectorAll(".category-list input[type='checkbox']:checked");
+			const catCheckedCount = elemsCatChecked.length;
 
-			// Update button
-			const btn = document.getElementById("generateCardBtn");
-			if (activeCheckboxes >= requiredCategories) {
+			// Update count and button
+			elemSelectionEntered.innerText = catCheckedCount;
+			if (catCheckedCount >= requiredCategories) {
 				btn.disabled = false;
 			} else {
 				btn.disabled = true;
 			}
-
-			// Update DOM
-			elemSelectionEntered.innerText = activeCheckboxes;
 		});
 	});
+
+	// Event listener on Generate Card button
+	btn.addEventListener("click", () => {
+		// Store list of selected category IDs as array
+		let listSelected = [];
+		const elemsCatChecked = document.querySelectorAll(".category-list input[type='checkbox']:checked");
+		elemsCatChecked.forEach(elem => listSelected.push(elem.id.substring(4)));
+
+		// Build list of randomly chosen categories
+		// TODO: Remove similar categories if option enabled
+		let listRandom = [];
+		for (let i=0; i<requiredCategories; i++) {
+			let selectedIndex = Math.floor(Math.random() * listSelected.length);
+			listRandom.push(listSelected[selectedIndex]);
+			listSelected.splice(selectedIndex, 1); // Remove from original list to avoid duplicates
+		}
+
+		// Save chosen categories to storage, and change to Bingo UI
+		localStorage.setItem("categories", JSON.stringify(listRandom));
+		setUI("bingo");
+	})
 }
 
 
@@ -274,37 +292,20 @@ async function setupCategoryUI() {
 
 let storedOutput = "";
 
-// Finished step 1
-function finishedSelection() {
-	elemStep1.style.display = "none";
-	elemStep2.style.display = "block";
+// Update list in DOM
+const selectedListElem = document.getElementById("selected-list");
+randomList.forEach(challenge => {
+	let elemLi = document.createElement("li");
+	elemLi.innerText = challenge;
+	selectedListElem.appendChild(elemLi);
+});
 
-	// Build list of selected entries
-	const listSelectedElems = document.querySelectorAll("#category-list input[type='checkbox']:checked + span"); // Who needs IDs and mappings when you have CSS?
-	let listSelected = [];
-	listSelectedElems.forEach(elem => listSelected.push(elem.innerText));
+// Add output to text field
+storedOutput = generateMarkdown(randomList); // Update data in outer scope
+const bingoText = document.getElementById("bingo-text");
+bingoText.innerHTML = storedOutput;
 
-	// Get random item from selection, then remove from list
-	let randomList = [];
-	for (let i=0; i<(rows * cols) - includeFreeTile; i++) {
-		let selectedIndex = Math.floor(Math.random() * listSelected.length);
-		randomList.push(listSelected[selectedIndex]);
-		listSelected.splice(selectedIndex, 1);
-	}
 
-	// Update list in DOM
-	const selectedListElem = document.getElementById("selected-list");
-	randomList.forEach(challenge => {
-		let elemLi = document.createElement("li");
-		elemLi.innerText = challenge;
-		selectedListElem.appendChild(elemLi);
-	});
-
-	// Add output to text field
-	storedOutput = generateMarkdown(randomList); // Update data in outer scope
-	const bingoText = document.getElementById("bingo-text");
-	bingoText.innerHTML = storedOutput;
-}
 
 function copyTable() {
 	// Play Copied! animation and pause at end of animation
