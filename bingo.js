@@ -1,84 +1,203 @@
 "use strict"
 
+/*******
+* Init *
+*******/
+
+// Predefined game modes
+const gameruleStandard = {
+	winCondition: "col-row-diag",
+	gridSize: "medium",
+	golf: false,
+	lockRandom: false,
+	allowSimilar: false,
+	star: "wildcard"
+}
+const gameruleGolf = {
+	winCondition: "blackout",
+	gridSize: "medium",
+	golf: true,
+	lockRandom: false,
+	allowSimilar: false,
+	star: "free"
+}
+
+// Global state
+var gamerule = loadGameRules();
+var categories = loadCategories();
+var categoriesFullList; // Promise, populated when categories are fetched
+
+// Choose which UI to load
+// If no categories are saved, this is likely first-time setup.  Otherwise, try loading the card.
+if (categories.length === 0) {
+	setUI("gamerules");
+} else {
+	setUI("bingo");
+}
+
+
+// Initialize game rules from local data, or default to standard
+function loadGameRules() {
+	let gameruleTemp = JSON.parse(localStorage.getItem("gamerules"));
+	if (!gameruleTemp) {
+		console.log("Existing game rules not found.  Defaulting to standard rules.");
+		gameruleTemp = structuredClone(gameruleStandard);
+		localStorage.setItem("gamerules", JSON.stringify(gameruleTemp));
+	}
+	return gameruleTemp;
+}
+
+// Try to load saved categories as array of IDs
+function loadCategories() {
+	let categories = localStorage.getItem("categories");
+	if (!categories) {
+		console.log("Saved categories not found.  Loading game rules for first-time setup.");
+		categories = [];
+	}
+	return categories;
+}
+
+// Choose which template to embed
+function setUI(ui) {
+	// Remove old UI
+	document.querySelector(".category-wrapper")?.remove();
+
+	// Clone specified template to DOM
+	const cloneTemplate = templateName => {
+		const template = document.getElementById(templateName + "-template");
+		const clone = template.content.cloneNode(true);
+		document.body.append(clone);
+	}
+
+	// Instantiate new UI and make any useful callbacks
+	switch(ui) {
+		case "gamerules":
+			cloneTemplate("gamerules");
+			setupGamerulesUI();
+		break;
+		case "category":
+			cloneTemplate("category");
+			setupCategoryUI();
+		break;
+		case "bingo":
+			cloneTemplate("bingo");
+		break;
+		case "final":
+			cloneTemplate("final");
+		break;
+	}
+}
+
+// Start fetching categories
+async function fetchCategories() {
+	try {
+		const response = await fetch("categories.json");
+		const categories = await response.json();
+		return categories;
+	} catch (error) {
+		console.error("Error fetching categories", error);
+	}
+}
+
+
+/**********************
+* Set up Game Rule UI *
+**********************/
+
+function setupGamerulesUI() {
+	// Call to update game rules DOM when changing game modes or intitializing
+	const updateGameRulesDOM = () => {
+		document.getElementById("winCondition").value = gamerule.winCondition;
+		document.getElementById("gridSize").value = gamerule.gridSize;
+		document.getElementById("golf").checked = gamerule.golf;
+		document.getElementById("lockRandom").checked = gamerule.lockRandom;
+		document.getElementById("allowSimilar").checked = gamerule.allowSimilar;
+		document.getElementById("star").value = gamerule.star;
+	}
+	updateGameRulesDOM();
+
+	// Find game mode by comparing current game rules against defaults
+	// We could save game mode directly, but this allows us to change the defaults later without creating conflicts
+	const getGameMode = () => {
+		let gamemode = "custom";
+		if (JSON.stringify(gamerule) === JSON.stringify(gameruleStandard)) {
+			gamemode = "standard";
+		} else if (JSON.stringify(gamerule) === JSON.stringify(gameruleGolf)) {
+			gamemode = "golf";
+		}
+		return gamemode;
+	}
+
+	// Update game mode radio selection
+	const gamemode = getGameMode();
+	document.querySelector("input[name='game-mode-radio'][value='" + gamemode + "']").checked = true;
+
+	// Enable custom rules fieldset if game mode is custom
+	const elemGameRules = document.getElementById("game-rules");
+	if (gamemode === "custom") {
+		elemGameRules.disabled = false;
+	}
+
+	// Watch for clicks on game mode radios, then update game rules, UI, and save changes
+	const gameModeRadios = document.querySelectorAll("input[name='game-mode-radio']");
+	gameModeRadios.forEach(elem => {
+		elem.addEventListener("click", event => {
+			let gameModeSelection = event.target.value;
+			if (gameModeSelection === "standard") {
+				gamerule = structuredClone(gameruleStandard);
+				elemGameRules.disabled = true;
+				localStorage.setItem("gamerules", JSON.stringify(gamerule));
+			}
+			else if (gameModeSelection === "golf") {
+				gamerule = structuredClone(gameruleGolf);
+				elemGameRules.disabled = true;
+				localStorage.setItem("gamerules", JSON.stringify(gamerule));
+			}
+			else if (gameModeSelection === "custom") {
+				elemGameRules.disabled = false;
+			}
+
+			updateGameRulesDOM();
+		});
+	});
+
+	// Watch for clicks on game rules controls, save any changes
+	const gameRuleControls = document.querySelectorAll(".game-rules input, .game-rules select");
+	gameRuleControls.forEach(elem => {
+		elem.addEventListener("change", event => {
+			// Load correct property based on checkbox or dropdown
+			if (event.target.nodeName === "INPUT") {
+				gamerule[event.target.id] = event.target.checked;
+			}
+			else if (event.target.nodeName === "SELECT") {
+				gamerule[event.target.id] = event.target.value;
+			}
+
+			localStorage.setItem("gamerules", JSON.stringify(gamerule));
+		});
+	})
+}
+
+
+/*********************
+* Set up Category UI *
+*********************/
+
+async function setupCategoryUI() {
+	// Categories should have long-since fetched, but we'll await the promise just to be sure
+	categoriesFullList = await fetchCategories();
+	console.log(categoriesFullList);
+}
+
+
+
+/*
+
 const rows = 5;
 const cols = 5;
 const includeFreeTile = 1; // 0 or 1 for free star tile
 
-const listFull = [
-	"You have to tinker in order to get it running",
-	"You wanted to play it when you were younger but never did",
-	"You can complete it in one sitting",
-	"You can complete in only a few hours",
-	"Known for its soundtrack",
-	"In a genre you don’t normally play",
-	"Recommended by someone on Tildes",
-	"Recommended by someone IRL",
-	"Chosen for you by someone else",
-	"Begins with one of your initials",
-	"Begins with the first letter of your username",
-	"Owned for more than one year",
-	"Owned for more than two years",
-	"Owned for more than three years",
-	"Owned for more than four years",
-	"Owned for more than five years",
-	"“When the hell did I buy this?”",
-	"Has DLC",
-	"Has no DLC",
-	"Has achievements",
-	"Has no achievements",
-	"Has minigames",
-	"Has cute, feel-good vibes",
-	"Has creepy, unsettling vibes",
-	"You can save/pet/care for animals",
-	"Considered a “classic”",
-	"Considered a “cult classic”",
-	"Considered a “disappointment”",
-	"From now-defunct dev studio",
-	"Has one-word title",
-	"Has a non-human player character",
-	"Has an animal player character",
-	"Has an aggregate review score above 90",
-	"Has an aggregate review score below 70",
-	"Has number somewhere in the title",
-	"Has “Super” in the title",
-	"Has the letter X somewhere in its title",
-	"Has the letter Q somewhere in its title",
-	"Has punctuation somewhere in its title",
-	"Came out more than 5 years ago",
-	"Came out more than 10 years ago",
-	"Came out more than 15 years ago",
-	"Came out more than 20 years ago",
-	"Is one of the oldest games you own",
-	"From a developer in a different country",
-	"From a studio you haven't heard of before",
-	"Solo-dev project",
-	"Won an award",
-	"You don't think you'll enjoy it",
-	"You chose based on title alone",
-	"You paid full price for it",
-	"You got it on sale",
-	"You got from a bundle",
-	"You got it as a gift",
-	"You own on physical media",
-	"You can't remember where you got it from",
-	"You regret buying it",
-	"From a series you’ve never played",
-	"From a series you have played",
-	"Part of a trilogy",
-	"Already installed",
-	"Not found on any distribution service",
-	"Licensed game",
-	"Arcade game",
-	"ROMhack or other significant mod",
-	"Co-op game or campaign",
-	"Unplayed game #x in your library list (use dice/RNG)",
-	"Hasn't been re-released, ported, remade, or re-released in 20+ years",
-	"You've been meaning to give a second chance",
-	"You've been meaning to go back to",
-	"Not super popular (e.g. <50 user reviews on Metacritic)",
-	"Your friend swears it is the greatest game ever",
-	"La Mulana, you wuss"
-];
+const listFull = ;
 
 // Entry point
 const elemStep1 = document.getElementById("step1");
@@ -104,10 +223,10 @@ function init() {
 	populateList();
 
 	// Attach event listener to each checkbox so we can track the number checked
-	const checkboxElems = document.querySelectorAll("#challenge-list input[type='checkbox']");
+	const checkboxElems = document.querySelectorAll("#category-list input[type='checkbox']");
 	checkboxElems.forEach(elem => {
 		elem.addEventListener("change", () => {
-			const activeCheckboxesElems = document.querySelectorAll("#challenge-list input[type='checkbox']:checked");
+			const activeCheckboxesElems = document.querySelectorAll("#category-list input[type='checkbox']:checked");
 			const activeCheckboxes = activeCheckboxesElems.length;
 
 			// Update button
@@ -125,7 +244,7 @@ function init() {
 
 // Generate list of challenges and add to DOM
 function populateList() {
-	const listElem = document.getElementById("challenge-list");
+	const listElem = document.getElementById("category-list");
 	listFull.forEach(val => {
 		let elemLi = document.createElement("li"); // List item
  		let elemLabel = document.createElement("label"); // Label
@@ -153,7 +272,7 @@ function finishedSelection() {
 	elemStep2.style.display = "block";
 
 	// Build list of selected entries
-	const listSelectedElems = document.querySelectorAll("#challenge-list input[type='checkbox']:checked + span"); // Who needs IDs and mappings when you have CSS?
+	const listSelectedElems = document.querySelectorAll("#category-list input[type='checkbox']:checked + span"); // Who needs IDs and mappings when you have CSS?
 	let listSelected = [];
 	listSelectedElems.forEach(elem => listSelected.push(elem.innerText));
 
@@ -246,3 +365,5 @@ function generateMarkdown(randomList) {
 
 	return output;
 }
+
+*/

@@ -5,66 +5,157 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Tildes Backlog Bingo</title>
 	<link rel="stylesheet" href="style.css">
+	<meta name="color-scheme" content="light dark">
 </head>
 <body>
 
 <h1>Tildes Backlog Bingo</h1>
-<p>Wish to participate in the Tildes Backlog Burner event?  Let's generate a bingo card for you!</p>
 
-<hr>
+<template id="gamerules-template">
+	<section id="gamerules-ui" class="category-wrapper">
+		<p>Wish to participate in the Tildes Backlog Burner event?  Let's generate a bingo card for you!</p>
 
-<div id="step1" style="display: block;">
-	<h2>Step 1</h2>
-	<p>Select your list of applicable categories.  Uncheck any that you don't believe are possible for you.</p>
-	<p>You need to select at least <span class="selectionRequired">0</span> categories for a full Bingo card.</p>
+		<h2>Game Mode</h2>
+		<div class="game-mode">
+			<label>
+				<input type="radio" name="game-mode-radio" value="standard">
+				<h3>Standard</h3>
+				<p>The main way to play.  Complete a row, column, or diagonal to win.  Each game only counts for one category.</p>
+			</label>
+			<label>
+				<input type="radio" name="game-mode-radio" value="golf">
+				<h3>Golf</h3>
+				<p>Focus on strategy, and try to finish a whole board playing as few unique titles as possible.</p>
+			</label>
+			<label>
+				<input type="radio" name="game-mode-radio" value="custom">
+				<h3>Custom</h3>
+				<p>Customize the ruleset to your liking.</p>
+			</label>
+		</div>
 
-	<ul id="challenge-list" class="challenge-list"></ul>
+		<h2>Game Rules</h2>
+		<fieldset id="game-rules" class="game-rules" disabled>
+			<ul>
+				<li>
+					<h3>Win condition</h3>
+					<select id="winCondition" name="win-condition">
+						<option value="col-row">Column or row</option>
+						<option value="col-row-diag">Column, row, or diagonal</option>
+						<option value="blackout">Blackout (every square)</option>
+					</select>
+					<p>The required pattern for completing a bingo.</p>
+				</li>
+				<li>
+					<h3>Grid Size</h3>
+					<select id="gridSize" name="grid-size">
+						<option value="small">Small (3x3)</option>
+						<option value="medium">Medium (5x5)</option>
+						<option value="large">Large (7x7)</option>
+					</select>
+					<p>How large of a bingo grid to generate.</p>
+				</li>
+				<li>
+					<h3>Golf Rules</h3>
+					<label>
+						<input type="checkbox" id="golf" name="golf">
+						<span>Enable golf rules</span>
+					</label>
+					<p>Golf rules allow games to apply to multiple squares.  This lets you focus on playing strategically.</p>
+				</li>
+				<li>
+					<h3>Lock Random</h3>
+					<label>
+						<input type="checkbox" id="lockRandom" name="lock-random">
+						<span>Lock random</span>
+					</label>
+					<p>The random button helps you choose a category to focus on.  This setting locks the button until you satisfy the chosen category, for a more restrictive game style.</p>
+				</li>
+				<li>
+					<h3>Allow Similar</h3>
+					<label>
+						<input type="checkbox" id="allowSimilar" name="allow-similar">
+						<span>Allow similar</span>
+					</label>
+					<p>The generator will try to prevent similar categories from being chosen together unless this is enabled.</p>
+				</li>
+				<li>
+					<h3>Star Square</h3>
+					<select id="star" name="star">
+						<option value="disabled">Disabled</option>
+						<option value="free">Free Space</option>
+						<option value="wildcard">Wildcard</option>
+					</select>
+					<p>The center square is often marked as a freebie.  This lets you customize its behaviour.<br>
+					A free space counts as a completed game, while a wildcard allows any game with no specific category.</p>
+				</li>
+			</ul>
+		</fieldset>
 
-	<button id="step1-btn" onClick="finishedSelection()">Next step!</button>
-	<span class="required"><span id="selectionEntered">0</span> of <span class="selectionRequired">0</span> required</span>
-</div>
+		<p class="closing-line">When you're ready, move to the next step to select your categories.  These settings can be changed later.</p>
+		<button onClick="setUI('category')">Select Categories</button>
+	</section>
+</template>
 
-<div id="step2" style="display: none;">
-	<h2>Step 2</h2>
-	<p>Great!  We've generated a unique bingo card for you.  Here's the list of categories you need to complete:</p>
+<template id="category-template">
+	<section id="category-ui" class="category-wrapper">
+		<p>Now select the categories you wish to populate your bingo card with.  These will be chosen at random from the list below.  Please uncheck any that you don't believe are possible for you to complete.</p>
+		<p>You need to select at least <span class="selectionRequired">0</span> categories for a full Bingo card.</p>
 
-	<ul id="selected-list"></ul>
+		<ul id="category-list" class="category-list two-col"></ul>
 
-	<p>And here's your Markdown-formatted bingo card.  Save this text to a separate file for safekeeping.</p>
+		<p class="closing-line">Your card will be saved locally.  Please do not delete browser data to avoid data loss.</p>
 
-	<textarea id="bingo-text" class="bingo-text" readonly></textarea>
+		<button id="step1-btn" onClick="setUI('bingo')">Generate Card</button>
+		<span class="required"><span id="selectionEntered">0</span> of <span class="selectionRequired">0</span> required</span>
+	</section>
+</template>
 
-	<button onClick="copyTable()" class="copy-btn">📋 Copy Table</button>
-	<span id="copy-status" class="copy-status">Copied!</span>
+<template id="bingo-template">
+	<section id="bingo-ui" class="category-wrapper">
+		<h2>Step 2</h2>
+		<p>Great!  We've generated a unique bingo card for you.  Here's the list of categories you need to complete:</p>
 
-	<button onClick="finishedCopyMarkdown()" class="step3-btn">I've saved it!</button>
-</div>
+		<ul id="selected-list"></ul>
 
-<div id="step3" style="display: none;">
-	<h2>Step 3</h2>
-	<p>Awesome!  Now you just need to start playing some games, then fill in your bingo card.</p>
-	<p>To mark an entry as complete, place an emoji checkmark ✅, then strike it out using <code>~~strikethroughs~~</code>.  Finally, add a <code>&lt;br&gt;</code> tag and the name of the game of the game in <code>**bold**</code>.</p>
-	<p>For example, change the following:</p>
-<textarea readonly>
-| | |
-|-|-|
-| Recommended by someone on Tildes | In a genre you don't normally play |
-| Beatable in one sitting          | A licensed game |
-</textarea>
+		<p>And here's your Markdown-formatted bingo card.  Save this text to a separate file for safekeeping.</p>
 
-	<p>Into this formatted version:</p>
+		<textarea id="bingo-text" class="bingo-text" readonly></textarea>
 
-<textarea readonly>
-| | |
-|-|-|
-| ✅ ~~Recommended by someone on Tildes~~ <br> **La Mulana** | In a genre you don't normally play |
-| ✅ ~~Beatable in one sitting~~ <br> **Super Hexagon**      | ✅ ~~A licensed game~~ <br> **Garfield Kart** |
-</textarea>
+		<button onClick="copyTable()" class="copy-btn">📋 Copy Table</button>
+		<span id="copy-status" class="copy-status">Copied!</span>
 
-	<p>You can preview the Markdown on Tildes using the preview tab in a comment, or use <a href="https://markdownlivepreview.com/" target="_blank">MarkdownLivePreview.com</a>.</p>
+		<button onClick="finishedCopyMarkdown()" class="step3-btn">I've saved it!</button>
+	</section>
+</template>
 
-	<p class="closing-line">Have fun, and don't forget to share your progress in the weekly update threads!</p>
-</div>
+<template id="final-template">
+	<section id="final-ui" class="category-wrapper">
+		<h2>Step 3</h2>
+		<p>Awesome!  Now you just need to start playing some games, then fill in your bingo card.</p>
+		<p>To mark an entry as complete, place an emoji checkmark ✅, then strike it out using <code>~~strikethroughs~~</code>.  Finally, add a <code>&lt;br&gt;</code> tag and the name of the game of the game in <code>**bold**</code>.</p>
+		<p>For example, change the following:</p>
+	<textarea readonly>
+	| | |
+	|-|-|
+	| Recommended by someone on Tildes | In a genre you don't normally play |
+	| Beatable in one sitting          | A licensed game |
+	</textarea>
+
+		<p>Into this formatted version:</p>
+
+	<textarea readonly>
+	| | |
+	|-|-|
+	| ✅ ~~Recommended by someone on Tildes~~ <br> **La Mulana** | In a genre you don't normally play |
+	| ✅ ~~Beatable in one sitting~~ <br> **Super Hexagon**      | ✅ ~~A licensed game~~ <br> **Garfield Kart** |
+	</textarea>
+
+		<p>You can preview the Markdown on Tildes using the preview tab in a comment, or use <a href="https://markdownlivepreview.com/" target="_blank">MarkdownLivePreview.com</a>.</p>
+
+		<p class="closing-line">Have fun, and don't forget to share your progress in the weekly update threads!</p>
+	</section>
+</template>
 
 <script src="bingo.js"></script>
 

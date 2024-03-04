@@ -1,4 +1,12 @@
-/* Reset */
+/* .bingo-text {
+	height: 300px;
+} */
+
+
+/********
+* Reset *
+********/
+
 html {
 	box-sizing: border-box;
 }
@@ -8,32 +16,265 @@ html {
 }
 
 
-/* Colors */
+/*********
+* Colors *
+*********/
+
+/* Light Mode */
+body {
+	background-color: #f5f5f5;
+	color: #333;
+}
+
+/* Game Mode selection */
+.game-mode label:nth-of-type(1) {background-color: #fff5b2;}
+.game-mode label:nth-of-type(2) {background-color: #f2cdff;}
+.game-mode label:nth-of-type(3) {background-color: #BBDEFB;}
+
+/* Dark Mode */
+@media screen and (prefers-color-scheme: dark) {
+	body {
+		background-color: #1e1e1e;
+		color: #eee;
+	}
+	/* a:visited {
+		color: #eee;
+	} */
+
+	/* Controls */
+	button {
+		background-color: #201f1f;
+		border: 1px solid #3b3737;
+	}
+	button:hover
+	{
+		background-color: #302e2e;
+	}
+	button:focus {
+		border: 1px solid #615e5e;
+	}
+
+	/* Game Mode selection */
+	.game-mode label:nth-of-type(1) {background-color: #756600;}
+	.game-mode label:nth-of-type(2) {background-color: #5c007c;}
+	.game-mode label:nth-of-type(3) {background-color: #074070;}
+
+	/* Game Rules controls */
+	.game-rules select,
+	.game-rules label {
+		background-color: #131212;
+		color: #eee;
+		border: 1px solid #3b3737;
+	}
+}
+
+
+/*******************
+* Generic Elements *
+*******************/
+
 body {
 	padding: 20px 40px 40px 40px;
-	color: #eee;
-	background-color: #1e1e1e;
 	max-width: 1000px;
 	margin: 0 auto;
 	font-family: sans-serif;
 	font-size: 1.1em;
 }
 
-/* Elements */
-a:visited {
-	color: #eee;
+/* Input */
+/* textarea {
+	display: block;
+	width: 100%;
+	height: 120px;
+	min-width: 400px;
+	min-height: 100px;
+	max-width: 100%;
+	max-height: 600px;
+	margin: 25px auto 10px auto;
+	padding: 10px;
+	font-family: monospace;
+} */
+
+button {
+	margin-top: 10px;
+	padding: 8px;
+}
+/* .step3-btn {
+	display: block;
+	margin-top: 28px;
+} */
+
+ul {
+	line-height: 1.4;
 }
 
-.challenge-list {
+
+/*****************
+* Helper Classes *
+*****************/
+
+@media (min-width: 800px) {
+	ul.two-col {
+		columns: 2;
+		column-gap: 24px;
+	}
+}
+
+/* Closing line before button */
+.closing-line {
+	margin: 35px 0 10px 0;
+}
+
+
+/**************
+* Category UI *
+**************/
+
+.category-list {
 	margin: 25px 0 20px 0;
 }
 
+ul#category-list {
+	padding-left: 0;
+}
+#category-list li {
+	list-style: none;
+}
+
+/* Category number required */
 .required {
 	color: grey;
 	font-size: 0.8em;
 	margin-left: 10px;
 }
 
+/* input[type="checkbox"] {
+	margin-right: 10px;
+} */
+
+
+/****************
+* Game Rules UI *
+****************/
+
+.category-wrapper > h2:not(:first-of-type) {
+	margin-top: 40px;
+}
+
+/* Game Mode Layout */
+.game-mode {
+	display: grid;
+}
+.game-mode label {
+	display: grid;
+	grid-template-areas:
+		"gm-radio gm-title"
+		"gm-radio gm-desc";
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	padding: 25px 12px;
+	column-gap: 15px;
+	row-gap: 5px;
+}
+.game-mode h3 {
+	grid-area: gm-title;
+	margin: 0;
+}
+.game-mode p {
+	grid-area: gm-desc;
+	margin: 0;
+}
+.game-mode input[type="radio"] {
+	height: 30px;
+	width: 30px;
+	justify-self: center;
+	grid-area: gm-radio;
+	margin: 0;
+}
+
+/* Game Rules Layout */
+.game-rules {
+	padding: 20px;
+}
+.game-rules ul {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	margin: 0;
+	padding: 0;
+}
+.game-rules li {
+	display: grid;
+	grid-template-areas:
+		"gr-title gr-input"
+		"gr-desc gr-desc";
+	grid-template-columns: 2.5fr 200px;
+	align-items: center;
+	row-gap: 5px;
+}
+.game-rules h3 {
+	grid-area: gr-title;
+	margin: 0;
+}
+.game-rules select,
+.game-rules label {
+	grid-area: gr-input;
+	justify-self: end;
+}
+.game-rules p {
+	grid-area: gr-desc;
+	margin: 0;
+	font-size: 0.9em;
+}
+
+/* Flatten for mobile */
+@media (max-width: 800px) {
+	.game-rules ul {
+		gap: 20px;
+	}
+	.game-rules li {
+		grid-template-areas:
+			"gr-title"
+			"gr-desc"
+			"gr-input";
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Game Rules controls styling */
+.game-rules select,
+.game-rules label {
+	font-size: 0.9rem;
+	padding: 8px;
+	width: 100%;
+}
+/* Fade rules box out further, and ensure consistency in controls across browsers */
+.game-rules:disabled,
+.game-rules:disabled select,
+.game-rules:disabled label {
+	opacity: 0.7;
+}
+/* Bold ticked checkbox labels */
+.game-rules input[type='checkbox']:checked + span {
+	font-weight: bold;
+}
+
+
+/***********
+* Bingo UI *
+***********/
+
+/* Copy Button */
+.copy-btn {
+	all: unset;
+	cursor: pointer;
+}
+.copy-btn:hover,
+.copy-btn:focus {
+	color: #c3c3c3;
+}
+
+/* Copy Status */
 .copy-status {
 	margin-left: 10px;
 	animation-name: fadeOut;
@@ -60,70 +301,5 @@ a:visited {
 	100% {
 		visibility: hidden;
 		opacity: 0;
-	}
-}
-
-.closing-line {
-	font-size: 1.3em;
-	margin-top: 35px;
-}
-
-/* Input */
-textarea {
-	display: block;
-	width: 100%;
-	height: 120px;
-	min-width: 400px;
-	min-height: 100px;
-	max-width: 100%;
-	max-height: 600px;
-	margin: 25px auto 10px auto;
-	padding: 10px;
-	font-family: monospace;
-	background-color: #111;
-	color: #eee;
-}
-
-.bingo-text {
-	height: 300px;
-}
-
-ul#challenge-list {
-	padding-left: 0;
-}
-#challenge-list li {
-	list-style: none;
-}
-
-input[type="checkbox"] {
-	margin-right: 10px;
-}
-
-button {
-	margin-top: 10px;
-	padding: 8px;
-}
-.step3-btn {
-	display: block;
-	margin-top: 28px;
-}
-
-.copy-btn {
-	all: unset;
-	cursor: pointer;
-}
-.copy-btn:hover,
-.copy-btn:focus {
-	color: #c3c3c3;
-}
-
-ul {
-	line-height: 1.4;
-}
-
-@media (min-width: 800px) {
-	ul {
-		columns: 2;
-		column-gap: 24px;
 	}
 }
