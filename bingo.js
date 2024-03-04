@@ -23,9 +23,9 @@ const gameruleGolf = {
 }
 
 // Global state
-var gamerule = loadGameRules();
-var categories = loadCategories();
-var categoriesFullList; // Promise, populated when categories are fetched
+let gamerule = loadGameRules();
+let categories = loadCategories();
+const categoriesFullListPromise = fetchCategories(); // Start fetching categories in the background
 
 // Choose which UI to load
 // If no categories are saved, this is likely first-time setup.  Otherwise, try loading the card.
@@ -49,9 +49,9 @@ function loadGameRules() {
 
 // Try to load saved categories as array of IDs
 function loadCategories() {
-	let categories = localStorage.getItem("categories");
+	let categories = JSON.parse(localStorage.getItem("categories"));
 	if (!categories) {
-		console.log("Saved categories not found.  Loading game rules for first-time setup.");
+		console.log("Saved categories not found.  Loading game rules screen for first-time setup.");
 		categories = [];
 	}
 	return categories;
@@ -86,6 +86,10 @@ function setUI(ui) {
 			cloneTemplate("final");
 		break;
 	}
+
+	// Scroll to top of page
+	// (It was at this point I realized I'd accidentally created an SPA)
+	window.scrollTo(top);
 }
 
 // Start fetching categories
@@ -183,57 +187,79 @@ function setupGamerulesUI() {
 * Set up Category UI *
 *********************/
 
+// TODO: Temporary for testing
+//1 setUI("category");
+
 async function setupCategoryUI() {
 	// Categories should have long-since fetched, but we'll await the promise just to be sure
-	categoriesFullList = await fetchCategories();
-	console.log(categoriesFullList);
-}
+	const categoriesFullList = await categoriesFullListPromise;
+	const categoriesFilteredList = categoriesFullList.filter(cat => !cat.hidden);
 
+	// Get DOM elements
+	const elemsSelectionRequired = document.querySelectorAll(".selectionRequired");
+	const elemSelectionEntered = document.getElementById("selectionEntered");
 
+	// Calculate required category number from size of grid and star
+	// Using 0/1 instead of true/false so it can be used in math operations
+	let includeFreeTile = 0;
+	if (gamerule.star === "free" || gamerule.star === "wildcard") {
+		includeFreeTile = 1;
+	}
 
-/*
+	// Get rows and cols from grid size
+	const gridSizeMap = {
+		small: {rows: 3, cols: 3},
+		medium: {rows: 5, cols: 5},
+		large: {rows: 7, cols: 7}
+	};
+	const {rows, cols} = gridSizeMap[gamerule.gridSize];
 
-const rows = 5;
-const cols = 5;
-const includeFreeTile = 1; // 0 or 1 for free star tile
-
-const listFull = ;
-
-// Entry point
-const elemStep1 = document.getElementById("step1");
-const elemStep2 = document.getElementById("step2");
-const elemStep3 = document.getElementById("step3");
-const elemsSelectionRequired = document.querySelectorAll(".selectionRequired");
-const elemSelectionEntered = document.getElementById("selectionEntered");
-
-const requiredChallenges = (rows * cols) - includeFreeTile;
-const step1Button = document.getElementById("step1-btn");
-
-init();
-let storedOutput = "";
-
-
-function init() {
-	// Update required challenges in DOM
-	elemSelectionEntered.innerText = listFull.length;
+	// Update required categories in DOM
+	const requiredCategories = (rows * cols) - includeFreeTile;
+	elemSelectionEntered.innerText = categoriesFilteredList.length;
 	elemsSelectionRequired.forEach(elem => {
-		elem.innerText = requiredChallenges;
+		elem.innerText = requiredCategories;
 	});
 
+	// Generate list of categories and add to DOM
+	const populateList = () => {
+		const listElem = document.getElementById("category-list");
+		categoriesFilteredList.forEach(cat => {
+			let elemLi = document.createElement("li"); // List item
+			let elemLabel = document.createElement("label"); // Label
+
+			// Span
+			let elemSpan = document.createElement("span");
+			elemSpan.innerText = cat.msg;
+			
+			// Checkbox
+			let elemCheck = document.createElement("input");
+			elemCheck.type = "checkbox";
+			elemCheck.id = "cat-" + cat.id;
+			elemCheck.checked = true; // Default to on to encourage more experimenting
+
+			// Create elements
+			listElem.appendChild(elemLi);
+			elemLi.appendChild(elemLabel);
+			elemLabel.append(elemCheck);
+			elemLabel.append(elemSpan);
+		});
+	}
 	populateList();
 
 	// Attach event listener to each checkbox so we can track the number checked
-	const checkboxElems = document.querySelectorAll("#category-list input[type='checkbox']");
+	const checkboxElems = document.querySelectorAll(".category-list input[type='checkbox']");
 	checkboxElems.forEach(elem => {
 		elem.addEventListener("change", () => {
-			const activeCheckboxesElems = document.querySelectorAll("#category-list input[type='checkbox']:checked");
+			const activeCheckboxesElems = document.querySelectorAll(".category-list input[type='checkbox']:checked");
 			const activeCheckboxes = activeCheckboxesElems.length;
 
 			// Update button
-			if (activeCheckboxes >= requiredChallenges) {
-				step1Button.disabled = false;
+			const btn = document.getElementById("generateCardBtn");
+			if (activeCheckboxes >= requiredCategories) {
+				btn.disabled = false;
 			} else {
-				step1Button.disabled = true;
+				btn.disabled = true;
 			}
 
 			// Update DOM
@@ -242,29 +268,11 @@ function init() {
 	});
 }
 
-// Generate list of challenges and add to DOM
-function populateList() {
-	const listElem = document.getElementById("category-list");
-	listFull.forEach(val => {
-		let elemLi = document.createElement("li"); // List item
- 		let elemLabel = document.createElement("label"); // Label
 
-		// Span
-		let elemSpan = document.createElement("span");
-		elemSpan.innerText = val;
-		
-		// Checkbox
-		let elemCheck = document.createElement("input");
-		elemCheck.type = "checkbox";
-		elemCheck.checked = true; // Default to on to encourage more experimenting
 
-		// Create elements
-		listElem.appendChild(elemLi);
-		elemLi.appendChild(elemLabel);
-		elemLabel.append(elemCheck);
-		elemLabel.append(elemSpan);
-	});
-}
+/*
+
+let storedOutput = "";
 
 // Finished step 1
 function finishedSelection() {

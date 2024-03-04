@@ -303,6 +303,7 @@
 	},
 	{
 		"id": 72,
-		"msg": "La Mulana, you wuss"
+		"msg": "La Mulana, you wuss",
+		"hidden": true
 	}
 ]

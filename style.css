@@ -148,9 +148,10 @@ ul#category-list {
 	margin-left: 10px;
 }
 
-/* input[type="checkbox"] {
+/* Category list */
+.category-list input[type="checkbox"] {
 	margin-right: 10px;
-} */
+}
 
 
 /****************
