@@ -4,64 +4,24 @@
 * Init *
 *******/
 
-// TODO: Must lock center star option once cats are generated
+import * as gamerule from "./gamerule.mjs";
+import * as categories from "./categories.mjs";
 
-// Predefined game modes
-const gameruleStandard = {
-	winCondition: "col-row-diag",
-	gridSize: "medium",
-	golf: false,
-	lockRandom: false,
-	allowSimilar: false,
-	star: "wildcard"
-}
-const gameruleGolf = {
-	winCondition: "blackout",
-	gridSize: "medium",
-	golf: true,
-	lockRandom: false,
-	allowSimilar: false,
-	star: "free"
-}
-
-// Global state
-let gamerule = loadGameRules();
-let categories = loadCategories();
-const categoriesFullListPromise = fetchCategories(); // Start fetching categories in the background
+gamerule.initialLoad(); // Get game rules from browser, or default to standard
+categories.preload(); // Start fetching full categories list in the background
 
 // Choose which UI to load
-// If no categories are saved, this is likely first-time setup.  Otherwise, try loading the card.
-if (categories.length === 0) {
+// If no categories are saved, this is likely a first-time setup.  Otherwise, try loading the bingo card.
+if (categories.getBingoCategories().length === 0) {
 	setUI("gamerules");
 } else {
 	setUI("bingo");
 }
 
 
-// Initialize game rules from local data, or default to standard
-function loadGameRules() {
-	let gameruleTemp = JSON.parse(localStorage.getItem("gamerules"));
-	if (!gameruleTemp) {
-		console.log("Existing game rules not found.  Defaulting to standard rules.");
-		gameruleTemp = structuredClone(gameruleStandard);
-		localStorage.setItem("gamerules", JSON.stringify(gameruleTemp));
-	}
-	return gameruleTemp;
-}
-
-// Try to load saved categories as array of IDs
-function loadCategories() {
-	let categories = JSON.parse(localStorage.getItem("categories"));
-	if (!categories) {
-		console.log("Saved categories not found.  Loading game rules screen for first-time setup.");
-		categories = [];
-	}
-	return categories;
-}
-
 // Choose which template to embed
 function setUI(ui) {
-	// Remove old UI
+	// Remove old UI if it exists
 	document.querySelector(".category-wrapper")?.remove();
 
 	// Clone specified template to DOM
@@ -83,10 +43,10 @@ function setUI(ui) {
 		break;
 		case "bingo":
 			cloneTemplate("bingo");
+			setupBingoUI();
 		break;
-		case "final":
-			cloneTemplate("final");
-		break;
+		default:
+			console.error("Unknown UI", ui);
 	}
 
 	// Scroll to top of page
@@ -94,48 +54,29 @@ function setUI(ui) {
 	window.scrollTo(top);
 }
 
-// Start fetching categories
-async function fetchCategories() {
-	try {
-		const response = await fetch("categories.json");
-		const categories = await response.json();
-		return categories;
-	} catch (error) {
-		console.error("Error fetching categories", error);
-	}
-}
 
+/***********************
+* Set up Game Rules UI *
+***********************/
 
-/**********************
-* Set up Game Rule UI *
-**********************/
+// TODO: Lock center star option once cats are generated.  Or only allow changing between free space and wildcard.
 
+// Initialize game rules screen
 function setupGamerulesUI() {
 	// Call to update game rules DOM when changing game modes or intitializing
 	const updateGameRulesDOM = () => {
-		document.getElementById("winCondition").value = gamerule.winCondition;
-		document.getElementById("gridSize").value = gamerule.gridSize;
-		document.getElementById("golf").checked = gamerule.golf;
-		document.getElementById("lockRandom").checked = gamerule.lockRandom;
-		document.getElementById("allowSimilar").checked = gamerule.allowSimilar;
-		document.getElementById("star").value = gamerule.star;
-	}
+		const gameruleTemp = gamerule.get();
+		document.getElementById("winCondition").value = gameruleTemp.winCondition;
+		document.getElementById("gridSize").value = gameruleTemp.gridSize;
+		document.getElementById("golf").checked = gameruleTemp.golf;
+		document.getElementById("lockRandom").checked = gameruleTemp.lockRandom;
+		document.getElementById("allowSimilar").checked = gameruleTemp.allowSimilar;
+		document.getElementById("star").value = gameruleTemp.star;
+	};
 	updateGameRulesDOM();
 
-	// Find game mode by comparing current game rules against defaults
-	// We could save game mode directly, but this allows us to change the defaults later without creating conflicts
-	const getGameMode = () => {
-		let gamemode = "custom";
-		if (JSON.stringify(gamerule) === JSON.stringify(gameruleStandard)) {
-			gamemode = "standard";
-		} else if (JSON.stringify(gamerule) === JSON.stringify(gameruleGolf)) {
-			gamemode = "golf";
-		}
-		return gamemode;
-	}
-
-	// Update game mode radio selection
-	const gamemode = getGameMode();
+	// Update game mode radio selection based on game rules
+	const gamemode = gamerule.getGameMode(gamerule.get());
 	document.querySelector("input[name='game-mode-radio'][value='" + gamemode + "']").checked = true;
 
 	// Enable custom rules fieldset if game mode is custom
@@ -148,16 +89,15 @@ function setupGamerulesUI() {
 	const gameModeRadios = document.querySelectorAll("input[name='game-mode-radio']");
 	gameModeRadios.forEach(elem => {
 		elem.addEventListener("click", event => {
+			const elemGameRules = document.getElementById("game-rules");
 			let gameModeSelection = event.target.value;
 			if (gameModeSelection === "standard") {
-				gamerule = structuredClone(gameruleStandard);
+				gamerule.reset("standard");
 				elemGameRules.disabled = true;
-				localStorage.setItem("gamerules", JSON.stringify(gamerule));
 			}
 			else if (gameModeSelection === "golf") {
-				gamerule = structuredClone(gameruleGolf);
+				gamerule.reset("golf");
 				elemGameRules.disabled = true;
-				localStorage.setItem("gamerules", JSON.stringify(gamerule));
 			}
 			else if (gameModeSelection === "custom") {
 				elemGameRules.disabled = false;
@@ -171,16 +111,24 @@ function setupGamerulesUI() {
 	const gameRuleControls = document.querySelectorAll(".game-rules input, .game-rules select");
 	gameRuleControls.forEach(elem => {
 		elem.addEventListener("change", event => {
-			// Load correct property based on checkbox or dropdown
+			let gameruleChanges = gamerule.get();
+
+			// Load relevant property based on checkbox or dropdown
 			if (event.target.nodeName === "INPUT") {
-				gamerule[event.target.id] = event.target.checked;
+				gameruleChanges[event.target.id] = event.target.checked;
 			}
 			else if (event.target.nodeName === "SELECT") {
-				gamerule[event.target.id] = event.target.value;
+				gameruleChanges[event.target.id] = event.target.value;
 			}
 
-			localStorage.setItem("gamerules", JSON.stringify(gamerule));
+			gamerule.set(gameruleChanges);
 		});
+	});
+
+	// Attach event listener to Select Categories button to change UI
+	const btn = document.getElementById("btn-select-categories");
+	btn.addEventListener("click", () => {
+		setUI("category");
 	})
 }
 
@@ -191,8 +139,8 @@ function setupGamerulesUI() {
 
 async function setupCategoryUI() {
 	// Categories should have long-since fetched, but we'll await the promise just to be sure
-	const categoriesFullList = await categoriesFullListPromise;
-	const categoriesFilteredList = categoriesFullList.filter(cat => !cat.hidden);
+	const categoriesVisible = await categories.getCategoriesVisible();
+	const gameruleTemp = gamerule.get();
 
 	// Get DOM elements
 	const elemsSelectionRequired = document.querySelectorAll(".selectionRequired");
@@ -201,7 +149,7 @@ async function setupCategoryUI() {
 	// Calculate required category number from size of grid and star
 	// Using 0/1 instead of true/false so it can be used in math operations
 	let includeFreeTile = 0;
-	if (gamerule.star === "free" || gamerule.star === "wildcard") {
+	if (gameruleTemp.star === "free" || gameruleTemp.star === "wildcard") {
 		includeFreeTile = 1;
 	}
 
@@ -211,43 +159,40 @@ async function setupCategoryUI() {
 		medium: {rows: 5, cols: 5},
 		large: {rows: 7, cols: 7}
 	};
-	const {rows, cols} = gridSizeMap[gamerule.gridSize];
+	const {rows, cols} = gridSizeMap[gameruleTemp.gridSize];
 
 	// Update required categories in DOM
-	const requiredCategories = (rows * cols) - includeFreeTile;
-	elemSelectionEntered.innerText = categoriesFilteredList.length;
+	const requiredCategoryNumber = (rows * cols) - includeFreeTile;
+	elemSelectionEntered.innerText = categoriesVisible.length;
 	elemsSelectionRequired.forEach(elem => {
-		elem.innerText = requiredCategories;
+		elem.innerText = requiredCategoryNumber;
 	});
 
 	// Generate list of categories and add to DOM
-	const populateList = () => {
-		const listElem = document.getElementById("category-list");
-		categoriesFilteredList.forEach(cat => {
-			let elemLi = document.createElement("li"); // List item
-			let elemLabel = document.createElement("label"); // Label
+	const listElem = document.getElementById("category-list");
+	categoriesVisible.forEach(cat => {
+		let elemLi = document.createElement("li"); // List item
+		let elemLabel = document.createElement("label"); // Label
 
-			// Span
-			let elemSpan = document.createElement("span");
-			elemSpan.innerText = cat.msg;
-			
-			// Checkbox
-			let elemCheck = document.createElement("input");
-			elemCheck.type = "checkbox";
-			elemCheck.id = "cat-" + cat.id;
-			elemCheck.checked = true; // Default to on to encourage more experimenting
+		// Span
+		let elemSpan = document.createElement("span");
+		elemSpan.innerText = cat.msg;
+		
+		// Checkbox
+		let elemCheck = document.createElement("input");
+		elemCheck.type = "checkbox";
+		elemCheck.id = "cat-" + cat.id;
+		elemCheck.checked = true; // Default to on to encourage more experimenting
 
-			// Create elements
-			listElem.appendChild(elemLi);
-			elemLi.appendChild(elemLabel);
-			elemLabel.append(elemCheck);
-			elemLabel.append(elemSpan);
-		});
-	}
-	populateList();
+		// Create elements
+		listElem.appendChild(elemLi);
+		elemLi.appendChild(elemLabel);
+		elemLabel.append(elemCheck);
+		elemLabel.append(elemSpan);
+	});
 
 	// Attach event listener to each checkbox so we can track the number checked
-	const btn = document.getElementById("generateCardBtn");
+	const btn = document.getElementById("btn-generate-card");
 	const checkboxElems = document.querySelectorAll(".category-list input[type='checkbox']");
 	checkboxElems.forEach(elem => {
 		elem.addEventListener("change", () => {
@@ -256,7 +201,7 @@ async function setupCategoryUI() {
 
 			// Update count and button
 			elemSelectionEntered.innerText = catCheckedCount;
-			if (catCheckedCount >= requiredCategories) {
+			if (catCheckedCount >= requiredCategoryNumber) {
 				btn.disabled = false;
 			} else {
 				btn.disabled = true;
@@ -264,26 +209,83 @@ async function setupCategoryUI() {
 		});
 	});
 
-	// Event listener on Generate Card button
+	// Attach event listener to Generate Card button
 	btn.addEventListener("click", () => {
 		// Store list of selected category IDs as array
-		let listSelected = [];
-		const elemsCatChecked = document.querySelectorAll(".category-list input[type='checkbox']:checked");
-		elemsCatChecked.forEach(elem => listSelected.push(elem.id.substring(4)));
+		let catCheckedIDs = []; // List of category IDs that were checked, before they're turned into real objects and stored in catPoolPrimary
+		const catPoolPrimary = []; // Holds all checked categories initially.  If allowSimilar is false, groups move to secondary pool as fallback
+		const catPoolSecondary = [];
+		const catBingoList = []; // The final list of saved bingo categories
+		const usedGroups = []; // Array of strings of category groups already chosen from primary pool
+		const allowSimilar = gamerule.get().allowSimilar;
 
-		// Build list of randomly chosen categories
-		// TODO: Remove similar categories if option enabled
-		let listRandom = [];
-		for (let i=0; i<requiredCategories; i++) {
-			let selectedIndex = Math.floor(Math.random() * listSelected.length);
-			listRandom.push(listSelected[selectedIndex]);
-			listSelected.splice(selectedIndex, 1); // Remove from original list to avoid duplicates
+		// Create array of all checked off category IDs
+		const elemsCatChecked = document.querySelectorAll(".category-list input[type='checkbox']:checked");
+		elemsCatChecked.forEach(elem => catCheckedIDs.push(parseInt(elem.id.substring(4))));
+
+		// Shuffle order of IDs
+		catCheckedIDs = categories.shuffle(catCheckedIDs);
+
+		// Add category objects to primary pool based on IDs
+		catCheckedIDs.forEach(catID => {
+			catPoolPrimary.push(categoriesVisible.find(cat => cat.id === catID));
+		});
+
+		// Fill bingo list from primary pool
+		// TODO: Test this logic a bit more.
+		// TODO: Consider instead using while loop with two conditions - no entries left in primary pool, and still under required size.  Then could grab entry at random, and move to secondary pool if it doesn't fit
+		for (const cat of catPoolPrimary) {
+			if (allowSimilar || !cat.group) {
+				catBingoList.push(cat);
+			} else {
+				if (cat.group && !usedGroups.includes(cat.group)) {
+					// Allow Similar is false, and group hasn't been used yet
+					catBingoList.push(cat);
+					usedGroups.push(cat.group);
+				}
+				else {
+					// Cat group already used
+					catPoolSecondary.push(cat);
+				}
+			}
+
+			// Filled list with randomized entries, we're done
+			if (catBingoList.length >= requiredCategoryNumber) {
+				break;
+			}
+		};
+
+		// If we don't have enough from primary pool, fill the rest from secondary
+		// These should still be roughly randomized from before
+		if (catBingoList.length < requiredCategoryNumber) {
+			console.warn("Filling from secondary pool");
+			for (const cat of catPoolSecondary) {
+				catBingoList.push(cat);
+
+				// Filled list with randomized entries, we're done
+				if (catBingoList.length === requiredCategoryNumber) {
+					break;
+				}
+			}
 		}
 
 		// Save chosen categories to storage, and change to Bingo UI
-		localStorage.setItem("categories", JSON.stringify(listRandom));
+		categories.setBingoCategories(catBingoList.map(cat => cat.id));
 		setUI("bingo");
 	})
+}
+
+
+/******************
+* Set up Bingo UI *
+******************/
+
+function setupBingoUI() {
+	console.log("Hello!");
+
+	const bingoCard = document.getElementById("bingo-card");
+
+	// TODO: Assign data attribute with size to bingo card
 }
 
 

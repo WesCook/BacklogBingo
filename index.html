@@ -61,7 +61,7 @@
 						<input type="checkbox" id="golf" name="golf">
 						<span>Enable golf rules</span>
 					</label>
-					<p>Golf rules allow games to apply to multiple squares.  This lets you focus on playing strategically.</p>
+					<p>Golf rules allow games to apply to multiple categories.  This lets you focus on playing strategically.</p>
 				</li>
 				<li>
 					<h3>Lock Random</h3>
@@ -93,7 +93,7 @@
 		</fieldset>
 
 		<p class="closing-line">When you're ready, move to the next step to select your categories.  These settings can be changed later.</p>
-		<button onClick="setUI('category')">Select Categories</button>
+		<button id="btn-select-categories">Select Categories</button>
 	</section>
 </template>
 
@@ -107,57 +107,27 @@
 		<p class="closing-line">These categories cannot be changed once your card is generated.</p>
 		<p>Your card will be saved locally, and no data is stored online.  Please do not delete browser data to avoid data loss.</p>
 
-		<button id="generateCardBtn">Generate Card</button>
+		<button id="btn-generate-card">Generate Card</button>
 		<span class="required"><span id="selectionEntered">0</span> of <span class="selectionRequired">0</span> required</span>
 	</section>
 </template>
 
 <template id="bingo-template">
 	<section id="bingo-ui" class="category-wrapper">
-		<p>Great!  We've generated a unique bingo card for you.  Here's the list of categories you need to complete:</p>
+		<p>That's a spiffy looking Bingo card!  Here's the list of categories you need to complete:</p>
 
-		<ul id="selected-list"></ul>
+		<div id="bingo-card" class="bingo-card"></div>
 
-		<p>And here's your Markdown-formatted bingo card.  Save this text to a separate file for safekeeping.</p>
+		<p>And here's your Markdown-formatted bingo card.</p>
 
-		<textarea id="bingo-text" class="bingo-text" readonly></textarea>
+		<textarea id="bingo-markdown" class="bingo-markdown" readonly></textarea>
 
 		<button onClick="copyTable()" class="copy-btn">📋 Copy Table</button>
 		<span id="copy-status" class="copy-status">Copied!</span>
-
-		<button onClick="finishedCopyMarkdown()" class="step3-btn">I've saved it!</button>
 	</section>
 </template>
 
-<template id="final-template">
-	<section id="final-ui" class="category-wrapper">
-		<h2>Step 3</h2>
-		<p>Awesome!  Now you just need to start playing some games, then fill in your bingo card.</p>
-		<p>To mark an entry as complete, place an emoji checkmark ✅, then strike it out using <code>~~strikethroughs~~</code>.  Finally, add a <code>&lt;br&gt;</code> tag and the name of the game of the game in <code>**bold**</code>.</p>
-		<p>For example, change the following:</p>
-	<textarea readonly>
-	| | |
-	|-|-|
-	| Recommended by someone on Tildes | In a genre you don't normally play |
-	| Beatable in one sitting          | A licensed game |
-	</textarea>
-
-		<p>Into this formatted version:</p>
-
-	<textarea readonly>
-	| | |
-	|-|-|
-	| ✅ ~~Recommended by someone on Tildes~~ <br> **La Mulana** | In a genre you don't normally play |
-	| ✅ ~~Beatable in one sitting~~ <br> **Super Hexagon**      | ✅ ~~A licensed game~~ <br> **Garfield Kart** |
-	</textarea>
-
-		<p>You can preview the Markdown on Tildes using the preview tab in a comment, or use <a href="https://markdownlivepreview.com/" target="_blank">MarkdownLivePreview.com</a>.</p>
-
-		<p class="closing-line">Have fun, and don't forget to share your progress in the weekly update threads!</p>
-	</section>
-</template>
-
-<script src="bingo.js"></script>
+<script src="./js/bingo.js" type="module"></script>
 
 </body>
 </html>

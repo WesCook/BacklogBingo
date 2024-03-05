@@ -31,15 +31,20 @@ body {
 .game-mode label:nth-of-type(2) {background-color: #f2cdff;}
 .game-mode label:nth-of-type(3) {background-color: #BBDEFB;}
 
+/* Game Rules controls */
+.game-rules select,
+.game-rules label {
+	background-color: #eee;
+	color: #131212;
+	border: 1px solid #ddd;
+}
+
 /* Dark Mode */
 @media screen and (prefers-color-scheme: dark) {
 	body {
 		background-color: #1e1e1e;
 		color: #eee;
 	}
-	/* a:visited {
-		color: #eee;
-	} */
 
 	/* Controls */
 	button {
@@ -81,31 +86,9 @@ body {
 	font-size: 1.1em;
 }
 
-/* Input */
-/* textarea {
-	display: block;
-	width: 100%;
-	height: 120px;
-	min-width: 400px;
-	min-height: 100px;
-	max-width: 100%;
-	max-height: 600px;
-	margin: 25px auto 10px auto;
-	padding: 10px;
-	font-family: monospace;
-} */
-
 button {
 	margin-top: 10px;
 	padding: 8px;
-}
-/* .step3-btn {
-	display: block;
-	margin-top: 28px;
-} */
-
-ul {
-	line-height: 1.4;
 }
 
 
@@ -123,34 +106,6 @@ ul {
 /* Closing line before button */
 .closing-line {
 	margin: 35px 0 10px 0;
-}
-
-
-/**************
-* Category UI *
-**************/
-
-.category-list {
-	margin: 25px 0 20px 0;
-}
-
-ul#category-list {
-	padding-left: 0;
-}
-#category-list li {
-	list-style: none;
-}
-
-/* Category number required */
-.required {
-	color: grey;
-	font-size: 0.8em;
-	margin-left: 10px;
-}
-
-/* Category list */
-.category-list input[type="checkbox"] {
-	margin-right: 10px;
 }
 
 
@@ -261,9 +216,68 @@ ul#category-list {
 }
 
 
+/**************
+* Category UI *
+**************/
+
+.category-list {
+	margin: 25px 0 20px 0;
+	line-height: 1.4;
+}
+
+ul#category-list {
+	padding-left: 0;
+}
+#category-list li {
+	list-style: none;
+}
+
+/* Category number required */
+.required {
+	color: grey;
+	font-size: 0.8em;
+	margin-left: 10px;
+}
+
+/* Category list */
+.category-list input[type="checkbox"] {
+	margin-right: 10px;
+}
+
+
 /***********
 * Bingo UI *
 ***********/
+
+.bingo-card {
+	display: grid;
+	gap: 10px;
+}
+.bing-card[data-size="small"] {
+	grid-template-rows: repeat(3, 1fr);
+	grid-template-columns: repeat(3, 1fr);
+}
+.bing-card[data-size="medium"] {
+	grid-template-rows: repeat(5, 1fr);
+	grid-template-columns: repeat(5, 1fr);
+}
+.bing-card[data-size="large"] {
+	grid-template-rows: repeat(7, 1fr);
+	grid-template-columns: repeat(7, 1fr);
+}
+
+.bingo-markdown {
+	display: block;
+	width: 100%;
+	height: 120px;
+	min-width: 100%;
+	min-height: 100px;
+	max-width: 100%;
+	max-height: 600px;
+	margin: 25px auto 10px auto;
+	padding: 10px;
+	font-family: monospace;
+}
 
 /* Copy Button */
 .copy-btn {
