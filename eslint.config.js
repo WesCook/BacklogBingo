@@ -21,7 +21,7 @@ export default [
 				baseIndent: 1
 			}],
 			'vue/singleline-html-element-content-newline': ['warn', {
-				'externalIgnores': ['RouterLink']
+				'externalIgnores': ['option', 'RouterLink']
 			}]
 		}
 	}
