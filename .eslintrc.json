@@ -1,0 +1,23 @@
+{
+	"root": true,
+	"extends": [
+		"plugin:vue/vue3-recommended",
+		"eslint:recommended"
+	],
+	"rules": {
+		"semi": ["warn", "always"],
+		"quotes": ["warn", "single"],
+		"no-unused-vars": "warn",
+		"vue/html-indent": ["warn", "tab"],
+		"vue/script-indent": ["warn", "tab", {
+			"baseIndent": 1
+		}]
+	},
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	}
+}
+
+// TODO: Convert to flat config format once Vue plugin is supported
+// https://github.com/vuejs/eslint-plugin-vue/pull/2407
