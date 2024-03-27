@@ -14,11 +14,14 @@ export default [
 		rules: {
 			semi: ['warn', 'always'],
 			quotes: ['warn', 'single'],
-			'prefer-const': 'warn',
+			'prefer-const': 'error',
 			'no-unused-vars': 'warn',
-			'vue/html-indent': ['warn', 'tab'],
-			'vue/script-indent': ['warn', 'tab', {
+			'vue/html-indent': ['error', 'tab'],
+			'vue/script-indent': ['error', 'tab', {
 				baseIndent: 1
+			}],
+			'vue/singleline-html-element-content-newline': ['warn', {
+				'externalIgnores': ['RouterLink']
 			}]
 		}
 	}

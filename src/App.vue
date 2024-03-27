@@ -1,3 +1,3 @@
 <template>
-	Starting fresh
+	<RouterView />
 </template>
