@@ -30,7 +30,7 @@ input, button, textarea, select {
 	}
 }
 
-/* Main */
+/* Main body */
 body {
 	max-width: 1000px;
 	margin: 0 auto;
@@ -41,21 +41,36 @@ body {
 	line-height: 1.5;
 }
 
+/* Text spacing */
+p, h1, h2, h3, h4, h5, h6 {
+	margin-bottom: min(0.8em, 20px);
+}
+:where(p, h1, h2, h3, h4, h5, h6):not(:first-child) {
+	margin-top: min(0.8em, 20px);
+}
+
 /* Controls */
+input[type="checkbox"] {
+	margin-right: 7px;
+}
+
 input, button, textarea, select {
 	background-color: var(--background-shaded);
 	border: 1px solid var(--border-color);
 	color: var(--foreground-color);
 }
 
-button:hover,
-input[type="submit"]:hover,
-input[type="button"]:hover {
-	background-color: color-mix(in srgb, var(--background-color) 88%, var(--foreground-color));
-}
+button,
+input[type="submit"],
+input[type="button"] {
+	padding: 8px;
+	cursor: pointer;
 
-button:active,
-input[type="submit"]:active,
-input[type="button"]:active {
-	background-color: color-mix(in srgb, var(--background-color) 80%, var(--foreground-color));
+	&:hover {
+		background-color: color-mix(in srgb, var(--background-color) 88%, var(--foreground-color));
+	}
+
+	&:active {
+		background-color: color-mix(in srgb, var(--background-color) 80%, var(--foreground-color));
+	}
 }
