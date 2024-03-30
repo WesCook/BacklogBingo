@@ -9,16 +9,18 @@ input, button, textarea, select {
 }
 
 /* Colors */
-:root {
-	--foreground-color: #1e1e1e;
-	--background-color: white;
-	--background-shaded: #f7f7f7;
-	--border-color: #ddd;
-	--tone1: #fff5b2;
-	--tone2: #f2cdff;
-	--tone3: #BBDEFB;
+@media (prefers-color-scheme: light) {
+	:root {
+		--foreground-color: #1e1e1e;
+		--background-color: white;
+		--background-shaded: #f7f7f7;
+		--border-color: #ddd;
+		--tone1: #fff5b2;
+		--tone2: #f2cdff;
+		--tone3: #BBDEFB;
+	}
 }
-@media screen and (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
 	:root {
 		--foreground-color: #f5f5f5;
 		--background-color: #1e1e1e;
@@ -67,10 +69,10 @@ input[type="button"] {
 	cursor: pointer;
 
 	&:hover {
-		background-color: color-mix(in srgb, var(--background-color) 88%, var(--foreground-color));
+		background-color: color-mix(in srgb, inherit 88%, var(--foreground-color));
 	}
 
 	&:active {
-		background-color: color-mix(in srgb, var(--background-color) 80%, var(--foreground-color));
+		background-color: color-mix(in srgb, inherit 80%, var(--foreground-color));
 	}
 }

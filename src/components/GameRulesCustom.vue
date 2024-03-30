@@ -1,11 +1,15 @@
+<script setup>
+	const emit = defineEmits(['gamerule-update']);
+</script>
+
 <template>
 	<fieldset class="gamerules">
 		<ul>
 			<li>
-				<h3>Win condition</h3>
+				<h3>Win Condition</h3>
 				<select
 					id="winCondition"
-					name="win-condition"
+					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
 				>
 					<option value="row-col">Row or column</option>
 					<option value="row-col-diag">Row, column, or diagonal</option>
@@ -17,7 +21,7 @@
 				<h3>Grid Size</h3>
 				<select
 					id="gridSize"
-					name="grid-size"
+					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
 				>
 					<option value="small">Small (3x3)</option>
 					<option value="medium">Medium (5x5)</option>
@@ -31,7 +35,7 @@
 					<input
 						id="golf"
 						type="checkbox"
-						name="golf"
+						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
 					>
 					<span>Enable golf rules</span>
 				</label>
@@ -43,7 +47,7 @@
 					<input
 						id="lockRandom"
 						type="checkbox"
-						name="lock-random"
+						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
 					>
 					<span>Lock random</span>
 				</label>
@@ -55,7 +59,7 @@
 					<input
 						id="allowSimilar"
 						type="checkbox"
-						name="allow-similar"
+						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
 					>
 					<span>Allow similar</span>
 				</label>
@@ -65,7 +69,7 @@
 				<h3>Star Tile</h3>
 				<select
 					id="star"
-					name="star"
+					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
 				>
 					<option value="disabled">Disabled</option>
 					<option value="free">Free Space</option>
@@ -80,10 +84,12 @@
 	</fieldset>
 </template>
 
-<style>
+<style scoped>
 	.gamerules {
 		padding: 20px;
 		margin-bottom: 25px;
+		opacity: 1;
+		transition: opacity 0.2s ease;
 
 		/* Layout */
 		ul {
@@ -151,6 +157,5 @@
 		&:disabled label {
 			opacity: 0.7;
 		}
-
 	}
 </style>

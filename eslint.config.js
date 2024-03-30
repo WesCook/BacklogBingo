@@ -12,17 +12,32 @@ export default [
 	{
 		files: ['src/**/*.{vue,js}'],
 		rules: {
-			semi: ['warn', 'always'],
+			// Technical errors
+			'prefer-const': 'warn',
+
+			// Missing elements
 			quotes: ['warn', 'single'],
-			'prefer-const': 'error',
+			semi: ['warn', 'always'],
 			'no-unused-vars': 'warn',
+			'vue/enforce-style-attribute': ['error', {
+				'allow': ['scoped']
+			}],
+
+			// Code organization
+			'vue/block-order': ['error', {
+				'order': ['script', 'template', 'style']
+			}],
 			'vue/html-indent': ['error', 'tab'],
 			'vue/script-indent': ['error', 'tab', {
 				baseIndent: 1
 			}],
 			'vue/singleline-html-element-content-newline': ['warn', {
 				'externalIgnores': ['button', 'option', 'RouterLink']
-			}]
+			}],
+
+			// Reactivity loss
+			'vue/no-ref-object-reactivity-loss': 'warn',
+			'vue/no-setup-props-reactivity-loss': 'warn'
 		}
 	}
 ]
