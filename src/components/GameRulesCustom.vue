@@ -1,21 +1,21 @@
 <script setup>
-	import { inject } from 'vue';
+	import { useGameRules } from '../composables/gamerules.js';
 
-	const emit = defineEmits(['gamerule-update']);
+	const { getGameRules, setGameRule } = useGameRules();
+	const gamerules = getGameRules();
+
 	const props = defineProps({
-		gamemode: {
-			type: String,
-			default: ''
+		isCustom: {
+			type: Boolean,
+			default: false
 		}
 	});
-
-	const gamerules = inject('gamerules');
 </script>
 
 <template>
 	<fieldset
 		class="gamerules"
-		:disabled="props.gamemode !== 'custom'"
+		:disabled="!props.isCustom"
 	>
 		<ul>
 			<li>
@@ -23,7 +23,7 @@
 				<select
 					id="winCondition"
 					:value="gamerules.winCondition"
-					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
+					@change="setGameRule($event.target.id, $event.target.value)"
 				>
 					<option value="row-col">Row or column</option>
 					<option value="row-col-diag">Row, column, or diagonal</option>
@@ -36,7 +36,7 @@
 				<select
 					id="gridSize"
 					:value="gamerules.gridSize"
-					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
+					@change="setGameRule($event.target.id, $event.target.value)"
 				>
 					<option value="small">Small (3x3)</option>
 					<option value="medium">Medium (5x5)</option>
@@ -51,7 +51,7 @@
 						id="golf"
 						type="checkbox"
 						:checked="gamerules.golf"
-						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
+						@change="setGameRule($event.target.id, $event.target.checked)"
 					>
 					<span>Enable golf rules</span>
 				</label>
@@ -64,7 +64,7 @@
 						id="lockRandom"
 						type="checkbox"
 						:checked="gamerules.lockRandom"
-						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
+						@change="setGameRule($event.target.id, $event.target.checked)"
 					>
 					<span>Lock random</span>
 				</label>
@@ -77,7 +77,7 @@
 						id="allowSimilar"
 						type="checkbox"
 						:checked="gamerules.allowSimilar"
-						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
+						@change="setGameRule($event.target.id, $event.target.checked)"
 					>
 					<span>Allow similar</span>
 				</label>
@@ -88,7 +88,7 @@
 				<select
 					id="star"
 					:value="gamerules.star"
-					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
+					@change="setGameRule($event.target.id, $event.target.value)"
 				>
 					<option value="disabled">Disabled</option>
 					<option value="free">Free Space</option>

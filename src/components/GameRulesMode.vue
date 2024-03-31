@@ -1,5 +1,8 @@
 <script setup>
-	const emit = defineEmits(['gamemode-update']);
+	import { useGameRules } from '../composables/gamerules.js';
+
+	const { resetGameRules } = useGameRules();
+	const emit = defineEmits(['is-custom']);
 </script>
 
 <template>
@@ -9,7 +12,7 @@
 				type="radio"
 				name="gamemode-radio"
 				value="standard"
-				@change="emit('gamemode-update', 'standard');"
+				@change="resetGameRules('standard'); emit('is-custom', false);"
 			>
 			<h3>Standard</h3>
 			<p>The main way to play.  Complete a row, column, or diagonal to win.  Each game only counts for one category.</p>
@@ -19,7 +22,7 @@
 				type="radio"
 				name="gamemode-radio"
 				value="golf"
-				@change="emit('gamemode-update', 'golf');"
+				@change="resetGameRules('golf'); emit('is-custom', false);"
 			>
 			<h3>Golf</h3>
 			<p>Focus on strategy, and try to finish a whole board playing as few unique titles as possible.</p>
@@ -29,7 +32,7 @@
 				type="radio"
 				name="gamemode-radio"
 				value="custom"
-				@change="emit('gamemode-update', 'custom');"
+				@change="emit('is-custom', true);"
 			>
 			<h3>Custom</h3>
 			<p>Customize the ruleset to your liking.</p>
