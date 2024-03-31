@@ -1,14 +1,28 @@
 <script setup>
+	import { inject } from 'vue';
+
 	const emit = defineEmits(['gamerule-update']);
+	const props = defineProps({
+		gamemode: {
+			type: String,
+			default: ''
+		}
+	});
+
+	const gamerules = inject('gamerules');
 </script>
 
 <template>
-	<fieldset class="gamerules">
+	<fieldset
+		class="gamerules"
+		:disabled="props.gamemode !== 'custom'"
+	>
 		<ul>
 			<li>
 				<h3>Win Condition</h3>
 				<select
 					id="winCondition"
+					:value="gamerules.winCondition"
 					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
 				>
 					<option value="row-col">Row or column</option>
@@ -21,6 +35,7 @@
 				<h3>Grid Size</h3>
 				<select
 					id="gridSize"
+					:value="gamerules.gridSize"
 					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
 				>
 					<option value="small">Small (3x3)</option>
@@ -35,6 +50,7 @@
 					<input
 						id="golf"
 						type="checkbox"
+						:checked="gamerules.golf"
 						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
 					>
 					<span>Enable golf rules</span>
@@ -47,6 +63,7 @@
 					<input
 						id="lockRandom"
 						type="checkbox"
+						:checked="gamerules.lockRandom"
 						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
 					>
 					<span>Lock random</span>
@@ -59,6 +76,7 @@
 					<input
 						id="allowSimilar"
 						type="checkbox"
+						:checked="gamerules.allowSimilar"
 						@change="emit('gamerule-update', $event.target.id, $event.target.checked)"
 					>
 					<span>Allow similar</span>
@@ -69,6 +87,7 @@
 				<h3>Star Tile</h3>
 				<select
 					id="star"
+					:value="gamerules.star"
 					@change="emit('gamerule-update', $event.target.id, $event.target.value)"
 				>
 					<option value="disabled">Disabled</option>

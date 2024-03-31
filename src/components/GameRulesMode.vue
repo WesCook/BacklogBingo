@@ -1,82 +1,35 @@
 <script setup>
-	import { ref, inject, watch } from 'vue';
-
-	const emit = defineEmits(['gamerule-update']);
-
-	// Predefined game modes
-	const defaultGameModes = {
-		'standard': {
-			winCondition: 'row-col-diag',
-			gridSize: 'medium',
-			golf: false,
-			lockRandom: false,
-			allowSimilar: false,
-			star: 'wildcard'
-		},
-		'golf': {
-			winCondition: 'blackout',
-			gridSize: 'medium',
-			golf: true,
-			lockRandom: false,
-			allowSimilar: false,
-			star: 'free'
-		}
-	};
-
-	const gamerules = inject('gamerules');
-	const gamemode = ref(getGameMode());
-
-	// Find game mode by comparing current gamerules against defaults
-	// We could save the game mode directly, but this allows us to change the defaults later without creating conflicts
-	// They'll simply be converted into custom rules
-	function getGameMode() {
-		if (JSON.stringify(gamerules) === JSON.stringify(defaultGameModes.standard)) {
-			return 'standard';
-		} else if (JSON.stringify(gamerules) === JSON.stringify(defaultGameModes.golf)) {
-			return 'golf';
-		}
-		return 'custom';
-	}
-
-	// Update gamerules when gamemode changes
-	watch(gamemode, newVal => {
-		if (newVal === 'custom') {
-			return;
-		}
-		for (const rule in defaultGameModes[newVal]) {
-			emit('gamerule-update', rule, defaultGameModes[newVal][rule]);
-		}
-	});
+	const emit = defineEmits(['gamemode-update']);
 </script>
 
 <template>
 	<div class="gamemode">
 		<label>
 			<input
-				v-model="gamemode"
 				type="radio"
 				name="gamemode-radio"
 				value="standard"
+				@change="emit('gamemode-update', 'standard');"
 			>
 			<h3>Standard</h3>
 			<p>The main way to play.  Complete a row, column, or diagonal to win.  Each game only counts for one category.</p>
 		</label>
 		<label>
 			<input
-				v-model="gamemode"
 				type="radio"
 				name="gamemode-radio"
 				value="golf"
+				@change="emit('gamemode-update', 'golf');"
 			>
 			<h3>Golf</h3>
 			<p>Focus on strategy, and try to finish a whole board playing as few unique titles as possible.</p>
 		</label>
 		<label>
 			<input
-				v-model="gamemode"
 				type="radio"
 				name="gamemode-radio"
 				value="custom"
+				@change="emit('gamemode-update', 'custom');"
 			>
 			<h3>Custom</h3>
 			<p>Customize the ruleset to your liking.</p>
