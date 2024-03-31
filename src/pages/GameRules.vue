@@ -1,12 +1,14 @@
 <script setup>
 	import { ref } from 'vue';
+	import { useGameRules } from '../composables/gamerules.js';
 
 	import GameRulesMode from '../components/GameRulesMode.vue';
 	import GameRulesCustom from '../components/GameRulesCustom.vue';
 
-	// Passing if gamemode is custom from GameRulesMode to GameRulesCustom
-	// Not using calculateGameMode() because it derives its value from gamerules, which won't observe changes in DOM radios
-	const isCustom = ref(false);
+	// Passing gamemode from GameRulesMode to GameRulesCustom
+	// We're interested in the value of the radio, not the derived gamemode from
+	// calculateGameMode(), so that is only used to set the initial value.
+	const gamemodeRadio = ref(useGameRules().calculateGameMode());
 </script>
 
 <template>
@@ -16,12 +18,12 @@
 	<h2 class="gamemode-header">
 		Game Mode
 	</h2>
-	<GameRulesMode @is-custom="isCustom = $event" />
+	<GameRulesMode v-model="gamemodeRadio" />
 
 	<h2 class="gamerules-header">
 		Game Rules
 	</h2>
-	<GameRulesCustom :is-custom="isCustom" />
+	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
 
 	<p>When you're ready, move to the next step to select your categories. Except for grid size, these settings can be changed later.</p>
 	<button class="btn">Select Categories</button>
