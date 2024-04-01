@@ -1,4 +1,4 @@
-import { reactive, computed } from 'vue';
+import { reactive, readonly } from 'vue';
 
 // Holds the current game rules
 const gamerules = reactive({});
@@ -23,16 +23,24 @@ const defaultGameModes = {
 	}
 };
 
+function saveToBrowser() {
+	localStorage.setItem('gamerules', JSON.stringify(gamerules));
+}
+
+function loadFromBrowser() {
+	return localStorage.getItem('gamerules');
+}
+
 export function useGameRules() {
 	// Return readonly version of gamerules
-	// TODO: Is readonly() better?  It seems like computed() is only needed when it's an inner variable.
 	function getGameRules() {
-		return computed(() => gamerules);
+		return readonly(gamerules);
 	}
 
 	// Set specific game rule with value
 	function setGameRule(rule, value) {
 		gamerules[rule] = value;
+		saveToBrowser();
 	}
 
 	// Reset game rules to preset
@@ -45,6 +53,7 @@ export function useGameRules() {
 		for (const rule in defaultGameModes[gamemode]) {
 			gamerules[rule] = defaultGameModes[gamemode][rule];
 		}
+		saveToBrowser();
 	}
 
 	// Find gamemode by comparing current gamerules against defaults
@@ -59,10 +68,29 @@ export function useGameRules() {
 		return 'custom';
 	}
 
+	// Loads saved gamerule data and resets if missing
+	// Required to start the app
+	function initializeData() {
+		const gamerulesJSON = loadFromBrowser();
+
+		if (gamerulesJSON) {
+			// Looks good, update internal state
+			const gamerulesObj = JSON.parse(gamerulesJSON);
+			Object.entries(gamerulesObj).forEach(([key, value]) => {
+				gamerules[key] = value; // Mutate ref to avoid losing reactivity
+			});
+		} else {
+			// Looks bad, set defaults
+			resetGameRules('standard');
+			console.info('Existing game rules not found.  Defaulting to standard rules.');
+		}
+	}
+
 	return {
 		getGameRules,
 		setGameRule,
 		resetGameRules,
-		calculateGameMode
+		calculateGameMode,
+		initializeData
 	};
 }
