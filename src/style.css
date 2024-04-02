@@ -69,10 +69,10 @@ input[type="button"] {
 	cursor: pointer;
 
 	&:hover {
-		background-color: color-mix(in srgb, inherit 88%, var(--foreground-color));
+		background-color: color-mix(in srgb, var(--background-shaded) 88%, var(--foreground-color));
 	}
 
 	&:active {
-		background-color: color-mix(in srgb, inherit 80%, var(--foreground-color));
+		background-color: color-mix(in srgb, var(--background-shaded) 80%, var(--foreground-color));
 	}
 }

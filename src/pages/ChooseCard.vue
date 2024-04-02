@@ -1,12 +1,12 @@
 <script setup>
 	import CardSourceFile from '../components/CardSourceFile.vue';
+	import CardSourceURL from '../components/CardSourceURL.vue';
 
-	import { validateAndParse } from '../utils/json-parser.js';
+	import { validateJSON } from '../utils/json-parser.js';
 
-	function loadFile(fileStr) {
-		const loadedFile = validateAndParse(fileStr);
-		if (loadedFile) {
-			console.log(loadedFile);
+	function loadFile(json) {
+		if (validateJSON(json)) {
+			console.log(json);
 			// TODO: Place into store
 		}
 	}
@@ -18,7 +18,7 @@
 		Select a bingo card from an event, or provide your own via JSON.
 		<em>
 			<a
-				href="https://github.com/WesCook/BacklogBingo/tree/main/public/categories/tildes-gaming-nov-2023.json"
+				href="https://github.com/WesCook/BacklogBingo/blob/main/public/category-json/tildes-gaming-nov-2023.json"
 				target="_blank"
 			>Example Format</a>
 		</em>
@@ -37,13 +37,7 @@
 		<div class="card-url">
 			<h3>From URL</h3>
 			<p>You may download from a URL online.</p>
-			<form>
-				<input
-					type="text"
-					placeholder="https://example.com/card.json"
-				>
-				<button>Fetch</button>
-			</form>
+			<CardSourceURL @load-file="loadFile" />
 		</div>
 
 		<div class="card-file">
