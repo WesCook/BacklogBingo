@@ -6,10 +6,15 @@
 	import GameRulesCustom from '../components/GameRulesCustom.vue';
 	import StartOver from '../components/StartOver.vue';
 
+	const { initializeData, calculateGameMode } = useGameRules();
+
+	// Get game data from browser, or use defaults if starting fresh
+	initializeData();
+
 	// Passing gamemode from GameRulesMode to GameRulesCustom
 	// We're interested in the value of the radio, not the derived gamemode from
 	// calculateGameMode(), so that is only used to set the initial value.
-	const gamemodeRadio = ref(useGameRules().calculateGameMode());
+	const gamemodeRadio = ref(calculateGameMode());
 </script>
 
 <template>
