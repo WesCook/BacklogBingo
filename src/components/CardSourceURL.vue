@@ -7,6 +7,23 @@
 
 	async function processDownload() {
 		const url = urlInput.value;
+
+		// Empty check
+		if (!url) {
+			console.log('No URL provided');
+			return;
+		}
+
+		// See if string can be constructed into URL object
+		try {
+			new URL(url);
+		} catch (err) {
+			alert('Invalid URL');
+			console.error(err);
+			return;
+		}
+
+		// Attempt to download from URL
 		try {
 			const res = await fetch(url);
 			if (!res.ok) {
@@ -22,7 +39,10 @@
 			if (err.name === 'SyntaxError') {
 				console.log(`Failed to parse ${url} as JSON`);
 				console.error(err.message);
-				alert('The download succeeded, but the file could not be read.  Is it a valid JSON file?');
+				alert('A file was downloaded, but it could not be read.  Is it a valid JSON file?');
+			} else if (err.name === 'TypeError') {
+				console.error(err.message);
+				alert('There was an error downloading from the URL, as an unexpected response was received');
 			}
 			else {
 				console.error(err.name, err.message);
@@ -43,13 +63,14 @@
 			type="text"
 			placeholder="https://example.com/card.json"
 		>
-		<button>Fetch</button>
+		<button>Fetch URL</button>
 	</form>
 </template>
 
 <style scoped>
 	.form {
 		display: flex;
+		height: 42px;
 	}
 	.url-input {
 		flex: 1;

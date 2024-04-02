@@ -1,6 +1,6 @@
 // Accepts JSON/object for validation
 // Returns true for valid, false for invalid
-export function validateJSON(json) {
+export function validate(json) {
 	// Verify file has the required keys
 	if (
 		!(Object.hasOwn(json, 'version')) ||

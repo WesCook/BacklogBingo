@@ -40,6 +40,27 @@
 <style scoped>
 	.file-picker {
 		width: 100%;
-		padding: 5px;
+		height: 42px;
+		padding-left: 8px;
+		line-height: 2.6; /* Required to vertically center? */
+		color: grey;
+	}
+
+	.file-picker::file-selector-button {
+		height: 100%;
+		float: right;
+		margin-right: 0;
+		padding: 8px;
+		background-color: var(--background-shaded);
+		border: none;
+		border-left: 1px solid var(--border-color);
+		cursor: pointer;
+	}
+
+	.file-picker::file-selector-button:hover {
+		background-color: color-mix(in srgb, var(--background-shaded) 88%, var(--foreground-color));
+	}
+	.file-picker::file-selector-button:active {
+		background-color: color-mix(in srgb, var(--background-shaded) 80%, var(--foreground-color));
 	}
 </style>

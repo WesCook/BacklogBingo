@@ -15,9 +15,9 @@ input, button, textarea, select {
 		--background-color: white;
 		--background-shaded: #f7f7f7;
 		--border-color: #ddd;
-		--tone1: #fff5b2;
+		--tone1: #BBDEFB;
 		--tone2: #f2cdff;
-		--tone3: #BBDEFB;
+		--tone3: #fff5b2;
 	}
 }
 @media (prefers-color-scheme: dark) {
@@ -26,9 +26,9 @@ input, button, textarea, select {
 		--background-color: #1e1e1e;
 		--background-shaded: #131212;
 		--border-color: #3b3737;
-		--tone1: #756600;
+		--tone1: #074070;
 		--tone2: #5c007c;
-		--tone3: #074070;
+		--tone3: #756600;
 	}
 }
 

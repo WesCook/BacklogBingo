@@ -2,10 +2,10 @@
 	import CardSourceFile from '../components/CardSourceFile.vue';
 	import CardSourceURL from '../components/CardSourceURL.vue';
 
-	import { validateJSON } from '../utils/json-parser.js';
+	import { validate } from '../utils/json-validate.js';
 
 	function loadFile(json) {
-		if (validateJSON(json)) {
+		if (validate(json)) {
 			console.log(json);
 			// TODO: Place into store
 		}
@@ -27,7 +27,7 @@
 	<div class="card-wrapper">
 		<div class="card-event">
 			<h3>Event Cards</h3>
-			<p>Prebuilt bingo cards from different online events.</p>
+			<p>Prebuilt bingo card sources from different online events.</p>
 			<ul>
 				<li>Tildes Gaming Backlog Nov 2023</li>
 				<li>Tildes Gaming Backlog May 2024</li>
@@ -42,7 +42,7 @@
 
 		<div class="card-file">
 			<h3>From File</h3>
-			<p>Or select your own from your PC.</p>
+			<p>Or select a file from your PC.</p>
 			<CardSourceFile @load-file="loadFile" />
 		</div>
 	</div>
@@ -60,6 +60,7 @@
 		grid-template-areas:
 			"card-event card-url"
 			"card-event card-file";
+		gap: 1em;
 		& > div {
 			padding: 25px;
 		}
@@ -72,7 +73,6 @@
 				"card-event"
 				"card-url"
 				"card-file";
-			row-gap: 1em;
 		}
 	}
 
@@ -83,10 +83,10 @@
 	}
 	.card-url {
 		grid-area: card-url;
-		background-color: var(--tone3);
+		background-color: var(--tone2);
 	}
 	.card-file {
 		grid-area: card-file;
-		background-color: var(--tone2);
+		background-color: var(--tone3);
 	}
 </style>
