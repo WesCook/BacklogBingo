@@ -1,0 +1,16 @@
+{
+	invalid
+	"version": 1,
+	"name": "Invalid JSON",
+	"categories": [
+		{ "name": "You have to tinker in order to get it running" },
+		{ "name": "You wanted to play it when you were younger but never did" },
+		{ "name": "You can complete it in one sitting" },
+		{ "name": "You can complete in only a few hours" },
+		{ "name": "Known for its soundtrack" },
+		{ "name": "In a genre you don’t normally play" },
+		{ "name": "Recommended by someone on Tildes" },
+		{ "name": "Recommended by someone IRL" },
+		{ "name": "Chosen for you by someone else" }
+	]
+}

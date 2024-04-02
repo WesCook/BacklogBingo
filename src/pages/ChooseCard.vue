@@ -1,9 +1,19 @@
 <script setup>
-	// This file should source the JSON (from wherever), update the local store, and move us to the next page.
+	import CardSourceFile from '../components/CardSourceFile.vue';
+
+	import { validateAndParse } from '../utils/json-parser.js';
+
+	function loadFile(fileStr) {
+		const loadedFile = validateAndParse(fileStr);
+		if (loadedFile) {
+			console.log(loadedFile);
+			// TODO: Place into store
+		}
+	}
 </script>
 
 <template>
-	<h1>Choose a Bingo Card</h1>
+	<h1>Choose Bingo Card Source</h1>
 	<p>
 		Select a bingo card from an event, or provide your own via JSON.
 		<em>
@@ -38,12 +48,8 @@
 
 		<div class="card-file">
 			<h3>From File</h3>
-			<p>Or upload your own.</p>
-			<form>
-				<input
-					type="file"
-				>
-			</form>
+			<p>Or select your own from your PC.</p>
+			<CardSourceFile @load-file="loadFile" />
 		</div>
 	</div>
 
@@ -61,12 +67,12 @@
 			"card-event card-url"
 			"card-event card-file";
 		& > div {
-			padding: 20px;
+			padding: 25px;
 		}
 	}
 
 	/* Column view on mobile */
-	@media (max-width: 700px) {
+	@media (max-width: 750px) {
 		.card-wrapper {
 			grid-template-areas:
 				"card-event"

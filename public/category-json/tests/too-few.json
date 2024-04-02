@@ -1,0 +1,10 @@
+{
+	"version": 1,
+	"name": "Too few",
+	"categories": [
+		{ "name": "You have to tinker in order to get it running" },
+		{ "name": "You wanted to play it when you were younger but never did" },
+		{ "name": "You can complete it in one sitting" },
+		{ "name": "You can complete in only a few hours" }
+	]
+}
