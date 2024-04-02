@@ -77,7 +77,7 @@ export function useGameRules() {
 			// Looks good, update internal state
 			const gamerulesObj = JSON.parse(gamerulesJSON);
 			Object.entries(gamerulesObj).forEach(([key, value]) => {
-				gamerules[key] = value; // Mutate ref to avoid losing reactivity
+				gamerules[key] = value; // Mutate values to avoid losing reactivity
 			});
 		} else {
 			// Looks bad, set defaults

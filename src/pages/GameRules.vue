@@ -26,7 +26,10 @@
 	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
 
 	<p>When you're ready, move to the next step to select your categories. Except for grid size, these settings can be changed later.</p>
-	<button class="btn">Select Categories</button>
+
+	<RouterLink to="categories">
+		<button class="btn">Select Categories</button>
+	</RouterLink>
 </template>
 
 <style scoped>

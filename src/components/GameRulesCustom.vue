@@ -140,7 +140,6 @@
 					"gr-title"
 					"gr-desc"
 					"gr-input";
-				grid-template-columns: 1fr;
 				row-gap: 8px;
 			}
 		}
