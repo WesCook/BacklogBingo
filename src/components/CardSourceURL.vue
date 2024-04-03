@@ -59,10 +59,16 @@
 		display: flex;
 		height: 42px;
 	}
+
 	.url-input {
 		flex: 1;
 		padding: 8px;
 	}
+	.url-input::placeholder {
+		font-size: 0.9em;
+		color: grey;
+	}
+
 	.btn {
 		min-width: 100px;
 	}

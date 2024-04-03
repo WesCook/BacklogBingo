@@ -37,6 +37,6 @@
 		margin-bottom: 0.5em;
 	}
 	.li span {
-		margin-left: 3px;
+		margin-left: 0.4em;
 	}
 </style>

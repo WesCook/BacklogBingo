@@ -103,6 +103,7 @@
 	/* Layout */
 	.card-wrapper {
 		display: grid;
+		grid-template-columns: 2fr 1.4fr;
 		grid-template-areas:
 			"card-event card-url"
 			"card-event card-file";
@@ -134,6 +135,7 @@
 	/* Column view on mobile */
 	@media (max-width: 750px) {
 		.card-wrapper {
+			grid-template-columns: 1fr;
 			grid-template-areas:
 				"card-event"
 				"card-url"
