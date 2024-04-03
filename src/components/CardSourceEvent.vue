@@ -26,13 +26,17 @@
 </script>
 
 <template>
-	<li>
-		<button @click="processEvent(file)">Select</button> <span>{{ title }}</span>
+	<li class="li">
+		<button @click="processEvent(file)">Select</button>
+		<span>{{ title }}</span>
 	</li>
 </template>
 
 <style scoped>
-	li {
+	.li {
 		margin-bottom: 0.5em;
+	}
+	.li span {
+		margin-left: 3px;
 	}
 </style>

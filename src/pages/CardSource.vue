@@ -1,27 +1,34 @@
 <script setup>
 	import { ref } from 'vue';
+	import { useRouter } from 'vue-router';
 
 	import CardSourceEvent from '../components/CardSourceEvent.vue';
 	import CardSourceFile from '../components/CardSourceFile.vue';
 	import CardSourceURL from '../components/CardSourceURL.vue';
 
 	import { validateJSON } from '../utils/json-utils.js';
+	import { useCategories } from '../composables/categories.js';
 
-	const loadedJSON = ref();
-
-	function loadFile(json) {
-		if (validateJSON(json)) {
-			console.log(json);
-			loadedJSON.value = json;
-			// TODO: Place into store
-		}
-	}
+	const router = useRouter();
+	const { setCategories } = useCategories();
 
 	// Locking fieldset to disable all buttons when network request is active
 	// Set true to lock, false to unlock
 	const fieldset = ref();
 	function lockDownload(locking) {
 		fieldset.value.disabled = locking;
+	}
+
+	const loadedJSON = ref();
+	function loadFile(json) {
+		if (validateJSON(json)) {
+			loadedJSON.value = json;
+		}
+	}
+
+	function confirmSource() {
+		setCategories(loadedJSON);
+		router.push('/gamerules');
 	}
 </script>
 
@@ -79,17 +86,12 @@
 		</div>
 	</fieldset>
 
-	<!-- <p>Once the card has been loaded, you may edit your game rules.</p> -->
-	<!-- <RouterLink to="gamerules">
-		<button>Edit Game Rules</button>
-	</RouterLink> -->
-
-	<div>
-		<h2 style="margin-top: 50px;">
-			Debug Data
-		</h2>
-		{{ loadedJSON }}
-	</div>
+	<section class="confirmation-panel">
+		<div v-if="loadedJSON">
+			<p>You've selected "{{ loadedJSON.name }}".  It has {{ loadedJSON.categories.length }} categories available.</p>
+			<button @click="confirmSource">Next Step</button>
+		</div>
+	</section>
 </template>
 
 <style scoped>
@@ -104,6 +106,10 @@
 		& > div {
 			padding: 25px;
 		}
+	}
+
+	.confirmation-panel {
+		margin-top: 1.5em;
 	}
 
 	/* Remove styling for semantic elements */
