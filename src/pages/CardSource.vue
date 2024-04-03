@@ -94,7 +94,7 @@
 		v-if="loadedJSON"
 		class="confirmation-panel"
 	>
-		<p>You've selected "{{ loadedJSON.name }}".  It has {{ loadedJSON.categories.length }} categories available.</p>
+		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
 		<button @click="confirmSource">Next Step</button>
 	</section>
 </template>

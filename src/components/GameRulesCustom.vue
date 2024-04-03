@@ -43,6 +43,12 @@
 					<option value="large">Large (7x7)</option>
 				</select>
 				<p>How large of a bingo grid to generate.</p>
+				<p
+					v-if="gamerules.gridSize !== 'medium'"
+					class="notice"
+				>
+					This setting cannot be customized once your card is generated.
+				</p>
 			</li>
 			<li>
 				<h3>Golf Rules</h3>
@@ -56,6 +62,22 @@
 					<span>Enable golf rules</span>
 				</label>
 				<p>Golf rules allow games to apply to multiple categories.  This lets you focus on playing strategically.</p>
+			</li>
+			<li>
+				<h3>Star Tile</h3>
+				<select
+					id="star"
+					:value="gamerules.star"
+					@change="setGameRule($event.target.id, $event.target.value)"
+				>
+					<option value="disabled">Disabled</option>
+					<option value="free">Free Space</option>
+					<option value="wildcard">Wildcard</option>
+				</select>
+				<p>
+					The center tile is often marked as a freebie.  This lets you customize its behaviour.<br>
+					A free space counts as a completed game, while a wildcard allows any game with no specific category.
+				</p>
 			</li>
 			<li>
 				<h3>Lock Random</h3>
@@ -82,21 +104,11 @@
 					<span>Allow similar</span>
 				</label>
 				<p>The generator will try to prevent similar categories from being chosen together unless this is enabled.</p>
-			</li>
-			<li>
-				<h3>Star Tile</h3>
-				<select
-					id="star"
-					:value="gamerules.star"
-					@change="setGameRule($event.target.id, $event.target.value)"
+				<p
+					v-if="gamerules.allowSimilar"
+					class="notice"
 				>
-					<option value="disabled">Disabled</option>
-					<option value="free">Free Space</option>
-					<option value="wildcard">Wildcard</option>
-				</select>
-				<p>
-					The center tile is often marked as a freebie.  This lets you customize its behaviour.<br>
-					A free space counts as a completed game, while a wildcard allows any game with no specific category.
+					This setting cannot be customized once your card is generated.
 				</p>
 			</li>
 		</ul>
@@ -122,8 +134,9 @@
 		li {
 			display: grid;
 			grid-template-areas:
-				"gr-title gr-input"
-				"gr-desc gr-desc";
+				"title input"
+				"desc desc"
+				"notice notice";
 			grid-template-columns: 2.5fr 200px;
 			align-items: center;
 			row-gap: 5px;
@@ -137,17 +150,19 @@
 
 			li {
 				grid-template-areas:
-					"gr-title"
-					"gr-desc"
-					"gr-input";
+					"title"
+					"desc"
+					"input"
+					"notice";
 				row-gap: 8px;
+				grid-template-columns: 1fr;
 			}
 		}
 
 		/* Inputs */
 		select,
 		label {
-			grid-area: gr-input;
+			grid-area: input;
 			background-color: var(--background-shaded);
 			font-size: 0.9rem;
 			padding: 8px;
@@ -155,14 +170,20 @@
 
 		/* Text content */
 		h3 {
-			grid-area: gr-title;
+			grid-area: title;
 			margin: 0;
 		}
 
 		p {
-			grid-area: gr-desc;
+			grid-area: desc;
 			margin: 0;
 			font-size: 0.9em;
+		}
+
+		.notice {
+			grid-area: notice;
+			color: #e59400;
+			font-weight: bold;
 		}
 
 		/* Bold ticked checkbox labels for extra visibility */

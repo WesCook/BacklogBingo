@@ -20,12 +20,12 @@
 
 <template>
 	<div class="top-row">
-		<h1>Tildes Backlog Bingo</h1>
+		<h1>Configure Game Rules</h1>
 		<RouterLink to="/card"><button>← Go back</button></RouterLink>
 		<StartOver />
 	</div>
 
-	<p>Wish to participate in the Tildes Backlog Burner event? Let's generate a bingo card for you!</p>
+	<p>Now to choose how you want to play!  Unless otherwise noted, these settings can be changed later.</p>
 
 	<h2 class="gamemode-header">
 		Game Mode
@@ -36,8 +36,6 @@
 		Game Rules
 	</h2>
 	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
-
-	<p>When you're ready, move to the next step to select your categories. Except for grid size, these settings can be changed later.</p>
 
 	<RouterLink to="categories">
 		<button class="btnCategories">Select Categories</button>
