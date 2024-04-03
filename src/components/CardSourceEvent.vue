@@ -16,7 +16,7 @@
 
 	async function processEvent(filename) {
 		emit('lock-download', true);
-		const path = `/category-json/${filename}`;
+		const path = `./category-json/${filename}`;
 		const json = await downloadJSON(path);
 		if (json) {
 			emit('load-file', json);
@@ -27,7 +27,7 @@
 
 <template>
 	<li>
-		<button @click="processEvent(file)">Select</button> {{ title }}
+		<button @click="processEvent(file)">Select</button> <span>{{ title }}</span>
 	</li>
 </template>
 
