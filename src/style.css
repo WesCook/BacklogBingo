@@ -52,11 +52,11 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 /* Controls */
-input[type="checkbox"] {
-	margin-right: 7px;
-}
-
-input, button, textarea, select {
+input,
+button,
+textarea,
+select,
+input[type="file"]::file-selector-button {
 	background-color: var(--background-shaded);
 	border: 1px solid var(--border-color);
 	color: var(--foreground-color);
@@ -66,13 +66,17 @@ button,
 input[type="submit"],
 input[type="button"] {
 	padding: 8px;
-	cursor: pointer;
-
-	&:hover {
+	
+	&:not(:disabled):hover {
+		cursor: pointer;
 		background-color: color-mix(in srgb, var(--background-shaded) 88%, var(--foreground-color));
 	}
 
 	&:active {
 		background-color: color-mix(in srgb, var(--background-shaded) 80%, var(--foreground-color));
 	}
+}
+
+input[type="checkbox"] {
+	margin-right: 7px;
 }

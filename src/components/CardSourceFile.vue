@@ -3,7 +3,6 @@
 
 	// Parses file contents into string
 	function processFile(event) {
-
 		const file = event.target.files[0];
 		const reader = new FileReader();
 		reader.readAsText(file);
@@ -50,17 +49,16 @@
 		height: 100%;
 		float: right;
 		margin-right: 0;
-		padding: 8px;
-		background-color: var(--background-shaded);
 		border: none;
 		border-left: 1px solid var(--border-color);
-		cursor: pointer;
 	}
 
-	.file-picker::file-selector-button:hover {
+	input[type="file"]:not(:disabled):hover::file-selector-button {
+		cursor: pointer;
 		background-color: color-mix(in srgb, var(--background-shaded) 88%, var(--foreground-color));
 	}
-	.file-picker::file-selector-button:active {
+
+	input[type="file"]:active::file-selector-button {
 		background-color: color-mix(in srgb, var(--background-shaded) 80%, var(--foreground-color));
 	}
 </style>

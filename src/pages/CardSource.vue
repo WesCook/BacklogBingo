@@ -1,14 +1,27 @@
 <script setup>
+	import { ref } from 'vue';
+
+	import CardSourceEvent from '../components/CardSourceEvent.vue';
 	import CardSourceFile from '../components/CardSourceFile.vue';
 	import CardSourceURL from '../components/CardSourceURL.vue';
 
-	import { validate } from '../utils/json-validate.js';
+	import { validateJSON } from '../utils/json-utils.js';
+
+	const loadedJSON = ref();
 
 	function loadFile(json) {
-		if (validate(json)) {
+		if (validateJSON(json)) {
 			console.log(json);
+			loadedJSON.value = json;
 			// TODO: Place into store
 		}
+	}
+
+	// Locking fieldset to disable all buttons when network request is active
+	// Set true to lock, false to unlock
+	const fieldset = ref();
+	function lockDownload(locking) {
+		fieldset.value.disabled = locking;
 	}
 </script>
 
@@ -24,33 +37,59 @@
 		</em>
 	</p>
 
-	<div class="card-wrapper">
+	<fieldset
+		ref="fieldset"
+		class="card-wrapper"
+	>
 		<div class="card-event">
-			<h3>Event Cards</h3>
+			<h3>Prebuilt Event Cards</h3>
 			<p>Prebuilt bingo card sources from different online events.</p>
-			<ul>
-				<li>Tildes Gaming Backlog Nov 2023</li>
-				<li>Tildes Gaming Backlog May 2024</li>
+			<ul class="list">
+				<CardSourceEvent
+					title="Tildes Gaming Backlog Nov 2023"
+					file="tildes-gaming-nov-2023.json"
+					@load-file="loadFile"
+					@lock-download="lockDownload"
+				/>
+				<CardSourceEvent
+					title="Tildes Gaming Backlog May 2024"
+					file="tildes-gaming-may-2024.json"
+					@load-file="loadFile"
+					@lock-download="lockDownload"
+				/>
 			</ul>
 		</div>
 
 		<div class="card-url">
 			<h3>From URL</h3>
 			<p>You may download from a URL online.</p>
-			<CardSourceURL @load-file="loadFile" />
+			<CardSourceURL
+				@load-file="loadFile"
+				@lock-download="lockDownload"
+			/>
 		</div>
 
 		<div class="card-file">
 			<h3>From File</h3>
 			<p>Or select a file from your PC.</p>
-			<CardSourceFile @load-file="loadFile" />
+			<CardSourceFile
+				@load-file="loadFile"
+				@lock-download="lockDownload"
+			/>
 		</div>
-	</div>
+	</fieldset>
 
-	<p>Once the card has been loaded, you may edit your game rules.</p>
-	<RouterLink to="gamerules">
+	<!-- <p>Once the card has been loaded, you may edit your game rules.</p> -->
+	<!-- <RouterLink to="gamerules">
 		<button>Edit Game Rules</button>
-	</RouterLink>
+	</RouterLink> -->
+
+	<div>
+		<h2 style="margin-top: 50px;">
+			Debug Data
+		</h2>
+		{{ loadedJSON }}
+	</div>
 </template>
 
 <style scoped>
@@ -64,6 +103,20 @@
 		& > div {
 			padding: 25px;
 		}
+	}
+
+	/* Remove styling for semantic elements */
+	.list {
+		list-style: none;
+		padding-left: 0;
+	}
+	.card-wrapper {
+		border: none;
+		transition: opacity 0.2s ease;
+	}
+	/* Indicate when buttons are inactive */
+	.card-wrapper[disabled] {
+		opacity: 70%;
 	}
 
 	/* Column view on mobile */
