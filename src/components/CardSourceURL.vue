@@ -1,6 +1,9 @@
 <script setup>
 	import { ref } from 'vue';
+	import { useErrors } from '../composables/errors.js';
 	import { downloadJSON } from '../utils/json-utils.js';
+
+	const { setError } = useErrors();
 
 	const emit = defineEmits(['load-file', 'lock-download']);
 
@@ -12,7 +15,7 @@
 
 		// Empty check
 		if (!url) {
-			console.log('No URL provided.');
+			setError('No URL provided.', false);
 			emit('lock-download', false);
 			return false;
 		}
@@ -21,8 +24,8 @@
 		try {
 			new URL(url);
 		} catch (err) {
-			alert('The URL does not appear to be valid.');
-			console.error(err);
+			setError('The URL does not appear to be valid.');
+			// setError(err);
 			emit('lock-download', false);
 			return false;
 		}

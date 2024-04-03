@@ -1,5 +1,6 @@
 <script setup>
 	import { ref } from 'vue';
+
 	import { useGameRules } from '../composables/gamerules.js';
 
 	import GameRulesMode from '../components/GameRulesMode.vue';

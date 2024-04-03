@@ -1,3 +1,6 @@
+import { useErrors } from '../composables/errors.js';
+const { setError } = useErrors();
+
 // Returns json of provided URL, local or remote.
 // Validates different types of errors.  Returns false on error.
 export async function downloadJSON(url) {
@@ -5,9 +8,7 @@ export async function downloadJSON(url) {
 	try {
 		const res = await fetch(url);
 		if (!res.ok) {
-			console.log('A network error occured.');
-			console.error(res);
-			alert(`There was an error downloading from the URL.  The status code was ${res.status}.`);
+			setError(`There was an error downloading from the URL.  The status code was ${res.status}.`);
 			return false;
 		}
 
@@ -15,16 +16,12 @@ export async function downloadJSON(url) {
 		return json;
 	} catch (err) {
 		if (err.name === 'SyntaxError') {
-			console.log(`Failed to parse ${url} as JSON`);
-			console.error(err.message);
-			alert('A file was downloaded, but it could not be read.  Is it a valid JSON file?');
+			setError(`A file was downloaded, but it could not be read.  Is it a valid JSON file?\n\n${err.name}\n${err.message}`);
 		} else if (err.name === 'TypeError') {
-			console.error(err.message);
-			alert('There was an error downloading from the URL.  An unexpected response was received.');
+			setError(`There was an error downloading from the URL.  An unexpected response was received.\n\n${err.name}\n${err.message}`);
 		}
 		else {
-			console.error(err.name, err.message);
-			alert('An unknown error occurred.');
+			setError(`An unknown error occurred.\n\n${err.name}\n${err.message}`);
 		}
 	}
 }
@@ -38,15 +35,13 @@ export function validateJSON(json) {
 		!(Object.hasOwn(json, 'name')) ||
 		!(Object.hasOwn(json, 'categories'))
 	) {
-		alert('There was an error parsing the file.  It appears to be missing required keys.');
-		console.error('JSON file is missing required keys.');
+		setError('There was an error parsing the file.  It appears to be missing required keys.');
 		return false;
 	}
 
 	// Verify there are at least 9 categories (for the smallest size bingo card)
 	if (json.categories.length < 9) {
-		alert('This JSON is valid, but there are too few categories.  Please include at least nine categories.');
-		console.error('Too few bingo categories in JSON.');
+		setError('This JSON is valid, but there are too few categories.  Please include at least nine categories.');
 		return false;
 	}
 

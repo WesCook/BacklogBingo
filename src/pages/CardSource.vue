@@ -1,16 +1,18 @@
 <script setup>
 	import { ref } from 'vue';
 	import { useRouter } from 'vue-router';
+	import { useErrors } from '../composables/errors.js';
+
+	import { useCategories } from '../composables/categories.js';
+	import { validateJSON } from '../utils/json-utils.js';
 
 	import CardSourceEvent from '../components/CardSourceEvent.vue';
 	import CardSourceFile from '../components/CardSourceFile.vue';
 	import CardSourceURL from '../components/CardSourceURL.vue';
 
-	import { validateJSON } from '../utils/json-utils.js';
-	import { useCategories } from '../composables/categories.js';
-
 	const router = useRouter();
 	const { setCategories } = useCategories();
+	const { clearError } = useErrors();
 
 	// Locking fieldset to disable all buttons when network request is active
 	// Set true to lock, false to unlock
@@ -22,11 +24,13 @@
 	const loadedJSON = ref();
 	function loadFile(json) {
 		if (validateJSON(json)) {
+			clearError();
 			loadedJSON.value = json;
 		}
 	}
 
 	function confirmSource() {
+		clearError();
 		setCategories(loadedJSON);
 		router.push('/gamerules');
 	}
@@ -86,11 +90,12 @@
 		</div>
 	</fieldset>
 
-	<section class="confirmation-panel">
-		<div v-if="loadedJSON">
-			<p>You've selected "{{ loadedJSON.name }}".  It has {{ loadedJSON.categories.length }} categories available.</p>
-			<button @click="confirmSource">Next Step</button>
-		</div>
+	<section
+		v-if="loadedJSON"
+		class="confirmation-panel"
+	>
+		<p>You've selected "{{ loadedJSON.name }}".  It has {{ loadedJSON.categories.length }} categories available.</p>
+		<button @click="confirmSource">Next Step</button>
 	</section>
 </template>
 

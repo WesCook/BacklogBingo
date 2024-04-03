@@ -1,4 +1,8 @@
 <script setup>
+	import { useErrors } from '../composables/errors.js';
+
+	const { setError } = useErrors();
+
 	const emit = defineEmits(['load-file']);
 
 	// Parses file contents into string
@@ -7,10 +11,9 @@
 		const reader = new FileReader();
 		reader.readAsText(file);
 		reader.onload = () => {
-			// Verify file is not empty
+			// Verify file is readable and not empty
 			if (!reader.result) {
-				alert('There was an error parsing the file.  It appears to be empty.');
-				console.error('JSON file is empty');
+				setError('There was an error reading the file.');
 				return;
 			}
 
@@ -19,8 +22,7 @@
 				const json = JSON.parse(reader.result);
 				emit('load-file', json);
 			} catch (err) {
-				alert('There was an error parsing the file.  Is it a valid JSON file?');
-				console.error(err);
+				setError(`There was an error parsing the file.  Is it a valid JSON file?\n\n${err}`);
 				return;
 			}
 		};
