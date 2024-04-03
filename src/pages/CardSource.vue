@@ -43,7 +43,7 @@
 	>
 		<div class="card-event">
 			<h3>Prebuilt Event Cards</h3>
-			<p>Prebuilt bingo card sources from different online events.</p>
+			<p>Bingo card sources from various online events.</p>
 			<ul class="list">
 				<CardSourceEvent
 					title="Tildes Gaming Backlog Nov 2023"
@@ -100,6 +100,7 @@
 			"card-event card-url"
 			"card-event card-file";
 		gap: 1em;
+		padding: 0;
 		& > div {
 			padding: 25px;
 		}
