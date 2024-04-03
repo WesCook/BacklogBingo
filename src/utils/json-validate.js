@@ -8,14 +8,14 @@ export function validate(json) {
 		!(Object.hasOwn(json, 'categories'))
 	) {
 		alert('There was an error parsing the file.  It appears to be missing required keys.');
-		console.error('JSON file is missing required keys');
+		console.error('JSON file is missing required keys.');
 		return false;
 	}
 
 	// Verify there are at least 9 categories (for the smallest size bingo card)
 	if (json.categories.length < 9) {
 		alert('This JSON is valid, but there are too few categories.  Please include at least nine categories.');
-		console.error('Too few bingo categories in JSON');
+		console.error('Too few bingo categories in JSON.');
 		return false;
 	}
 
