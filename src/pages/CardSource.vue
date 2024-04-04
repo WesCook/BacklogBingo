@@ -11,7 +11,7 @@
 	import CardSourceURL from '../components/CardSourceURL.vue';
 
 	const router = useRouter();
-	const { setCategories } = useCategories();
+	const { setCardSource } = useCategories();
 	const { clearError } = useErrors();
 
 	// Locking fieldset to disable all buttons when network request is active
@@ -31,7 +31,7 @@
 
 	function confirmSource() {
 		clearError();
-		setCategories(loadedJSON);
+		setCardSource(loadedJSON.value);
 		router.push('/gamerules');
 	}
 </script>

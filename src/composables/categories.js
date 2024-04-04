@@ -1,23 +1,27 @@
 import { reactive, readonly } from 'vue';
 
-// Holds the currently-loaded categories
-const categories = reactive([]);
+const cardSource = reactive({}); // Holds the original JSON data
+const bingoCard = reactive({}); // Holds a filtered list with selected categories
 
 export function useCategories() {
-	// Return readonly version of categories
-	function getCategories() {
-		return readonly(categories);
+	function getCardSource() {
+		return readonly(cardSource);
 	}
 
-	// Set categories and save to browser
-	function setCategories(categoriesObj) {
+	function getBingoCard() {
+		return readonly(bingoCard);
+	}
+
+	// Set categories
+	function setCardSource(categoriesObj) {
 		Object.entries(categoriesObj).forEach(([key, value]) => {
-			categories[key] = value; // Mutate values to avoid losing reactivity
+			cardSource[key] = value; // Mutate values to avoid losing reactivity
 		});
 	}
 
 	return {
-		getCategories,
-		setCategories
+		getCardSource,
+		setCardSource,
+		getBingoCard
 	};
 }

@@ -1,8 +1,13 @@
 <script setup>
+	import { ref, computed, onMounted} from 'vue';
+
 	import { useGameRules } from '../composables/gamerules.js';
+	import { useCategories } from '../composables/categories.js';
+	import { useErrors } from '../composables/errors.js';
 
 	const { getGameRules, setGameRule } = useGameRules();
-	const gamerules = getGameRules();
+	const { getCardSource } = useCategories();
+	const { setError } = useErrors();
 
 	const props = defineProps({
 		isCustom: {
@@ -10,6 +15,47 @@
 			default: false
 		}
 	});
+
+	const gamerules = getGameRules();
+	const cardSource = getCardSource();
+
+	// Determine grid size and set default for later comparison
+	const defaultGridSize = ref(gamerules.gridSize);
+	const maxGridSize = computed(() => getMaxGridSize(cardSource.categories.length));
+	const maxGridLabel = computed(() => getGridLabel(maxGridSize.value));
+
+	// Override grid size gamerule if too small to fit a 5x5
+	onMounted(() => {
+		if (maxGridSize.value < 5) {
+			setGameRule('gridSize', maxGridLabel.value);
+			defaultGridSize.value = maxGridLabel.value;
+		}
+	});
+
+	// Calculate max grid size from category count
+	function getMaxGridSize(catCount) {
+		const acceptedSizes = [3, 5, 7];
+		const maxSize = Math.floor(Math.sqrt(catCount));
+		for(let i=maxSize; i>=3; i--) {
+			if (acceptedSizes.includes(i)) {
+				return i; // 7, 5, 3
+			}
+		}
+
+		setError('Grid size appears invalid.  Are there enough categories?');
+		return -1;
+	}
+
+	// Get grid label from numerical size
+	function getGridLabel(size) {
+		if (size >= 7) {
+			return 'large';
+		} else if (size >= 5) {
+			return 'medium';
+		} else if (size >= 3) {
+			return 'small';
+		}
+	}
 </script>
 
 <template>
@@ -38,13 +84,28 @@
 					:value="gamerules.gridSize"
 					@change="setGameRule($event.target.id, $event.target.value)"
 				>
-					<option value="small">Small (3x3)</option>
-					<option value="medium">Medium (5x5)</option>
-					<option value="large">Large (7x7)</option>
+					<option
+						v-if="maxGridSize >= 3"
+						value="small"
+					>
+						Small (3x3)
+					</option>
+					<option
+						v-if="maxGridSize >= 5"
+						value="medium"
+					>
+						Medium (5x5)
+					</option>
+					<option
+						v-if="maxGridSize >= 7"
+						value="large"
+					>
+						Large (7x7)
+					</option>
 				</select>
 				<p>How large of a bingo grid to generate.</p>
 				<p
-					v-if="gamerules.gridSize !== 'medium'"
+					v-if="gamerules.gridSize !== defaultGridSize"
 					class="notice"
 				>
 					This setting cannot be customized once your card is generated.
