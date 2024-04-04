@@ -38,7 +38,7 @@
 	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
 
 	<RouterLink to="categories">
-		<button class="btnCategories">Select Categories</button>
+		<button>Filter Categories</button>
 	</RouterLink>
 </template>
 
@@ -55,9 +55,5 @@
 
 	.gamerules-header {
 		margin-top: 1.4em;
-	}
-
-	.btnCategories {
-		margin-top: 1.1em;
 	}
 </style>

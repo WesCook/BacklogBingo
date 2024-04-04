@@ -95,7 +95,7 @@
 		class="confirmation-panel"
 	>
 		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
-		<button @click="confirmSource">Next Step</button>
+		<button @click="confirmSource">Configure Game Rules</button>
 	</section>
 </template>
 
