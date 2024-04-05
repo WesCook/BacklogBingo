@@ -1,4 +1,8 @@
-import { reactive, readonly } from 'vue';
+import { reactive, computed, readonly, toRaw } from 'vue';
+
+import { useCategories } from '../composables/categories.js';
+
+const { isBingoCardSet, getCardSourceCatNumber, getMaxGridSize, getGridLabel } = useCategories();
 
 // Holds the current game rules
 const gamerules = reactive({});
@@ -27,11 +31,20 @@ function saveToBrowser() {
 	localStorage.setItem('gamerules', JSON.stringify(gamerules));
 }
 
-function loadFromBrowser() {
-	return localStorage.getItem('gamerules');
-}
-
 export function useGameRules() {
+	// Returns true if gamerules have been configured
+	const areGamerulesSet = computed(() => Object.keys(gamerules).length !== 0);
+
+	// Load data from browser and update local state
+	function initializeData() {
+		const gamerulesTemp = JSON.parse(localStorage.getItem('gamerules'));
+		if (gamerulesTemp) {
+			Object.entries(gamerulesTemp).forEach(([key, value]) => {
+				gamerules[key] = value; // Mutate values to avoid losing reactivity
+			});
+		}
+	}
+
 	// Return readonly version of gamerules
 	function getGameRules() {
 		return readonly(gamerules);
@@ -50,47 +63,69 @@ export function useGameRules() {
 			return;
 		}
 
-		for (const rule in defaultGameModes[gamemode]) {
-			gamerules[rule] = defaultGameModes[gamemode][rule];
+		const transform = gamerulesTransform(defaultGameModes[gamemode], ['locked', 'shrinkgrid']);
+		for (const rule in transform) {
+			gamerules[rule] = transform[rule];
 		}
 		saveToBrowser();
 	}
 
-	// Find gamemode by comparing current gamerules against defaults
-	// We could save the gamemode directly, but this allows us to change the defaults later without creating conflicts
-	// They'll simply be converted into custom rules
+	// Returns modified gamerules with requested transforms, as passed in an array
+	// - ['locked'] If card has already been generated, some settings are locked and can't change away from current gamerules
+	// - ['shrinkgrid'] If category limit is too low for default grid size, use small grid
+	function gamerulesTransform(gamerulesTemp, transforms = []) {
+		// Start with untransformed version (automatically unwrap proxies)
+		const gamerulesTransform = structuredClone(toRaw(gamerulesTemp));
+
+		if (transforms.includes('locked')) {
+			// Retain locked settings because they shouldn't change after a card has been generated
+			if (isBingoCardSet.value) {
+				gamerulesTransform.gridSize = gamerules.gridSize;
+				gamerulesTransform.allowSimilar = gamerules.allowSimilar;
+			}
+		}
+
+		if (transforms.includes('shrinkgrid')) {
+			// If we're forced to use a small grid, overwrite it to small instead
+			const maxGridSize = getGridLabel(getMaxGridSize(getCardSourceCatNumber()));
+			if (maxGridSize === 'small') {
+				gamerulesTransform.gridSize = 'small';
+			}
+		}
+
+		return gamerulesTransform;
+	}
+
+	// Find gamemode by comparing current gamerules against (transformed) defaults
+	// Calculating instead of storing gamemode allows us to change the default later
+	// without creating conflicts.
 	function calculateGameMode() {
-		if (JSON.stringify(gamerules) === JSON.stringify(defaultGameModes.standard)) {
+		// Returns true if objects match
+		// Not using stringify for comparison because that's impacted by key order
+		const compareObjects = (obj1, obj2) => {
+			for (const key of Object.keys(obj1)) {
+				if (obj1[key] !== obj2[key]) {
+					return false;
+				}
+			}
+			return true;
+		};
+
+		if (compareObjects(gamerules, gamerulesTransform(defaultGameModes['standard'], ['shrinkgrid']))) {
 			return 'standard';
-		} else if (JSON.stringify(gamerules) === JSON.stringify(defaultGameModes.golf)) {
+		} else if (compareObjects(gamerules, gamerulesTransform(defaultGameModes['golf'], ['shrinkgrid']))) {
 			return 'golf';
 		}
 		return 'custom';
 	}
 
-	// Loads saved gamerule data and resets if missing
-	// Required to start the app
-	function initializeData() {
-		const gamerulesJSON = loadFromBrowser();
-
-		if (gamerulesJSON) {
-			// Looks good, update internal state
-			const gamerulesObj = JSON.parse(gamerulesJSON);
-			Object.entries(gamerulesObj).forEach(([key, value]) => {
-				gamerules[key] = value; // Mutate values to avoid losing reactivity
-			});
-		} else {
-			// Looks bad, set defaults
-			resetGameRules('standard');
-			console.info('Existing game rules not found.  Defaulting to standard rules.');
-		}
-	}
-
 	return {
+		areGamerulesSet,
+		initializeData,
 		getGameRules,
 		setGameRule,
 		resetGameRules,
-		calculateGameMode,
-		initializeData
+		gamerulesTransform,
+		calculateGameMode
 	};
 }

@@ -1,8 +1,12 @@
 <script setup>
 	import { ref } from 'vue';
 
+	import { useCategories } from '../composables/categories.js';
+
 	import CategoriesList from '../components/CategoriesList.vue';
 	import StartOver from '../components/StartOver.vue';
+
+	const { setBingoCard } = useCategories();
 
 	const minCategories = ref(0);
 	const currentCount = ref(0);
@@ -23,7 +27,9 @@
 	<p>These categories cannot be changed once your card is generated.</p>
 	<p>Your card will be saved locally, and no data is stored online.  Please do not delete browser data to avoid data loss.</p>
 
-	<button>Generate Card</button>
+	<!-- Just for testing purposes -->
+	<button @click="setBingoCard">Generate Card</button>
+
 	<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
 </template>
 
@@ -33,7 +39,8 @@
 		align-items: start;
 		gap: 10px;
 		justify-content: end;
-		& h1 {
+
+		h1 {
 			margin-right: auto;
 		}
 	}

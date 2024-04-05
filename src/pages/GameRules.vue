@@ -6,11 +6,16 @@
 	import GameRulesMode from '../components/GameRulesMode.vue';
 	import GameRulesCustom from '../components/GameRulesCustom.vue';
 	import StartOver from '../components/StartOver.vue';
+	import { useCategories } from '../composables/categories';
 
-	const { initializeData, calculateGameMode } = useGameRules();
+	const { areGamerulesSet, resetGameRules, calculateGameMode } = useGameRules();
+	const { isBingoCardSet } = useCategories();
 
-	// Get game data from browser, or use defaults if starting fresh
-	initializeData();
+	// Initialize to standard if no browser data
+	if (!areGamerulesSet.value) {
+		console.log('No gamerules found.  Defaulting to standard.');
+		resetGameRules('standard');
+	}
 
 	// Passing gamemode from GameRulesMode to GameRulesCustom
 	// We're interested in the value of the radio, not the derived gamemode from
@@ -21,7 +26,12 @@
 <template>
 	<div class="top-row">
 		<h1>Configure Game Rules</h1>
-		<RouterLink to="/card"><button>← Go back</button></RouterLink>
+		<RouterLink
+			v-if="!isBingoCardSet"
+			to="/card"
+		>
+			<button>← Go back</button>
+		</RouterLink>
 		<StartOver />
 	</div>
 
@@ -48,7 +58,8 @@
 		align-items: start;
 		gap: 10px;
 		justify-content: end;
-		& h1 {
+
+		h1 {
 			margin-right: auto;
 		}
 	}

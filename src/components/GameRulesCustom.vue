@@ -1,13 +1,11 @@
 <script setup>
-	import { ref, computed, onMounted} from 'vue';
+	import { ref} from 'vue';
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
-	import { useErrors } from '../composables/errors.js';
 
-	const { getGameRules, setGameRule } = useGameRules();
-	const { getCardSource } = useCategories();
-	const { setError } = useErrors();
+	const { getGameRules, setGameRule, gamerulesTransform } = useGameRules();
+	const { isBingoCardSet, getCardSourceCatNumber, getMaxGridSize } = useCategories();
 
 	const props = defineProps({
 		isCustom: {
@@ -17,45 +15,15 @@
 	});
 
 	const gamerules = getGameRules();
-	const cardSource = getCardSource();
 
-	// Determine grid size and set default for later comparison
+	// If grid size can't fit chosen categories, set it to small via transform
+	setGameRule('gridSize', gamerulesTransform(gamerules, ['shrinkgrid']).gridSize);
+
+	// Save default grid size for later comparison (post-transform)
 	const defaultGridSize = ref(gamerules.gridSize);
-	const maxGridSize = computed(() => getMaxGridSize(cardSource.categories.length));
-	const maxGridLabel = computed(() => getGridLabel(maxGridSize.value));
 
-	// Override grid size gamerule if too small to fit a 5x5
-	onMounted(() => {
-		if (maxGridSize.value < 5) {
-			setGameRule('gridSize', maxGridLabel.value);
-			defaultGridSize.value = maxGridLabel.value;
-		}
-	});
-
-	// Calculate max grid size from category count
-	function getMaxGridSize(catCount) {
-		const acceptedSizes = [3, 5, 7];
-		const maxSize = Math.floor(Math.sqrt(catCount));
-		for(let i=maxSize; i>=3; i--) {
-			if (acceptedSizes.includes(i)) {
-				return i; // 7, 5, 3
-			}
-		}
-
-		setError('Grid size appears invalid.  Are there enough categories?');
-		return -1;
-	}
-
-	// Get grid label from numerical size
-	function getGridLabel(size) {
-		if (size >= 7) {
-			return 'large';
-		} else if (size >= 5) {
-			return 'medium';
-		} else if (size >= 3) {
-			return 'small';
-		}
-	}
+	// Store grid size for conditional logic
+	const maxGridSize = getMaxGridSize(getCardSourceCatNumber());
 </script>
 
 <template>
@@ -82,6 +50,7 @@
 				<select
 					id="gridSize"
 					:value="gamerules.gridSize"
+					:disabled="isBingoCardSet"
 					@change="setGameRule($event.target.id, $event.target.value)"
 				>
 					<option
@@ -105,10 +74,16 @@
 				</select>
 				<p>How large of a bingo grid to generate.</p>
 				<p
-					v-if="gamerules.gridSize !== defaultGridSize"
+					v-if="isBingoCardSet"
 					class="notice"
 				>
-					This setting cannot be customized once your card is generated.
+					This setting cannot be changed as your card has already been generated.
+				</p>
+				<p
+					v-else-if="gamerules.gridSize !== defaultGridSize"
+					class="notice"
+				>
+					This setting cannot be changed once your card is generated.
 				</p>
 			</li>
 			<li>
@@ -160,16 +135,23 @@
 						id="allowSimilar"
 						type="checkbox"
 						:checked="gamerules.allowSimilar"
+						:disabled="isBingoCardSet"
 						@change="setGameRule($event.target.id, $event.target.checked)"
 					>
 					<span>Allow similar</span>
 				</label>
 				<p>The generator will try to prevent similar categories from being chosen together unless this is enabled.</p>
 				<p
-					v-if="gamerules.allowSimilar"
+					v-if="isBingoCardSet"
 					class="notice"
 				>
-					This setting cannot be customized once your card is generated.
+					This setting cannot be changed as your card has already been generated.
+				</p>
+				<p
+					v-else-if="gamerules.allowSimilar"
+					class="notice"
+				>
+					This setting cannot be changed once your card is generated.
 				</p>
 			</li>
 		</ul>
@@ -252,11 +234,16 @@
 			font-weight: bold;
 		}
 
+		/* Fade rule when disabled */
+		li:has(:is(input,select):disabled) {
+			opacity: 70%;
+		}
+
 		/* Fade out further when disabled, and ensure consistency in controls across browsers */
 		&:disabled,
 		&:disabled select,
 		&:disabled label {
-			opacity: 0.7;
+			opacity: 70%;
 		}
 	}
 </style>
