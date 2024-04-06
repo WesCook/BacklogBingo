@@ -19,8 +19,8 @@
 		<StartOver />
 	</div>
 
-	<p>Now you can fine-tune the categories you wish to populate your bingo card from.  Please uncheck any categories that you don't believe are possible for you to complete.</p>
-	<p>When you're ready, click <em>Generate Card</em> to create a unique bingo card from the selected categories, or <em>Skip</em> to include all categories.</p>
+	<p>Now you can fine-tune the categories your bingo card will pick from.  Please uncheck any categories that you don't believe are possible for you to complete.</p>
+	<p>When you're ready, click <em>Generate Card</em> to create a unique bingo card from the selected categories, or click <em>Skip</em> to include all categories.</p>
 
 	<div class="btn-bar">
 		<button class="skip-btn">Skip this step</button>
@@ -59,11 +59,7 @@
 		margin: 1.5em 0;
 	}
 
-	/* Stand-in styles */
 	.categories-list {
-		width: 100%;
-		height: 400px;
-		border: 1px solid grey;
 		margin: 2em 0;
 	}
 

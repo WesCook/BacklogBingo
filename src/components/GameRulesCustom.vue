@@ -162,6 +162,7 @@
 	.gamerules {
 		padding: 20px;
 		background-color: color-mix(in srgb, var(--background-shaded) 90%, var(--foreground-color));
+		border: 1px solid var(--border-color);
 		opacity: 1;
 		transition: opacity 0.2s ease;
 
