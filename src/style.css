@@ -18,6 +18,9 @@ input, button, textarea, select {
 		--tone1: #BBDEFB;
 		--tone2: #f2cdff;
 		--tone3: #fff5b2;
+		--link-default: #3535ff;
+		--link-hover: #8888ff;
+		--link-active: #9e9eff;
 	}
 }
 @media (prefers-color-scheme: dark) {
@@ -29,6 +32,9 @@ input, button, textarea, select {
 		--tone1: #074070;
 		--tone2: #5c007c;
 		--tone3: #756600;
+		--link-default: #9e9eff;
+		--link-hover: #8888ff;
+		--link-active: #7777ff;
 	}
 }
 
@@ -49,6 +55,19 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 :where(p, h1, h2, h3, h4, h5, h6):not(:first-child) {
 	margin-top: min(0.8em, 20px);
+}
+
+/* Links */
+a:link,
+a:visited {
+	color: var(--link-default);
+}
+a:focus,
+a:hover {
+	color: var(--link-hover);
+}
+a:active {
+	color: var(--link-active);
 }
 
 /* Controls */

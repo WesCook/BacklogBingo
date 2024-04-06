@@ -23,4 +23,4 @@ This repo is configured with GitHub Actions to automatically build and deploy th
 
 If you wish to fork this repo and also deploy to Github Pages, the config file `/.github/workflows/deploy.yml` will help you configure your own GitHub Actions.  Other deployment targets such as Netlify can be found [in the Vite documentation](https://vitejs.dev/guide/static-deploy).
 
-If changing the repository name, you will need to update the base path in `vite.config.js`.  For example if targeting a regular domain name without a subdirectory, base should be set to `/`, or simply deleted.
+If changing the repository name, you will need to update the base path in `vite.config.js`.  For example if targeting a regular domain name without a subdirectory, `base` should be set to `/`, or simply deleted.

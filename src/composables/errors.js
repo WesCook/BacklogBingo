@@ -9,7 +9,7 @@ export function useErrors() {
 	}
 
 	// Always logs to console, but only shows in UI if ui=true
-	function setError(message, ui=true) {
+	function setError(message, ui = true) {
 		console.error('[Backlog Bingo] ' + message);
 		if (ui) {
 			error.value = message;
