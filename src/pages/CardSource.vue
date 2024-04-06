@@ -12,17 +12,23 @@
 	import ModalWindow from '../components/ModalWindow.vue';
 
 	const router = useRouter();
-	const { setCardSource } = useCategories();
+	const { getCardSource, setCardSource, isCardSourceSet } = useCategories();
 	const { clearError } = useErrors();
 
 	// Locking fieldset to disable all buttons when network request is active
 	// Set true to lock, false to unlock
-	const fieldset = ref();
+	const fieldset = ref(); // Template ref
 	function lockDownload(locking) {
 		fieldset.value.disabled = locking;
 	}
 
 	const loadedJSON = ref();
+	
+	// If we're returning, load the stored card source
+	if (isCardSourceSet.value) {
+		loadedJSON.value = getCardSource();
+	}
+
 	function loadFile(json) {
 		if (validateJSON(json)) {
 			clearError();
