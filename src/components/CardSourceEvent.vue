@@ -9,6 +9,10 @@
 		file: {
 			type: String,
 			default: ''
+		},
+		selectedName: {
+			type: String,
+			default: ''
 		}
 	});
 	const emit = defineEmits(['load-file', 'lock-download']);
@@ -27,7 +31,7 @@
 <template>
 	<li class="li">
 		<button @click="processEvent(file)">Select</button>
-		<span>{{ title }}</span>
+		<span :class="{highlight: selectedName === title}">{{ title }}</span>
 	</li>
 </template>
 
@@ -37,5 +41,8 @@
 	}
 	.li span {
 		margin-left: 0.4em;
+	}
+	.highlight {
+		font-weight: bold;
 	}
 </style>

@@ -71,12 +71,14 @@
 				<CardSourceEvent
 					title="Tildes Gaming Backlog Nov 2023"
 					file="tildes-gaming-nov-2023.json"
+					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
 				<CardSourceEvent
 					title="Tildes Gaming Backlog May 2024"
 					file="tildes-gaming-may-2024.json"
+					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
