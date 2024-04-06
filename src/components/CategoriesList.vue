@@ -1,12 +1,22 @@
 <script setup>
 	import { useCategories } from '../composables/categories.js';
+	import { generateHSL } from '../utils/color-utils.js';
 
-	const { getCardSource } = useCategories();
+	const { getCardSource, getCardSourceGroups } = useCategories();
+
 	defineProps({
 		categories: {
 			type: Array,
 			default: () => []
 		}
+	});
+
+	// Generate colors to be assigned in template
+	const groups = getCardSourceGroups();
+	const colors = generateHSL(groups.length, 50, 50);
+	const groupColors = {};
+	groups.forEach((group, index) => {
+		groupColors[group] = colors[index];
 	});
 </script>
 
@@ -21,7 +31,9 @@
 					type="checkbox"
 					checked="checked"
 				>
-				<span>{{ category.name }}</span>
+				<span
+					:style="{ color: groupColors[category.group] }"
+				>{{ category.name }}</span>
 			</label>
 		</li>
 	</ul>
@@ -33,7 +45,7 @@
 		list-style: none;
 		padding: 15px;
 		border: 1px solid var(--border-color);
-		background-color: color-mix(in srgb, var(--background-shaded) 90%, var(--foreground-color));
+		background-color: color-mix(in srgb, var(--background-shaded) 92%, var(--foreground-color));
 	}
 	@media (min-width: 700px) {
 		.list {

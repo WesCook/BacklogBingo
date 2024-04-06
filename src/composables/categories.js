@@ -34,12 +34,21 @@ export function useCategories() {
 		return readonly(cardSource);
 	}
 
-	function getBingoCard() {
-		return readonly(bingoCard);
+	// Returns array of unique groups
+	function getCardSourceGroups() {
+		const groups = new Set(getCardSource().categories.map(category => category.group));
+		if (groups.has(undefined)) { // Empty values get caught as undefined so let's remove that
+			groups.delete(undefined);
+		}
+		return Array.from(groups);
 	}
 
 	function getCardSourceCatNumber() {
 		return cardSource.categories.length;
+	}
+
+	function getBingoCard() {
+		return readonly(bingoCard);
 	}
 
 	function setCardSource(categoriesObj) {
@@ -92,6 +101,7 @@ export function useCategories() {
 		isBingoCardSet,
 		initializeData,
 		getCardSource,
+		getCardSourceGroups,
 		getCardSourceCatNumber,
 		setCardSource,
 		getBingoCard,
