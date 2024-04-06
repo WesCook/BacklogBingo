@@ -21,6 +21,7 @@ input, button, textarea, select {
 		--link-default: #3535ff;
 		--link-hover: #8888ff;
 		--link-active: #9e9eff;
+		--dropshadow: rgba(50, 50, 50, 0.5);
 	}
 }
 @media (prefers-color-scheme: dark) {
@@ -35,6 +36,7 @@ input, button, textarea, select {
 		--link-default: #9e9eff;
 		--link-hover: #8888ff;
 		--link-active: #7777ff;
+		--dropshadow: rgba(130, 130, 130, 0.5);
 	}
 }
 

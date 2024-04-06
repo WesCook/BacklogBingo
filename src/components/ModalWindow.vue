@@ -61,7 +61,7 @@
 	.modal-dialog {
 		padding: 0; /* Clicks on <dialog> close it, so ensure all clicks are on children instead */
 		border: none;
-		box-shadow: rgba(200, 200, 200, 0.5) 0px 3px 8px;
+		box-shadow: var(--dropshadow) 0px 3px 8px;
 		border-radius: 15px;
 	}
 	.modal-dialog::backdrop {

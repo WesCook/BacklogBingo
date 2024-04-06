@@ -9,7 +9,7 @@ const { setError, clearError } = useErrors();
 import HomePage from './pages/HomePage.vue';
 import CardSource from './pages/CardSource.vue';
 import GameRules from './pages/GameRules.vue';
-import FilterCategories from './pages/FilterCategories.vue';
+import RefineCategories from './pages/RefineCategories.vue';
 import NotFound from './pages/NotFound.vue';
 
 const routes = [
@@ -26,7 +26,7 @@ const routes = [
 			return '/card';
 		}
 	}},
-	{ path: '/categories', component: FilterCategories },
+	{ path: '/categories', component: RefineCategories },
 	// { path: '/bingo', component: BingoCard },
 	{ path: '/:pathMatch(.*)*', component: NotFound }
 ];

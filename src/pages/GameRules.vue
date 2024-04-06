@@ -24,13 +24,13 @@
 </script>
 
 <template>
-	<div class="top-row">
+	<div class="nav-bar">
 		<h1>Configure Game Rules</h1>
 		<RouterLink
 			v-if="!isBingoCardSet"
 			to="/card"
 		>
-			<button>← Go back</button>
+			<button>← Go Back</button>
 		</RouterLink>
 		<StartOver />
 	</div>
@@ -47,13 +47,19 @@
 	</h2>
 	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
 
-	<RouterLink to="categories">
-		<button>Filter Categories</button>
-	</RouterLink>
+	<p class="confirm-text">
+		When you're ready, click <em>Confirm Game Rules</em> to move to the next step and refine your categories.
+	</p>
+
+	<div class="btn-bar">
+		<RouterLink to="categories">
+			<button>Confirm Game Rules</button>
+		</RouterLink>
+	</div>
 </template>
 
 <style scoped>
-	.top-row {
+	.nav-bar {
 		display: flex;
 		align-items: start;
 		gap: 10px;
@@ -62,6 +68,15 @@
 		h1 {
 			margin-right: auto;
 		}
+	}
+
+	.btn-bar {
+		display: flex;
+		justify-content: end;
+	}
+
+	.confirm-text {
+		margin: 2em 0;
 	}
 
 	.gamerules-header {
