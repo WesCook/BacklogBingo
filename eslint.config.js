@@ -18,7 +18,9 @@ export default [
 			// Missing elements
 			quotes: ['warn', 'single'],
 			semi: ['warn', 'always'],
-			'no-unused-vars': 'warn',
+			'no-unused-vars': ['warn', {
+				varsIgnorePattern: '^props$'
+			}],
 			'vue/enforce-style-attribute': ['error', {
 				'allow': ['scoped']
 			}],

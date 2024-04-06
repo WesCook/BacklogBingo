@@ -44,10 +44,10 @@
 	>
 		<div class="modal-wrapper">
 			<h3
-				v-if="props.title"
+				v-if="title"
 				class="modal-header"
 			>
-				{{ props.title }}
+				{{ title }}
 			</h3>
 			<div class="modal-content">
 				<slot />

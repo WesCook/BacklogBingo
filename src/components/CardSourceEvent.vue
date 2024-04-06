@@ -1,7 +1,6 @@
 <script setup>
 	import { downloadJSON } from '../utils/json-utils.js';
 
-	// eslint-disable-next-line no-unused-vars
 	const props = defineProps({
 		title: {
 			type: String,

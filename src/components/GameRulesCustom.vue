@@ -29,7 +29,7 @@
 <template>
 	<fieldset
 		class="gamerules"
-		:disabled="!props.isCustom"
+		:disabled="!isCustom"
 	>
 		<ul>
 			<li>
