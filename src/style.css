@@ -49,6 +49,17 @@ body {
 	line-height: 1.5;
 }
 
+/* Modal <dialog> */
+html {
+	scrollbar-gutter: stable; /* Reserve gutter space for modal */
+}
+body:has(dialog[open]) {
+	overflow: hidden; /* Prevent scrolling with active modal */
+}
+dialog {
+	margin: auto; /* Re-center as reset clears this */
+}
+
 /* Text spacing */
 p, h1, h2, h3, h4, h5, h6 {
 	margin-bottom: min(0.8em, 20px);

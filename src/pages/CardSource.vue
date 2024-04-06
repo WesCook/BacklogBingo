@@ -9,6 +9,7 @@
 	import CardSourceEvent from '../components/CardSourceEvent.vue';
 	import CardSourceFile from '../components/CardSourceFile.vue';
 	import CardSourceURL from '../components/CardSourceURL.vue';
+	import ModalWindow from '../components/ModalWindow.vue';
 
 	const router = useRouter();
 	const { setCardSource } = useCategories();
@@ -33,6 +34,11 @@
 		clearError();
 		setCardSource(loadedJSON.value);
 		router.push('/gamerules');
+	}
+
+	const previewActive = ref();
+	function preview() {
+		previewActive.value = true;
 	}
 </script>
 
@@ -95,8 +101,29 @@
 		class="confirmation-panel"
 	>
 		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
-		<button @click="confirmSource">Configure Game Rules</button>
+		<p>When you're ready, click <em>Confirm Source</em> to move to the next step and configure your game rules.</p>
+		<div class="btn-bar">
+			<button @click="preview">Preview Categories</button>
+			<button @click="confirmSource">Confirm Source</button>
+		</div>
 	</section>
+
+	<teleport to="body">
+		<ModalWindow
+			v-if="previewActive"
+			:title="loadedJSON.name"
+			@close="previewActive = false"
+		>
+			<ol class="preview-list">
+				<li
+					v-for="category in loadedJSON.categories"
+					:key="category"
+				>
+					{{ category.name }}
+				</li>
+			</ol>
+		</ModalWindow>
+	</teleport>
 </template>
 
 <style scoped>
@@ -115,7 +142,13 @@
 	}
 
 	.confirmation-panel {
-		margin-top: 1.5em;
+		margin-top: 2em;
+	}
+
+	.btn-bar {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 2em;
 	}
 
 	/* Remove styling for semantic elements */
@@ -155,5 +188,15 @@
 	.card-file {
 		grid-area: card-file;
 		background-color: var(--tone3);
+	}
+
+	/* Categories listed in modal preview */
+	.preview-list {
+		list-style: decimal;
+		padding-left: 50px;
+
+		li {
+			margin-bottom: 3px;
+		}
 	}
 </style>
