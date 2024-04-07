@@ -2,14 +2,27 @@
 	import { ref } from 'vue';
 
 	import { useCategories } from '../composables/categories.js';
+	import { generateHSL } from '../utils/color-utils.js';
 
 	import CategoriesList from '../components/CategoriesList.vue';
+	import CategoriesGroupToggle from '../components/CategoriesGroupToggle.vue';
 	import StartOver from '../components/StartOver.vue';
 
-	const { setBingoCard } = useCategories();
+	const { setBingoCard, getCardSourceGroups } = useCategories();
+
+	const categoryValues = ref([]);
+	const groupValues = ref([]);
 
 	const minCategories = ref(0);
 	const currentCount = ref(0);
+
+	// Generate colors to be assigned in template
+	const groups = getCardSourceGroups();
+	const colors = generateHSL(groups.length, 50, 50);
+	const groupColors = {};
+	groups.forEach((group, index) => {
+		groupColors[group] = colors[index];
+	});
 </script>
 
 <template>
@@ -28,7 +41,16 @@
 		<button @click="setBingoCard">Generate Card</button>
 	</div>
 
-	<CategoriesList class="categories-list" />
+	<CategoriesGroupToggle
+		v-model="groupValues"
+		:colors="groupColors"
+	/>
+
+	<CategoriesList
+		v-model="categoryValues"
+		class="categories-list"
+		:colors="groupColors"
+	/>
 
 	<p>Your card will be saved locally, and no information is stored online.  To avoid data loss, please do not delete your browser data.</p>
 	<p>You need to select at least <span>{{ minCategories }}</span> categories for a full Bingo card.</p>
@@ -60,7 +82,7 @@
 	}
 
 	.categories-list {
-		margin: 2em 0;
+		margin: 1em 0 2em 0;
 	}
 
 	.skip-btn {

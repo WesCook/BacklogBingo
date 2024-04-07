@@ -1,23 +1,20 @@
 <script setup>
 	import { useCategories } from '../composables/categories.js';
-	import { generateHSL } from '../utils/color-utils.js';
 
-	const { getCardSource, getCardSourceGroups } = useCategories();
+	const { getCardSource } = useCategories();
 
 	defineProps({
 		categories: {
 			type: Array,
 			default: () => []
+		},
+		colors: {
+			type: Object,
+			default: () => {}
 		}
 	});
 
-	// Generate colors to be assigned in template
-	const groups = getCardSourceGroups();
-	const colors = generateHSL(groups.length, 50, 50);
-	const groupColors = {};
-	groups.forEach((group, index) => {
-		groupColors[group] = colors[index];
-	});
+	const model = defineModel({ type: Array });
 </script>
 
 <template>
@@ -28,11 +25,13 @@
 		>
 			<label>
 				<input
+					v-model="model"
+					:value="category.name"
 					type="checkbox"
 					checked="checked"
 				>
 				<span
-					:style="{ color: groupColors[category.group] }"
+					:style="{ color: colors[category.group] }"
 				>{{ category.name }}</span>
 			</label>
 		</li>

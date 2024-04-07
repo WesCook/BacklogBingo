@@ -8,7 +8,7 @@ const cardSource = reactive({}); // Holds the original JSON data
 const bingoCard = reactive({}); // Holds a filtered list with selected categories
 
 export function useCategories() {
-	// Returns true if card source has been configured
+	// Returns true if card source/bingo card have been configured
 	const isCardSourceSet = computed(() => Object.keys(cardSource).length !== 0);
 	const isBingoCardSet = computed(() => Object.keys(bingoCard).length !== 0);
 
