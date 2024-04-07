@@ -4,25 +4,33 @@
 	import { useCategories } from '../composables/categories.js';
 	import { generateHSL } from '../utils/color-utils.js';
 
-	import CategoriesList from '../components/CategoriesList.vue';
-	import CategoriesGroupToggle from '../components/CategoriesGroupToggle.vue';
+	import CategoriesGroup from '../components/CategoriesGroup.vue';
+	import CategoriesItem from '../components/CategoriesItem.vue';
 	import StartOver from '../components/StartOver.vue';
 
-	const { setBingoCard, getCardSourceGroups } = useCategories();
+	const { setBingoCard, getCardSource, getCardSourceGroups } = useCategories();
 
-	const categoryValues = ref([]);
-	const groupValues = ref([]);
+	const cardSource = getCardSource();
+	const groups = getCardSourceGroups();
 
-	const minCategories = ref(0);
-	const currentCount = ref(0);
+	// Initialize with all entries so they are checked by default
+	const groupValues = ref([...groups]);
+	const categoryValues = ref([...cardSource.categories.map(category => category.name)]);
+
+	const minCategories = ref(0); // TODO: Implement
+	const currentCount = ref(0); // TODO: Implement
 
 	// Generate colors to be assigned in template
-	const groups = getCardSourceGroups();
 	const colors = generateHSL(groups.length, 50, 50);
 	const groupColors = {};
 	groups.forEach((group, index) => {
 		groupColors[group] = colors[index];
 	});
+
+	function pascalToTitleCase(input) {
+		const result = input.replace(/([A-Z])/g, ' $1');
+		return result.charAt(0).toUpperCase() + result.slice(1);
+	}
 </script>
 
 <template>
@@ -41,16 +49,34 @@
 		<button @click="setBingoCard">Generate Card</button>
 	</div>
 
-	<CategoriesGroupToggle
-		v-model="groupValues"
-		:colors="groupColors"
-	/>
+	<!-- Group Toggles -->
+	<div
+		v-if="groups.length"
+		class="groups-toggle"
+	>
+		<strong>Quick Toggle</strong>
+		<ul class="groups-list">
+			<CategoriesGroup
+				v-for="group in groups"
+				:key="group"
+				v-model="groupValues"
+				:name="group"
+				:friendly-name="pascalToTitleCase(group)"
+				:color="groupColors[group]"
+			/>
+		</ul>
+	</div>
 
-	<CategoriesList
-		v-model="categoryValues"
-		class="categories-list"
-		:colors="groupColors"
-	/>
+	<!-- Category List -->
+	<ul class="categories-list">
+		<CategoriesItem
+			v-for="category in cardSource.categories"
+			:key="category.name"
+			v-model="categoryValues"
+			:name="category.name"
+			:color="groupColors[category.group]"
+		/>
+	</ul>
 
 	<p>Your card will be saved locally, and no information is stored online.  To avoid data loss, please do not delete your browser data.</p>
 	<p>You need to select at least <span>{{ minCategories }}</span> categories for a full Bingo card.</p>
@@ -81,8 +107,31 @@
 		margin: 1.5em 0;
 	}
 
+	.groups-toggle {
+		display: flex;
+		gap: 1em;
+	}
+	.groups-list {
+		list-style: none;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 1em;
+	}
+
 	.categories-list {
 		margin: 1em 0 2em 0;
+		min-height: 200px;
+		list-style: none;
+		padding: 15px;
+		border: 1px solid var(--border-color);
+		background-color: color-mix(in srgb, var(--background-shaded) 92%, var(--foreground-color));
+	}
+	@media (min-width: 700px) {
+		.categories-list {
+			columns: 2;
+			column-gap: 24px;
+		}
 	}
 
 	.skip-btn {
