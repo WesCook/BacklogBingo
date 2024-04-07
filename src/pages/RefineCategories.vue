@@ -20,6 +20,26 @@
 	const minCategories = ref(0); // TODO: Implement
 	const currentCount = ref(0); // TODO: Implement
 
+	function groupChange(group, checked) {
+		// Get all categories for group
+		const groupsCategories = cardSource.categories.filter(category => category.group === group).map(category => category.name);
+
+		if (checked) {
+			// Add categories that aren't already in the array
+			categoryValues.value.push(...groupsCategories.filter(category => !categoryValues.value.includes(category)));
+		} else {
+			// Remove categories
+			groupsCategories.forEach(category => {
+				const index = categoryValues.value.indexOf(category);
+				categoryValues.value.splice(index, 1);
+			});
+		}
+	}
+
+	function categoryChange(elem, checked) {
+		// console.log(elem, checked);
+	}
+
 	// Generate colors to be assigned in template
 	const colors = generateHSL(groups.length, 50, 50);
 	const groupColors = {};
@@ -27,6 +47,7 @@
 		groupColors[group] = colors[index];
 	});
 
+	// Generate friendlier title case group names
 	function pascalToTitleCase(input) {
 		const result = input.replace(/([A-Z])/g, ' $1');
 		return result.charAt(0).toUpperCase() + result.slice(1);
@@ -63,6 +84,7 @@
 				:name="group"
 				:friendly-name="pascalToTitleCase(group)"
 				:color="groupColors[group]"
+				@group-change="groupChange"
 			/>
 		</ul>
 	</div>
@@ -75,6 +97,7 @@
 			v-model="categoryValues"
 			:name="category.name"
 			:color="groupColors[category.group]"
+			@category-change="categoryChange"
 		/>
 	</ul>
 

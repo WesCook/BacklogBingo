@@ -14,6 +14,8 @@
 		}
 	});
 
+	defineEmits(['group-change']);
+
 	const model = defineModel({ type: Array });
 </script>
 
@@ -24,6 +26,7 @@
 				v-model="model"
 				type="checkbox"
 				:value="name"
+				@change="$emit('group-change', $event.target.value, $event.target.checked)"
 			>
 			<span
 				:style="{ color: color }"
