@@ -9,3 +9,18 @@ export function generateHSL(amount, saturation, lightness) {
 	}
 	return colors;
 }
+
+// Generates colors based on light or dark mode
+// TODO: In the future, light-dark() can be used to assign both light and dark colors at once.
+// Not an option now as media queries can't be used inline, where this function is used.
+// No biggie except this implementation won't detect changes after page load.
+export function getThemedColors(amount) {
+	const darkMode = window?.matchMedia('(prefers-color-scheme: dark)').matches;
+	let colors;
+	if (darkMode) {
+		colors = generateHSL(amount, 60, 70);
+	} else {
+		colors = generateHSL(amount, 70, 40);
+	}
+	return colors;
+}

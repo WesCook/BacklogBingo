@@ -2,7 +2,7 @@
 	import { ref } from 'vue';
 
 	import { useCategories } from '../composables/categories.js';
-	import { generateHSL } from '../utils/color-utils.js';
+	import { getThemedColors } from '../utils/color-utils.js';
 
 	import CategoriesGroup from '../components/CategoriesGroup.vue';
 	import CategoriesItem from '../components/CategoriesItem.vue';
@@ -19,6 +19,14 @@
 
 	const minCategories = ref(0); // TODO: Implement
 	const currentCount = ref(0); // TODO: Implement
+
+	// Generate colors to be assigned in template
+	const colors = getThemedColors(groups.length);
+	const groupColors = {};
+	groups.forEach((group, index) => {
+		groupColors[group] = colors[index];
+	});
+
 
 	function getAllGroups() {
 		return [...groups];
@@ -88,21 +96,6 @@
 		const checkCount = groupsCategories.reduce((count, category) => categoryValues.value.includes(category) ? count + 1 : count, 0);
 		return checkCount > 0 && checkCount < groupsCategories.length;
 	}
-
-	// Generate colors to be assigned in template
-	// TODO: In the future, light-dark() can be used to assign both light and dark colors at once.
-	// Not an option now as media queries can't be used inline.  No biggie except this implementation won't detect changes after page load.
-	const darkMode = window?.matchMedia('(prefers-color-scheme: dark)').matches;
-	let colors;
-	if (darkMode) {
-		colors = generateHSL(groups.length, 60, 70);
-	} else {
-		colors = generateHSL(groups.length, 70, 40);
-	}
-	const groupColors = {};
-	groups.forEach((group, index) => {
-		groupColors[group] = colors[index];
-	});
 
 	// Generate friendlier title case group names
 	function pascalToTitleCase(input) {
