@@ -90,7 +90,15 @@
 	}
 
 	// Generate colors to be assigned in template
-	const colors = generateHSL(groups.length, 50, 50);
+	// TODO: In the future, light-dark() can be used to assign both light and dark colors at once.
+	// Not an option now as media queries can't be used inline.  No biggie except this implementation won't detect changes after page load.
+	const darkMode = window?.matchMedia('(prefers-color-scheme: dark)').matches;
+	let colors;
+	if (darkMode) {
+		colors = generateHSL(groups.length, 60, 70);
+	} else {
+		colors = generateHSL(groups.length, 70, 40);
+	}
 	const groupColors = {};
 	groups.forEach((group, index) => {
 		groupColors[group] = colors[index];
