@@ -26,7 +26,16 @@ const routes = [
 			return '/card';
 		}
 	}},
-	{ path: '/categories', component: RefineCategories },
+	{ path: '/categories', component: RefineCategories, beforeEnter: () => {
+		if (!isCardSourceSet.value) {
+			setError('You cannot access that page without first defining a card source.  You have been redirected to do so now.');
+			return '/card';
+		}
+		if (isBingoCardSet.value) {
+			setError('You cannot access that page once a bingo card has been generated.  You have been redirected.');
+			return '/bingo';
+		}
+	}},
 	// { path: '/bingo', component: BingoCard },
 	{ path: '/:pathMatch(.*)*', component: NotFound }
 ];
