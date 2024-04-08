@@ -4,6 +4,10 @@
 			type: String,
 			default: ''
 		},
+		group: {
+			type: String,
+			default: ''
+		},
 		color: {
 			type: String,
 			default: ''
@@ -22,7 +26,7 @@
 				v-model="model"
 				type="checkbox"
 				:value="name"
-				@change="$emit('category-change', $event.target, $event.target.checked)"
+				@change="$emit('category-change', group)"
 			>
 			<span :style="{ color: color }">{{ name }}</span>
 		</label>

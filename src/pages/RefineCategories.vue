@@ -31,13 +31,43 @@
 			// Remove categories
 			groupsCategories.forEach(category => {
 				const index = categoryValues.value.indexOf(category);
-				categoryValues.value.splice(index, 1);
+				if (index >= 0) {
+					categoryValues.value.splice(index, 1);
+				}
 			});
 		}
 	}
 
-	function categoryChange(elem, checked) {
-		// console.log(elem, checked);
+	function categoryChange(group) {
+		if (!group) {
+			return;
+		}
+
+		// Get all categories for group and count checked states
+		const groupsCategories = cardSource.categories.filter(category => category.group === group).map(category => category.name);
+		const checkCount = groupsCategories.reduce((count, category) => categoryValues.value.includes(category) ? count + 1 : count, 0);
+
+		// Update group checkbox based on state
+		if (checkCount === groupsCategories.length) {
+			// All cats checked
+			if (!groupValues.value.includes(group)) {
+				groupValues.value.push(group);
+			}
+		} else {
+			// Not all cats checked, so group is also unchecked
+			const index = groupValues.value.indexOf(group);
+			if (index >= 0) {
+				groupValues.value.splice(index, 1);
+			}
+		}
+
+		// Set group indeterminate state based on count
+		const groupElement = document.querySelector(`input[type='checkbox'][value='${group}']`);
+		if (checkCount === 0 || checkCount === groupsCategories.length) {
+			groupElement.indeterminate = false;
+		} else {
+			groupElement.indeterminate = true;
+		}
 	}
 
 	// Generate colors to be assigned in template
@@ -96,6 +126,7 @@
 			:key="category.name"
 			v-model="categoryValues"
 			:name="category.name"
+			:group="category.group"
 			:color="groupColors[category.group]"
 			@category-change="categoryChange"
 		/>
