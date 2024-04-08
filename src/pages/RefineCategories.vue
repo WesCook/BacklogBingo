@@ -14,12 +14,31 @@
 	const groups = getCardSourceGroups();
 
 	// Initialize with all entries so they are checked by default
-	const groupValues = ref([...groups]);
-	const categoryValues = ref([...cardSource.categories.map(category => category.name)]);
+	const groupValues = ref(getAllGroups());
+	const categoryValues = ref(getAllCategories());
 
 	const minCategories = ref(0); // TODO: Implement
 	const currentCount = ref(0); // TODO: Implement
 
+	function getAllGroups() {
+		return [...groups];
+	}
+
+	function getAllCategories() {
+		return [...cardSource.categories.map(category => category.name)];
+	}
+
+	function selectAll() {
+		groupValues.value = getAllGroups();
+		categoryValues.value = getAllCategories();
+	}
+
+	function selectNone() {
+		groupValues.value = [];
+		categoryValues.value = [];
+	}
+
+	// Event from CategoriesGroup when group checkbox changes
 	function groupChange(group, checked) {
 		// Get all categories for group
 		const groupsCategories = cardSource.categories.filter(category => category.group === group).map(category => category.name);
@@ -38,6 +57,7 @@
 		}
 	}
 
+	// Event from CategoriesItem when category checkbox changes
 	function categoryChange(group) {
 		if (!group) {
 			return;
@@ -60,14 +80,13 @@
 				groupValues.value.splice(index, 1);
 			}
 		}
+	}
 
-		// Set group indeterminate state based on count
-		const groupElement = document.querySelector(`input[type='checkbox'][value='${group}']`);
-		if (checkCount === 0 || checkCount === groupsCategories.length) {
-			groupElement.indeterminate = false;
-		} else {
-			groupElement.indeterminate = true;
-		}
+	// When group checkboxes are neither full nor empty, they are indeterminate
+	function getIndeterminate(group) {
+		const groupsCategories = cardSource.categories.filter(category => category.group === group).map(category => category.name);
+		const checkCount = groupsCategories.reduce((count, category) => categoryValues.value.includes(category) ? count + 1 : count, 0);
+		return checkCount > 0 && checkCount < groupsCategories.length;
 	}
 
 	// Generate colors to be assigned in template
@@ -111,12 +130,20 @@
 				v-for="group in groups"
 				:key="group"
 				v-model="groupValues"
-				:name="group"
+				:group-name="group"
 				:friendly-name="pascalToTitleCase(group)"
+				:indeterminate="getIndeterminate(group)"
 				:color="groupColors[group]"
 				@group-change="groupChange"
 			/>
 		</ul>
+
+		<!-- Select All/None -->
+		<div class="selectAllNone">
+			<button @click="selectAll">All</button>
+			<span>/</span>
+			<button @click="selectNone">None</button>
+		</div>
 	</div>
 
 	<!-- Category List -->
@@ -125,7 +152,7 @@
 			v-for="category in cardSource.categories"
 			:key="category.name"
 			v-model="categoryValues"
-			:name="category.name"
+			:category-name="category.name"
 			:group="category.group"
 			:color="groupColors[category.group]"
 			@category-change="categoryChange"
@@ -164,7 +191,9 @@
 	.groups-toggle {
 		display: flex;
 		gap: 1em;
+		margin-top: 2em;
 	}
+
 	.groups-list {
 		list-style: none;
 		padding: 0;
@@ -173,8 +202,19 @@
 		column-gap: 1em;
 	}
 
+	.selectAllNone {
+		margin-left: auto;
+		white-space: nowrap;
+		margin-top: -8px;
+	}
+	.selectAllNone button {
+		all: unset;
+		padding: 3px 5px;
+		margin: 5px;
+	}
+
 	.categories-list {
-		margin: 1em 0 2em 0;
+		margin: 0.5em 0 2em 0;
 		min-height: 200px;
 		list-style: none;
 		padding: 15px;

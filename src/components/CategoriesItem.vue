@@ -1,6 +1,6 @@
 <script setup>
 	defineProps({
-		name: {
+		categoryName: {
 			type: String,
 			default: ''
 		},
@@ -25,10 +25,10 @@
 			<input
 				v-model="model"
 				type="checkbox"
-				:value="name"
+				:value="categoryName"
 				@change="$emit('category-change', group)"
 			>
-			<span :style="{ color: color }">{{ name }}</span>
+			<span :style="{ color: color }">{{ categoryName }}</span>
 		</label>
 	</li>
 </template>

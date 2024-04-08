@@ -1,12 +1,16 @@
 <script setup>
 	defineProps({
-		name: {
+		groupName: {
 			type: String,
 			default: ''
 		},
 		friendlyName: {
 			type: String,
 			default: ''
+		},
+		indeterminate: {
+			type: Boolean,
+			default: false
 		},
 		color: {
 			type: String,
@@ -25,7 +29,8 @@
 			<input
 				v-model="model"
 				type="checkbox"
-				:value="name"
+				:value="groupName"
+				:indeterminate
 				@change="$emit('group-change', $event.target.value, $event.target.checked)"
 			>
 			<span

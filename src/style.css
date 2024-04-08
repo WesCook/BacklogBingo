@@ -92,6 +92,7 @@ input[type="file"]::file-selector-button {
 	background-color: var(--background-shaded);
 	border: 1px solid var(--border-color);
 	color: var(--foreground-color);
+	transition: background-color 0.2s ease;
 }
 
 button,
