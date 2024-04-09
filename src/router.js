@@ -2,14 +2,17 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 
 import { useErrors } from './composables/errors.js';
 import { useCategories } from './composables/categories.js';
+import { useBingo } from './composables/bingo.js';
 
-const { isCardSourceSet, isBingoCardSet } = useCategories();
+const { isCardSourceSet } = useCategories();
+const { isBingoCardSet } = useBingo();
 const { setError, clearError } = useErrors();
 
 import HomePage from './pages/HomePage.vue';
 import CardSource from './pages/CardSource.vue';
 import GameRules from './pages/GameRules.vue';
 import RefineCategories from './pages/RefineCategories.vue';
+import BingoCard from './pages/BingoCard.vue';
 import NotFound from './pages/NotFound.vue';
 
 const routes = [
@@ -36,7 +39,16 @@ const routes = [
 			return '/bingo';
 		}
 	}},
-	// { path: '/bingo', component: BingoCard },
+	{ path: '/bingo', component: BingoCard, beforeEnter: () => {
+		if (!isBingoCardSet.value) {
+			setError('You cannot access that page without first generating a bingo card.  You have been redirected to do so now.');
+			if (!isCardSourceSet.value) {
+				return '/card';
+			} else {
+				return '/gamerules';
+			}
+		}
+	}},
 	{ path: '/:pathMatch(.*)*', component: NotFound }
 ];
 

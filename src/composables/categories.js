@@ -4,13 +4,12 @@ import { useErrors } from '../composables/errors.js';
 
 const { setError } = useErrors();
 
-const cardSource = reactive({}); // Holds the original JSON data
-const bingoCard = reactive({}); // Holds a filtered list with selected categories
+// Holds JSON data from the card source
+const cardSource = reactive({});
 
 export function useCategories() {
-	// Returns true if card source/bingo card have been configured
+	// Returns true if card source has been configured
 	const isCardSourceSet = computed(() => Object.keys(cardSource).length !== 0);
-	const isBingoCardSet = computed(() => Object.keys(bingoCard).length !== 0);
 
 	// Load data from browser and update local state
 	// Mutate values to avoid losing reactivity
@@ -19,13 +18,6 @@ export function useCategories() {
 		if (cardSourceTemp) {
 			Object.entries(cardSourceTemp).forEach(([key, value]) => {
 				cardSource[key] = value;
-			});
-		}
-
-		const bingoCardTemp = JSON.parse(localStorage.getItem('bingoCard'));
-		if (bingoCardTemp) {
-			Object.entries(bingoCardTemp).forEach(([key, value]) => {
-				bingoCard[key] = value;
 			});
 		}
 	}
@@ -45,10 +37,6 @@ export function useCategories() {
 
 	function getCardSourceCatNumber() {
 		return cardSource.categories.length;
-	}
-
-	function getBingoCard() {
-		return readonly(bingoCard);
 	}
 
 	function setCardSource(categoriesObj) {
@@ -101,13 +89,11 @@ export function useCategories() {
 
 	return {
 		isCardSourceSet,
-		isBingoCardSet,
 		initializeData,
 		getCardSource,
 		getCardSourceGroups,
 		getCardSourceCatNumber,
 		setCardSource,
-		getBingoCard,
 		getMaxGridSize,
 		getGridLabel,
 		getCategoryNumber

@@ -192,7 +192,7 @@
 		const success = generateBingoCard(catSubset);
 		if (success) {
 			console.log('Bingo card generated!');
-			// router.push('/bingo');
+			router.push('/bingo');
 		} else {
 			console.error('Could not generate bingo card');
 		}

@@ -1,16 +1,18 @@
-import { useCategories } from '../composables/categories.js';
 import { useGameRules } from '../composables/gamerules.js';
+import { useCategories } from '../composables/categories.js';
+import { useBingo } from '../composables/bingo.js';
 import { useErrors } from '../composables/errors.js';
 
-const { getCategoryNumber } = useCategories();
 const { getGameRules } = useGameRules();
+const { getCategoryNumber } = useCategories();
+const { setBingoCard } = useBingo();
 const { setError } = useErrors();
 
 // Generate and save the bingo card.  Returns true on success.
 export function generateBingoCard(categories) {
 	const chosenCategories = chooseCategories(categories);
 	if (chosenCategories) {
-		localStorage.setItem('bingoCard', JSON.stringify(chosenCategories));
+		setBingoCard(chosenCategories);
 		return true;
 	}
 	return false;

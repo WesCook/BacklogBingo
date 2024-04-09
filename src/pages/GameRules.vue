@@ -2,14 +2,14 @@
 	import { ref } from 'vue';
 
 	import { useGameRules } from '../composables/gamerules.js';
+	import { useBingo } from '../composables/bingo.js';
 
 	import GameRulesMode from '../components/GameRulesMode.vue';
 	import GameRulesCustom from '../components/GameRulesCustom.vue';
 	import StartOver from '../components/StartOver.vue';
-	import { useCategories } from '../composables/categories';
 
 	const { areGamerulesSet, resetGameRules, calculateGameMode } = useGameRules();
-	const { isBingoCardSet } = useCategories();
+	const { isBingoCardSet } = useBingo();
 
 	// Initialize to standard if no browser data
 	if (!areGamerulesSet.value) {

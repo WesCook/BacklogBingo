@@ -1,8 +1,10 @@
 import { reactive, computed, readonly, toRaw } from 'vue';
 
 import { useCategories } from '../composables/categories.js';
+import { useBingo } from '../composables/bingo.js';
 
-const { isBingoCardSet, getCardSourceCatNumber, getMaxGridSize, getGridLabel } = useCategories();
+const { getCardSourceCatNumber, getMaxGridSize, getGridLabel } = useCategories();
+const { isBingoCardSet } = useBingo();
 
 // Holds the current game rules
 const gamerules = reactive({});
