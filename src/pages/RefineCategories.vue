@@ -8,32 +8,71 @@
 	import CategoriesItem from '../components/CategoriesItem.vue';
 	import StartOver from '../components/StartOver.vue';
 
-	const { setBingoCard, getCardSource, getCardSourceGroups } = useCategories();
+	const { getCardSource, setBingoCard } = useCategories();
 
-	const cardSource = getCardSource();
-	const groups = getCardSourceGroups();
+	// Category, group, and color lookup
+	const { categoryList, groupList } = populateCategoryAndGroups();
+	const groupColors = generateColors();
 
-	// Initialize with all entries so they are checked by default
+	// Checkbox state: initialize with all entries so they are checked by default
 	const groupValues = ref(getAllGroups());
 	const categoryValues = ref(getAllCategories());
 
+	// Track selected categories to meet minimum
 	const minCategories = ref(0); // TODO: Implement
 	const currentCount = ref(0); // TODO: Implement
 
-	// Generate colors to be assigned in template
-	const colors = getThemedColors(groups.length);
-	const groupColors = {};
-	groups.forEach((group, index) => {
-		groupColors[group] = colors[index];
-	});
 
+	// Build new list of categories and groups for easier manipulation
+	// Using UUIDs as keys.  Avoiding using raw values in template and v-for keys.
+	function populateCategoryAndGroups() {
+		const categoryList = new Map();
+		const groupList = new Map();
+		const groupMap = new Map(); // Reverse map of UUID to group name
+
+		for (const categorySource of getCardSource().categories) {
+			// Create new, mutable category object
+			const category = {
+				name: categorySource.name
+			};
+
+			// Generate group UUID if needed, then add to object and Groups List
+			if (categorySource.group) {
+				let groupID;
+				if (groupMap.has(categorySource.group)) {
+					groupID = groupMap.get(categorySource.group);
+				} else {
+					groupID = crypto.randomUUID();
+					groupList.set(groupID, categorySource.group);
+					groupMap.set(categorySource.group, groupID);
+				}
+				category.group = groupID;
+			}
+
+			// Add to Category List
+			categoryList.set(crypto.randomUUID(), category);
+		}
+
+		return { categoryList, groupList };
+	}
+
+	// Generate colors to be assigned in template
+	function generateColors() {
+		const colors = getThemedColors(groupList.size);
+		const groupColors = {};
+		Array.from(groupList).forEach((groupArray, index) => {
+			groupColors[groupArray[0]] = colors[index];
+		});
+
+		return groupColors;
+	}
 
 	function getAllGroups() {
-		return [...groups];
+		return [...groupList.keys()];
 	}
 
 	function getAllCategories() {
-		return [...cardSource.categories.map(category => category.name)];
+		return [...categoryList.keys()];
 	}
 
 	function selectAll() {
@@ -46,34 +85,57 @@
 		categoryValues.value = [];
 	}
 
-	// Event from CategoriesGroup when group checkbox changes
-	function groupChange(group, checked) {
-		// Get all categories for group
-		const groupsCategories = cardSource.categories.filter(category => category.group === group).map(category => category.name);
+	// Returns all category UUIDs for a given group UUID
+	function getCategoriesFromGroup(group) {
+		return Array.from(categoryList)
+			.filter(([_catID, category]) => category.group === group)
+			.map(([uuid, _cat]) => uuid);
+	}
 
+	// Accepts array of category IDs to check
+	// Filter out those that are already included
+	function checkCategories(categories) {
+		categoryValues.value.push(...categories.filter(category => !categoryValues.value.includes(category)));
+	}
+
+	// Accepts array of category IDs to uncheck
+	function uncheckCategories(categories) {
+		categories.forEach(category => {
+			const index = categoryValues.value.indexOf(category);
+			if (index >= 0) {
+				categoryValues.value.splice(index, 1);
+			}
+		});
+	}
+
+	// Get number of checked categories in a group
+	function getGroupCheckedCount(group) {
+		const groupsCategories = getCategoriesFromGroup(group);
+		return groupsCategories.reduce((count, catID) => categoryValues.value.includes(catID) ? count + 1 : count, 0);
+	}
+
+	// Event from CategoriesGroup when group checkbox changes
+	function groupChangeEvent(group, checked) {
+		const groupsCategories = getCategoriesFromGroup(group);
 		if (checked) {
-			// Add categories that aren't already in the array
-			categoryValues.value.push(...groupsCategories.filter(category => !categoryValues.value.includes(category)));
+			checkCategories(groupsCategories);
 		} else {
-			// Remove categories
-			groupsCategories.forEach(category => {
-				const index = categoryValues.value.indexOf(category);
-				if (index >= 0) {
-					categoryValues.value.splice(index, 1);
-				}
-			});
+			uncheckCategories(groupsCategories);
 		}
 	}
 
 	// Event from CategoriesItem when category checkbox changes
-	function categoryChange(group) {
+	function categoryChangeEvent(category) {
+		// Get group from category
+		const group = categoryList.get(category).group;
+
 		if (!group) {
 			return;
 		}
 
 		// Get all categories for group and count checked states
-		const groupsCategories = cardSource.categories.filter(category => category.group === group).map(category => category.name);
-		const checkCount = groupsCategories.reduce((count, category) => categoryValues.value.includes(category) ? count + 1 : count, 0);
+		const groupsCategories = getCategoriesFromGroup(group);
+		const checkCount = getGroupCheckedCount(group);
 
 		// Update group checkbox based on state
 		if (checkCount === groupsCategories.length) {
@@ -92,15 +154,9 @@
 
 	// When group checkboxes are neither full nor empty, they are indeterminate
 	function getIndeterminate(group) {
-		const groupsCategories = cardSource.categories.filter(category => category.group === group).map(category => category.name);
-		const checkCount = groupsCategories.reduce((count, category) => categoryValues.value.includes(category) ? count + 1 : count, 0);
+		const groupsCategories = getCategoriesFromGroup(group);
+		const checkCount = getGroupCheckedCount(group);
 		return checkCount > 0 && checkCount < groupsCategories.length;
-	}
-
-	// Generate friendlier title case group names
-	function pascalToTitleCase(input) {
-		const result = input.replace(/([A-Z])/g, ' $1');
-		return result.charAt(0).toUpperCase() + result.slice(1);
 	}
 </script>
 
@@ -122,20 +178,20 @@
 
 	<!-- Group Toggles -->
 	<div
-		v-if="groups.length"
+		v-if="groupList.size"
 		class="groups-toggle"
 	>
 		<strong>Quick Toggle</strong>
 		<ul class="groups-list">
 			<CategoriesGroup
-				v-for="group in groups"
-				:key="group"
+				v-for="[uuid, group] of groupList"
+				:key="uuid"
 				v-model="groupValues"
-				:group-name="group"
-				:friendly-name="pascalToTitleCase(group)"
-				:indeterminate="getIndeterminate(group)"
-				:color="groupColors[group]"
-				@group-change="groupChange"
+				:uuid="uuid"
+				:friendly-name="group"
+				:indeterminate="getIndeterminate(uuid)"
+				:color="groupColors[uuid]"
+				@group-change="groupChangeEvent"
 			/>
 		</ul>
 
@@ -150,13 +206,13 @@
 	<!-- Category List -->
 	<ul class="categories-list">
 		<CategoriesItem
-			v-for="category in cardSource.categories"
-			:key="category.name"
+			v-for="[uuid, category] of categoryList"
+			:key="uuid"
 			v-model="categoryValues"
+			:uuid="uuid"
 			:category-name="category.name"
-			:group="category.group"
-			:color="groupColors[category.group]"
-			@category-change="categoryChange"
+			:color="groupColors[categoryList.get(uuid).group]"
+			@category-change="categoryChangeEvent"
 		/>
 	</ul>
 

@@ -1,10 +1,10 @@
 <script setup>
 	defineProps({
-		categoryName: {
+		uuid: {
 			type: String,
 			default: ''
 		},
-		group: {
+		categoryName: {
 			type: String,
 			default: ''
 		},
@@ -25,8 +25,8 @@
 			<input
 				v-model="model"
 				type="checkbox"
-				:value="categoryName"
-				@change="$emit('category-change', group)"
+				:value="uuid"
+				@change="$emit('category-change', uuid)"
 			>
 			<span :style="{ color: color }">{{ categoryName }}</span>
 		</label>

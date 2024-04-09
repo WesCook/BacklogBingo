@@ -19,6 +19,7 @@ export default [
 			quotes: ['warn', 'single'],
 			semi: ['warn', 'always'],
 			'no-unused-vars': ['warn', {
+				argsIgnorePattern: '^_',
 				varsIgnorePattern: '^props$'
 			}],
 			'vue/enforce-style-attribute': ['error', {
