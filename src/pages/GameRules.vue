@@ -32,14 +32,14 @@
 		>
 			<button>← Go Back</button>
 		</RouterLink>
-		<StartOver />
+		<StartOver v-if="!isBingoCardSet" />
 	</div>
 
-	<p>Now to choose how you want to play!  Unless otherwise noted, these settings can be changed later.</p>
+	<p v-if="!isBingoCardSet">
+		Now to choose how you want to play!  Unless otherwise noted, these settings can be changed later.
+	</p>
 
-	<h2 class="gamemode-header">
-		Game Mode
-	</h2>
+	<h2>Game Mode</h2>
 	<GameRulesMode v-model="gamemodeRadio" />
 
 	<h2 class="gamerules-header">
@@ -47,12 +47,21 @@
 	</h2>
 	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
 
-	<p class="confirm-text">
+	<p v-if="!isBingoCardSet">
 		When you're ready, click <em>Confirm Game Rules</em> to move to the next step and refine your categories.
 	</p>
 
 	<div class="btn-bar">
-		<RouterLink to="categories">
+		<RouterLink
+			v-if="isBingoCardSet"
+			to="bingo"
+		>
+			<button>Back to Bingo</button>
+		</RouterLink>
+		<RouterLink
+			v-else
+			to="categories"
+		>
 			<button>Confirm Game Rules</button>
 		</RouterLink>
 	</div>
@@ -70,16 +79,17 @@
 		}
 	}
 
-	.btn-bar {
-		display: flex;
-		justify-content: end;
-	}
-
-	.confirm-text {
-		margin: 2em 0;
-	}
-
 	.gamerules-header {
 		margin-top: 1.4em;
+	}
+
+	.gamerules-header + fieldset {
+		margin-bottom: 1.5em;
+	}
+
+	.btn-bar {
+		margin-top: 1.5em;
+		display: flex;
+		justify-content: end;
 	}
 </style>

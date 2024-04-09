@@ -3,9 +3,11 @@
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
+	import { useBingo } from '../composables/bingo.js';
 
 	const { getGameRules, setGameRule, gamerulesTransform } = useGameRules();
-	const { isBingoCardSet, getCardSourceCatNumber, getMaxGridSize } = useCategories();
+	const { getCardSourceCatNumber, getMaxGridSize } = useCategories();
+	const { isBingoCardSet } = useBingo();
 
 	const props = defineProps({
 		isCustom: {
