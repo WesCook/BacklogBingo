@@ -54,7 +54,7 @@
 		Select a bingo card from an event, or provide your own via JSON.
 		<em>
 			<a
-				href="https://github.com/WesCook/BacklogBingo/blob/main/public/category-json/tildes-gaming-nov-2023.json"
+				href="https://github.com/WesCook/BacklogBingo/blob/main/public/event-cards/tildes-gaming-nov-2023.json"
 				target="_blank"
 			>Example Format</a>
 		</em>

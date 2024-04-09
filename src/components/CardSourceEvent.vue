@@ -19,7 +19,7 @@
 
 	async function processEvent(filename) {
 		emit('lock-download', true);
-		const path = `./category-json/${filename}`;
+		const path = `./event-cards/${filename}`;
 		const json = await downloadJSON(path);
 		if (json) {
 			emit('load-file', json);
