@@ -1,14 +1,17 @@
 <script setup>
 	import { ref } from 'vue';
+	import { useRouter } from 'vue-router';
 
 	import { useCategories } from '../composables/categories.js';
 	import { getThemedColors } from '../utils/color-gen.js';
+	import { generateBingoCard } from '../utils/bingo-card-gen.js';
 
 	import CategoriesGroup from '../components/CategoriesGroup.vue';
 	import CategoriesItem from '../components/CategoriesItem.vue';
 	import StartOver from '../components/StartOver.vue';
 
-	const { getCardSource, setBingoCard } = useCategories();
+	const router = useRouter();
+	const { getCardSource } = useCategories();
 
 	// Category, group, and color lookup
 	const { categoryList, groupList } = populateCategoryAndGroups();
@@ -158,6 +161,38 @@
 		const checkCount = getGroupCheckedCount(group);
 		return checkCount > 0 && checkCount < groupsCategories.length;
 	}
+
+	function generateCard(skip) {
+		// Collect all or only checked categories, then flatten into accessible structure (arr of objs)
+		let catSubset = [];
+		catSubset = Array.from(categoryList).map(([uuid, catObj]) => ({
+			uuid,
+			name: (skip) ? catObj.name : categoryList.get(uuid).name,
+			group: (skip) ? catObj.group : categoryList.get(uuid).group
+		}));
+
+		if (skip) {
+			catSubset = Array.from(categoryList).map(([uuid, catObj]) => ({
+				uuid,
+				name: catObj.name,
+				group: catObj.group
+			}));
+		} else {
+			catSubset = categoryValues.value.map(uuid => ({
+				uuid,
+				name: categoryList.get(uuid).name,
+				group: categoryList.get(uuid).group
+			}));
+		}
+
+		const success = generateBingoCard(catSubset);
+		if (success) {
+			console.log('Bingo card generated!');
+			// router.push('/bingo');
+		} else {
+			console.error('Could not generate bingo card');
+		}
+	}
 </script>
 
 <template>
@@ -171,9 +206,9 @@
 	<p>When you're ready, click <em>Generate Card</em> to create a unique bingo card from the selected categories, or click <em>Skip</em> to include all categories.</p>
 
 	<div class="btn-bar">
-		<button class="skip-btn">Skip this step</button>
+		<button @click="generateCard(true)">Skip this step</button>
 		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
-		<button @click="setBingoCard">Generate Card</button>
+		<button @click="generateCard(false)">Generate Card</button>
 	</div>
 
 	<!-- Group Toggles -->
@@ -220,9 +255,9 @@
 	<p>You need to select at least <span>{{ minCategories }}</span> categories for a full Bingo card.</p>
 
 	<div class="btn-bar">
-		<button class="skip-btn">Skip this step</button>
+		<button @click="generateCard(true)">Skip this step</button>
 		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
-		<button @click="setBingoCard">Generate Card</button>
+		<button @click="generateCard(false)">Generate Card</button>
 	</div>
 </template>
 
@@ -243,6 +278,9 @@
 		justify-content: end;
 		gap: 10px;
 		margin: 1.5em 0;
+	}
+	.btn-bar button:first-child {
+		margin-right: auto;
 	}
 
 	.groups-toggle {
@@ -283,10 +321,6 @@
 			columns: 2;
 			column-gap: 24px;
 		}
-	}
-
-	.skip-btn {
-		margin-right: auto;
 	}
 
 	.required-tally {

@@ -1,0 +1,83 @@
+import { useCategories } from '../composables/categories.js';
+import { useGameRules } from '../composables/gamerules.js';
+import { useErrors } from '../composables/errors.js';
+
+const { getCategoryNumber } = useCategories();
+const { getGameRules } = useGameRules();
+const { setError } = useErrors();
+
+// Generate and save the bingo card.  Returns true on success.
+export function generateBingoCard(categories) {
+	const chosenCategories = chooseCategories(categories);
+	if (chosenCategories) {
+		localStorage.setItem('bingoCard', JSON.stringify(chosenCategories));
+		return true;
+	}
+	return false;
+}
+
+// Returns array of categories based on required grid size
+// Tries to respect allowSimilar.  Will fall back when more entries are required.
+function chooseCategories(categories) {
+	// Get gamerules
+	const gamerules = getGameRules();
+	const allowSimilar = gamerules.allowSimilar;
+	const categoryNumber = getCategoryNumber(gamerules.gridSize);
+
+	// Store pools of categories for sorting
+	const catPoolPrimary = shuffle(categories); // Holds all categories initially
+	const catPoolSecondary = []; // Fallback pool used when allowSimilar is false.  Reused groups are sent here.
+	const catFinalList = []; // The final list of saved bingo categories
+	const usedGroups = []; // Array of strings of category groups already chosen from primary pool
+
+	// Fill bingo list from primary pool
+	for (const cat of catPoolPrimary) {
+		if (allowSimilar || !cat.group) {
+			catFinalList.push(cat);
+		} else {
+			if (cat.group && !usedGroups.includes(cat.group)) {
+				// Allow Similar is false, and group hasn't been used yet
+				catFinalList.push(cat);
+				usedGroups.push(cat.group);
+			}
+			else {
+				// Cat group already used
+				catPoolSecondary.push(cat);
+			}
+		}
+
+		// List was filled with enough categories, so we're done
+		if (catFinalList.length >= categoryNumber) {
+			break;
+		}
+	}
+
+	// If we don't have enough from primary pool, fill the rest from secondary
+	// These should still be roughly randomized from before
+	while (catFinalList.length < categoryNumber && catPoolSecondary.length > 0) {
+		console.warn('Not enough unique categories, filling from secondary pool');
+		catFinalList.push(catPoolSecondary.shift());
+	}
+
+	// If we still don't have enough categories, we have problems.  But this shouldn't happen.
+	if (catFinalList.length < categoryNumber) {
+		setError(`A card could not be generated.  There were not enough categories provided (${catFinalList.length}/${categoryNumber}).`);
+		return;
+	}
+
+	// Remove group as it's no longer needed
+	catFinalList.forEach(cat => delete cat.group);
+
+	return catFinalList;
+}
+
+// Shuffle array
+// Adapted from https://stackoverflow.com/a/12646864
+function shuffle(arr) {
+	const shuffled = [...arr];
+	for (let i = shuffled.length-1; i>0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled;
+}

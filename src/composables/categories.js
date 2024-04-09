@@ -58,16 +58,6 @@ export function useCategories() {
 		localStorage.setItem('cardSource', JSON.stringify(cardSource));
 	}
 
-	// Update generated bingo card and save to browser
-	// TODO: Fully implement.  Just using for testing purposes currently.
-	function setBingoCard() {
-		bingoCard.name = cardSource.name;
-		bingoCard.version = cardSource.version;
-		bingoCard.categories = cardSource.categories;
-		// bingoCard.categories = cardSource.categories.filter(category => bingoCard[category]);
-		localStorage.setItem('bingoCard', JSON.stringify(cardSource));
-	}
-
 	// Calculate max grid size from category number, rounded down to nearest accepted size
 	function getMaxGridSize(catNum) {
 		const acceptedSizes = [3, 5, 7];
@@ -96,6 +86,19 @@ export function useCategories() {
 		return 'unknown';
 	}
 
+	// Get category number from grid size
+	function getCategoryNumber(label) {
+		switch(label) {
+			case 'large':
+				return 49;
+			case 'medium':
+				return 25;
+			case 'small':
+				return 9;
+			default: -1;
+		}
+	}
+
 	return {
 		isCardSourceSet,
 		isBingoCardSet,
@@ -105,8 +108,8 @@ export function useCategories() {
 		getCardSourceCatNumber,
 		setCardSource,
 		getBingoCard,
-		setBingoCard,
 		getMaxGridSize,
-		getGridLabel
+		getGridLabel,
+		getCategoryNumber
 	};
 }
