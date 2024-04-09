@@ -316,7 +316,7 @@
 		white-space: nowrap;
 		margin-top: -8px;
 	}
-	.selectAllNone button {
+	.selectAllNone :where(button) { /* Reduce specificity */
 		all: unset;
 		padding: 3px 5px;
 		margin: 5px;
