@@ -1,7 +1,8 @@
 <script setup>
-	import { ref } from 'vue';
+	import { ref, computed } from 'vue';
 	import { useRouter } from 'vue-router';
 
+	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { getThemedColors } from '../utils/color-gen.js';
 	import { generateBingoCard } from '../utils/bingo-card-gen.js';
@@ -11,7 +12,8 @@
 	import StartOver from '../components/StartOver.vue';
 
 	const router = useRouter();
-	const { getCardSource } = useCategories();
+	const { getGameRules } = useGameRules();
+	const { getCardSource, getCategoryNumber } = useCategories();
 
 	// Category, group, and color lookup
 	const { categoryList, groupList } = populateCategoryAndGroups();
@@ -22,8 +24,10 @@
 	const categoryValues = ref(getAllCategories());
 
 	// Track selected categories to meet minimum
-	const minCategories = ref(0); // TODO: Implement
-	const currentCount = ref(0); // TODO: Implement
+	const gamerules = getGameRules();
+	const minCategories = ref(getCategoryNumber(gamerules.gridSize));
+	const currentCount = computed(() => categoryValues.value.length);
+	const buttonsDisabled = computed(() => currentCount.value < minCategories.value);
 
 
 	// Build new list of categories and groups for easier manipulation
@@ -208,7 +212,12 @@
 	<div class="btn-bar">
 		<button @click="generateCard(true)">Skip this step</button>
 		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
-		<button @click="generateCard(false)">Generate Card</button>
+		<button
+			:disabled="buttonsDisabled"
+			@click="generateCard(false)"
+		>
+			Generate Card
+		</button>
 	</div>
 
 	<!-- Group Toggles -->
@@ -257,7 +266,12 @@
 	<div class="btn-bar">
 		<button @click="generateCard(true)">Skip this step</button>
 		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
-		<button @click="generateCard(false)">Generate Card</button>
+		<button
+			:disabled="buttonsDisabled"
+			@click="generateCard(false)"
+		>
+			Generate Card
+		</button>
 	</div>
 </template>
 
