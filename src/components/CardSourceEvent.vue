@@ -1,5 +1,5 @@
 <script setup>
-	import { downloadJSON } from '../utils/json-utils.js';
+	import { downloadJSON } from '../utils/json-parse.js';
 
 	const props = defineProps({
 		title: {

@@ -1,8 +1,8 @@
 import { useErrors } from '../composables/errors.js';
 const { setError } = useErrors();
 
-// Returns json of provided URL, local or remote.
-// Validates different types of errors.  Returns false on error.
+// Parses provided URL for json, local or remote
+// Reports network and JSON parsing errors.  Returns json on success, false on error.
 export async function downloadJSON(url) {
 	// Attempt to download from URL
 	try {
@@ -26,7 +26,7 @@ export async function downloadJSON(url) {
 	}
 }
 
-// Accepts JSON/object for validation
+// Additional validation for JSON file or regular object
 // Returns true for valid, false for invalid
 export function validateJSON(json) {
 	// Verify file has the required keys

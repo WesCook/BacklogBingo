@@ -4,7 +4,7 @@
 	import { useErrors } from '../composables/errors.js';
 
 	import { useCategories } from '../composables/categories.js';
-	import { validateJSON } from '../utils/json-utils.js';
+	import { validateJSON } from '../utils/json-parse.js';
 
 	import CardSourceEvent from '../components/CardSourceEvent.vue';
 	import CardSourceFile from '../components/CardSourceFile.vue';

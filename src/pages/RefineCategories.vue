@@ -2,7 +2,7 @@
 	import { ref } from 'vue';
 
 	import { useCategories } from '../composables/categories.js';
-	import { getThemedColors } from '../utils/color-utils.js';
+	import { getThemedColors } from '../utils/color-gen.js';
 
 	import CategoriesGroup from '../components/CategoriesGroup.vue';
 	import CategoriesItem from '../components/CategoriesItem.vue';

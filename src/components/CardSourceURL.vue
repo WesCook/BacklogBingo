@@ -1,7 +1,7 @@
 <script setup>
 	import { ref } from 'vue';
 	import { useErrors } from '../composables/errors.js';
-	import { downloadJSON } from '../utils/json-utils.js';
+	import { downloadJSON } from '../utils/json-parse.js';
 
 	const { setError } = useErrors();
 
