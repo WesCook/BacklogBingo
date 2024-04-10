@@ -13,6 +13,7 @@ export function generateBingoCard(categories) {
 	const chosenCategories = chooseCategories(categories);
 	if (chosenCategories) {
 		setBingoCard(chosenCategories);
+		localStorage.removeItem('cardSource');
 		return true;
 	}
 	return false;
