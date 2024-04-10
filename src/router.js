@@ -54,7 +54,15 @@ const routes = [
 
 const router = createRouter({
 	history: createWebHashHistory(), // Hashes required on GitHub Pages due to poor SPA support
-	routes
+	routes,
+	// Scroll to top, unless revisiting previous route
+	scrollBehavior(_to, _from, savedPosition) {
+		if (savedPosition) {
+			return savedPosition;
+		} else {
+			return { x: 0, y: 0 };
+		}
+	},
 });
 
 // Clear errors when changing page (though skip redirects so redirect notices persist)
