@@ -29,9 +29,12 @@
 </script>
 
 <template>
-	<li class="li">
+	<li
+		class="li"
+		:class="{ highlight: selectedName === title }"
+	>
 		<button @click="processEvent(file)">Select</button>
-		<span :class="{highlight: selectedName === title}">{{ title }}</span>
+		<span>{{ title }}</span>
 	</li>
 </template>
 
@@ -42,7 +45,11 @@
 	.li span {
 		margin-left: 0.4em;
 	}
-	.highlight {
-		font-weight: bold;
+	.highlight button {
+		border: 1px solid grey;
+	}
+	.highlight span {
+		font-style: italic;
+		color: color-mix(in srgb, var(--foreground-color) 85%, var(--background-color));
 	}
 </style>

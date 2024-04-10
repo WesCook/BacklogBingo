@@ -76,7 +76,7 @@
 					@lock-download="lockDownload"
 				/>
 				<CardSourceEvent
-					title="Tildes Gaming Backlog May 2024 (WIP)"
+					title="Tildes Gaming Backlog May 2024 - WIP"
 					file="tildes-gaming-may-2024.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
