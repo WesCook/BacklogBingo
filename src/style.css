@@ -71,8 +71,7 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 /* Links */
-a:link,
-a:visited {
+a:any-link {
 	color: var(--link-default);
 }
 a:focus,
