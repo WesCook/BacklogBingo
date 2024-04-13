@@ -87,6 +87,26 @@ export function useCategories() {
 		}
 	}
 
+	// Get numerical row length from grid size
+	function getRowLength(label) {
+		switch(label) {
+			case 'large':
+				return 7;
+			case 'medium':
+				return 5;
+			case 'small':
+				return 3;
+			default: -1;
+		}
+	}
+
+	function shouldShrinkGrid() {
+		if (cardSource.categories && getGridLabel(getMaxGridSize(getCardSourceCatNumber())) === 'small') {
+			return true;
+		}
+		return false;
+	}
+
 	return {
 		isCardSourceSet,
 		initializeData,
@@ -96,6 +116,8 @@ export function useCategories() {
 		setCardSource,
 		getMaxGridSize,
 		getGridLabel,
-		getCategoryNumber
+		getCategoryNumber,
+		getRowLength,
+		shouldShrinkGrid
 	};
 }

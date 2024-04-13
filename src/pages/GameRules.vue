@@ -2,37 +2,47 @@
 	import { ref } from 'vue';
 
 	import { useGameRules } from '../composables/gamerules.js';
+	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
 
 	import GameRulesMode from '../components/GameRulesMode.vue';
 	import GameRulesCustom from '../components/GameRulesCustom.vue';
 	import StartOver from '../components/StartOver.vue';
 
-	const { areGamerulesSet, resetGameRules, calculateGameMode } = useGameRules();
+	const { areGamerulesSet, setGameRule, resetGameRules, calculateGameMode } = useGameRules();
+	const { shouldShrinkGrid } = useCategories();
 	const { isBingoCardSet } = useBingo();
+
+	// When card source category limit is too low, the default grid size must be small.
+	// We need to inform the reset and comparisons functions of this.
+	const shouldShrink = shouldShrinkGrid();
 
 	// Initialize to standard if no browser data
 	if (!areGamerulesSet.value) {
 		console.log('No gamerules found.  Defaulting to standard.');
-		resetGameRules('standard');
+		resetGameRules('standard', false, shouldShrink);
+	}
+
+	// Shrink grid if category limit is too low.  Needs to run when changing card sources.
+	if (shouldShrink) {
+		setGameRule('gridSize', 'small');
 	}
 
 	// Passing gamemode from GameRulesMode to GameRulesCustom
 	// We're interested in the value of the radio, not the derived gamemode from
 	// calculateGameMode(), so that is only used to set the initial value.
-	const gamemodeRadio = ref(calculateGameMode());
+	const gamemodeRadio = ref(calculateGameMode(shouldShrink));
 </script>
 
 <template>
 	<div class="nav-bar">
 		<h1>Configure Game Rules</h1>
 		<RouterLink
-			v-if="!isBingoCardSet"
-			to="/card"
+			:to="(isBingoCardSet) ? '/bingo' : '/card'"
 		>
 			<button>← Go Back</button>
 		</RouterLink>
-		<StartOver v-if="!isBingoCardSet" />
+		<StartOver />
 	</div>
 
 	<p v-if="!isBingoCardSet">
@@ -53,13 +63,7 @@
 
 	<div class="btn-bar">
 		<RouterLink
-			v-if="isBingoCardSet"
-			to="bingo"
-		>
-			<button>Back to Bingo</button>
-		</RouterLink>
-		<RouterLink
-			v-else
+			v-if="!isBingoCardSet"
 			to="categories"
 		>
 			<button>Confirm Game Rules</button>

@@ -1,7 +1,12 @@
 <script setup>
 	import { useGameRules } from '../composables/gamerules.js';
+	import { useCategories } from '../composables/categories.js';
+	import { useBingo } from '../composables/bingo.js';
 
 	const { resetGameRules } = useGameRules();
+	const { shouldShrinkGrid } = useCategories();
+	const { isBingoCardSet } = useBingo();
+
 	const gamemodeRadio = defineModel({ type: String });
 </script>
 
@@ -13,7 +18,7 @@
 				type="radio"
 				name="gamemode-radio"
 				value="standard"
-				@change="resetGameRules('standard');"
+				@change="resetGameRules('standard', isBingoCardSet.value, shouldShrinkGrid());"
 			>
 			<h3>Standard</h3>
 			<p>The main way to play.  Complete a row, column, or diagonal to win.  Each game only counts for one category.</p>
@@ -24,7 +29,7 @@
 				type="radio"
 				name="gamemode-radio"
 				value="golf"
-				@change="resetGameRules('golf');"
+				@change="resetGameRules('golf', isBingoCardSet.value, shouldShrinkGrid());"
 			>
 			<h3>Golf</h3>
 			<p>Focus on strategy, and try to finish a whole board playing as few unique titles as possible.</p>

@@ -1,11 +1,5 @@
 import { reactive, computed, readonly, toRaw } from 'vue';
 
-import { useCategories } from '../composables/categories.js';
-import { useBingo } from '../composables/bingo.js';
-
-const { getCardSourceCatNumber, getMaxGridSize, getGridLabel } = useCategories();
-const { isBingoCardSet } = useBingo();
-
 // Holds the current game rules
 const gamerules = reactive({});
 
@@ -31,6 +25,29 @@ const defaultGameModes = {
 
 function saveToBrowser() {
 	localStorage.setItem('gamerules', JSON.stringify(gamerules));
+}
+
+// Returns gamerules passed in with transform applied.  Will lock some settings based on current gamerules state.
+function transformLocked(gamerulesTemp) {
+	// Start with untransformed version (automatically unwrap proxies)
+	const gamerulesTransform = structuredClone(toRaw(gamerulesTemp));
+
+	// Retain locked settings because they shouldn't change after a card has been generated
+	gamerulesTransform.gridSize = gamerules.gridSize;
+	gamerulesTransform.allowSimilar = gamerules.allowSimilar;
+
+	return gamerulesTransform;
+}
+
+// Returns gamerules passed in with transform applied.  Will shrink grid based on grid size.
+function transformShrinkGrid(gamerulesTemp) {
+	// Start with untransformed version (automatically unwrap proxies)
+	const gamerulesTransform = structuredClone(toRaw(gamerulesTemp));
+
+	// If we're forced to use a small grid, overwrite default to small instead
+	gamerulesTransform.gridSize = 'small';
+
+	return gamerulesTransform;
 }
 
 export function useGameRules() {
@@ -59,49 +76,37 @@ export function useGameRules() {
 	}
 
 	// Reset game rules to preset
-	function resetGameRules(gamemode) {
+	// Will optionally lock some settings for previously-generated cards, or shrink grid if category limit is too low
+	function resetGameRules(gamemode, lockSettings, shrinkGrid) {
 		if (!defaultGameModes[gamemode]) {
 			console.error(`Game mode ${gamemode} not found.`);
 			return;
 		}
 
-		const transform = gamerulesTransform(defaultGameModes[gamemode], ['locked', 'shrinkgrid']);
+		let transform = defaultGameModes[gamemode];
+
+		// Use defaults, but lock some settings if card has already been generated
+		// We need to run this when bingo card is present
+		if (lockSettings) {
+			transform = transformLocked(transform);
+		}
+
+		// Shrink grid if category limit is too low
+		if (shrinkGrid) {
+			transform = transformShrinkGrid(transform);
+		}
+
+		// Update gamerules with transformed defaults
 		for (const rule in transform) {
 			gamerules[rule] = transform[rule];
 		}
 		saveToBrowser();
 	}
 
-	// Returns modified gamerules with requested transforms, as passed in an array
-	// - ['locked'] If card has already been generated, some settings are locked and can't change away from current gamerules
-	// - ['shrinkgrid'] If category limit is too low for default grid size, use small grid
-	function gamerulesTransform(gamerulesTemp, transforms = []) {
-		// Start with untransformed version (automatically unwrap proxies)
-		const gamerulesTransform = structuredClone(toRaw(gamerulesTemp));
-
-		if (transforms.includes('locked')) {
-			// Retain locked settings because they shouldn't change after a card has been generated
-			if (isBingoCardSet.value) {
-				gamerulesTransform.gridSize = gamerules.gridSize;
-				gamerulesTransform.allowSimilar = gamerules.allowSimilar;
-			}
-		}
-
-		if (transforms.includes('shrinkgrid')) {
-			// If we're forced to use a small grid, overwrite it to small instead
-			const maxGridSize = getGridLabel(getMaxGridSize(getCardSourceCatNumber()));
-			if (maxGridSize === 'small') {
-				gamerulesTransform.gridSize = 'small';
-			}
-		}
-
-		return gamerulesTransform;
-	}
-
 	// Find gamemode by comparing current gamerules against (transformed) defaults
 	// Calculating instead of storing gamemode allows us to change the default later
 	// without creating conflicts.
-	function calculateGameMode() {
+	function calculateGameMode(shrinkGrid) {
 		// Returns true if objects match
 		// Not using stringify for comparison because that's impacted by key order
 		const compareObjects = (obj1, obj2) => {
@@ -113,9 +118,13 @@ export function useGameRules() {
 			return true;
 		};
 
-		if (compareObjects(gamerules, gamerulesTransform(defaultGameModes['standard'], ['shrinkgrid']))) {
+		// Get defaults, but transform if small grid is required
+		const std = (shrinkGrid) ? transformShrinkGrid(defaultGameModes['standard']) : defaultGameModes['standard'];
+		const golf = (shrinkGrid) ? transformShrinkGrid(defaultGameModes['golf']) : defaultGameModes['golf'];
+
+		if (compareObjects(gamerules, std)) {
 			return 'standard';
-		} else if (compareObjects(gamerules, gamerulesTransform(defaultGameModes['golf'], ['shrinkgrid']))) {
+		} else if (compareObjects(gamerules, golf)) {
 			return 'golf';
 		}
 		return 'custom';
@@ -127,7 +136,6 @@ export function useGameRules() {
 		getGameRules,
 		setGameRule,
 		resetGameRules,
-		gamerulesTransform,
 		calculateGameMode
 	};
 }

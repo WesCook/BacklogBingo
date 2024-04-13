@@ -24,8 +24,8 @@ const routes = [
 		}
 	}},
 	{ path: '/gamerules', component: GameRules, beforeEnter: () => {
-		if (!isCardSourceSet.value) {
-			setError('You cannot access that page without first defining a card source.  You have been redirected to do so now.');
+		if (!isCardSourceSet.value && !isBingoCardSet.value) {
+			setError('You cannot access that page without first defining a card source or bingo card.  You have been redirected to do so now.');
 			return '/card';
 		}
 	}},

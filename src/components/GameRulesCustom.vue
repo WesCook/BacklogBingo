@@ -5,8 +5,8 @@
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
 
-	const { getGameRules, setGameRule, gamerulesTransform } = useGameRules();
-	const { getCardSourceCatNumber, getMaxGridSize } = useCategories();
+	const { getGameRules, setGameRule } = useGameRules();
+	const { isCardSourceSet, getCardSourceCatNumber, getMaxGridSize } = useCategories();
 	const { isBingoCardSet } = useBingo();
 
 	const props = defineProps({
@@ -16,16 +16,15 @@
 		}
 	});
 
-	const gamerules = getGameRules();
-
-	// If grid size can't fit chosen categories, set it to small via transform
-	setGameRule('gridSize', gamerulesTransform(gamerules, ['shrinkgrid']).gridSize);
-
 	// Save default grid size for later comparison (post-transform)
+	const gamerules = getGameRules();
 	const defaultGridSize = ref(gamerules.gridSize);
 
-	// Store grid size for conditional logic
-	const maxGridSize = getMaxGridSize(getCardSourceCatNumber());
+	// Store grid size for conditional logic if configuring from a card source
+	let maxGridSize;
+	if (isCardSourceSet.value) {
+		maxGridSize = getMaxGridSize(getCardSourceCatNumber());
+	}
 </script>
 
 <template>
@@ -56,19 +55,19 @@
 					@change="setGameRule($event.target.id, $event.target.value)"
 				>
 					<option
-						v-if="maxGridSize >= 3"
+						v-if="isBingoCardSet || (isCardSourceSet && maxGridSize >= 3)"
 						value="small"
 					>
 						Small (3x3)
 					</option>
 					<option
-						v-if="maxGridSize >= 5"
+						v-if="isBingoCardSet || (isCardSourceSet && maxGridSize >= 5)"
 						value="medium"
 					>
 						Medium (5x5)
 					</option>
 					<option
-						v-if="maxGridSize >= 7"
+						v-if="isBingoCardSet || (isCardSourceSet && maxGridSize >= 7)"
 						value="large"
 					>
 						Large (7x7)
