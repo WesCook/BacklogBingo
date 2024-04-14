@@ -63,10 +63,10 @@
 		padding: clamp(0.2em, 1vw, 0.5em);
 		font-size: clamp(0.8em, calc(1vw + 0.3em), 0.95em);
 		text-align: center;
-		background-color: var(--invalid-card);
+		background-color: var(--tone1);
 	}
 	.bingo-tile:focus-within {
-		border-color: color-mix(in srgb, var(--foreground-color) 90%, var(--background-color));
+		border-color: color-mix(in srgb, var(--foreground-color) 70%, var(--background-color));
 	}
 
 	/* Extend height to aspect ratio at different thresholds */
@@ -82,7 +82,7 @@
 	}
 
 	.valid {
-		background-color: var(--valid-card);
+		background-color: var(--tone4);
 	}
 
 	input {

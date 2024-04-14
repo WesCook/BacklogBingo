@@ -18,11 +18,10 @@ input, button, textarea, select {
 		--tone1: #BBDEFB;
 		--tone2: #f2cdff;
 		--tone3: #fff5b2;
+		--tone4: #c4ffb2;
 		--link-default: #3535ff;
 		--link-hover: #8888ff;
 		--link-active: #9e9eff;
-		--valid-card: #98dbad;
-		--invalid-card: #dbb7b7;
 		--dropshadow: rgba(50, 50, 50, 0.5);
 	}
 }
@@ -35,11 +34,10 @@ input, button, textarea, select {
 		--tone1: #074070;
 		--tone2: #5c007c;
 		--tone3: #756600;
+		--tone4: #1b7500;
 		--link-default: #9e9eff;
 		--link-hover: #8888ff;
 		--link-active: #7777ff;
-		--valid-card: #152516;
-		--invalid-card: #251515;
 		--dropshadow: rgba(130, 130, 130, 0.5);
 	}
 }
