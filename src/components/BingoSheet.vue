@@ -9,6 +9,8 @@
 	const { getRowLength } = useCategories();
 	const { getBingoCard } = useBingo();
 
+	const bingoCard = getBingoCard();
+
 	const gridSize = getGameRules().gridSize;
 	const rowLength = getRowLength(gridSize);
 </script>
@@ -21,7 +23,7 @@
 		:data-size="gridSize"
 	>
 		<BingoTile
-			v-for="tile in getBingoCard()"
+			v-for="tile in bingoCard.categories"
 			:key="tile.uuid"
 			:data="tile"
 		/>

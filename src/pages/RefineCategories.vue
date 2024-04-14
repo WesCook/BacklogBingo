@@ -15,6 +15,8 @@
 	const { getGameRules } = useGameRules();
 	const { getCardSource, getCategoryNumber } = useCategories();
 
+	const cardSource = getCardSource();
+
 	// Category, group, and color lookup
 	const { categoryList, groupList } = populateCategoryAndGroups();
 	const groupColors = generateColors();
@@ -37,7 +39,7 @@
 		const groupList = new Map();
 		const groupMap = new Map(); // Reverse map of UUID to group name
 
-		for (const categorySource of getCardSource().categories) {
+		for (const categorySource of cardSource.categories) {
 			// Create new, mutable category object
 			const category = {
 				name: categorySource.name
@@ -189,7 +191,7 @@
 			}));
 		}
 
-		const success = generateBingoCard(catSubset);
+		const success = generateBingoCard(cardSource.name, catSubset);
 		if (success) {
 			console.log('Bingo card generated!');
 			router.push('/bingo');

@@ -9,10 +9,14 @@ const { setBingoCard } = useBingo();
 const { setError } = useErrors();
 
 // Generate and save the bingo card.  Returns true on success.
-export function generateBingoCard(categories) {
+export function generateBingoCard(name, categories) {
 	const chosenCategories = chooseCategories(categories);
 	if (chosenCategories) {
-		setBingoCard(chosenCategories);
+		const bingoCard = {
+			name: name,
+			categories: chosenCategories
+		};
+		setBingoCard(bingoCard);
 		localStorage.removeItem('cardSource');
 		return true;
 	}
