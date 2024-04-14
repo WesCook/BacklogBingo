@@ -23,9 +23,8 @@
 		// Validate if provided string can be constructed into URL object
 		try {
 			new URL(url);
-		} catch (err) {
+		} catch {
 			setError('The URL does not appear to be valid.');
-			// setError(err);
 			emit('lock-download', false);
 			return false;
 		}

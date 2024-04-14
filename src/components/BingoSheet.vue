@@ -1,4 +1,6 @@
 <script setup>
+	import { ref } from 'vue';
+
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
@@ -10,9 +12,14 @@
 	const { getBingoCard } = useBingo();
 
 	const bingoCard = getBingoCard();
+	const bingoValues = ref(new Map());
 
 	const gridSize = getGameRules().gridSize;
 	const rowLength = getRowLength(gridSize);
+
+	function editGame(id, text) {
+		bingoValues.value.set(id, text);
+	}
 </script>
 
 <template>
@@ -26,6 +33,8 @@
 			v-for="tile in bingoCard.categories"
 			:key="tile.uuid"
 			:data="tile"
+			:valid="!!bingoValues.get(tile.uuid)"
+			@edit-game="editGame"
 		/>
 	</div>
 </template>
@@ -33,7 +42,7 @@
 <style scoped>
 	.bingo-card {
 		display: grid;
-		gap: clamp(0.2em, 1vw, 0.8em);
+		gap: clamp(0.2em, 1.3vw, 0.9em);
 		overflow-x: auto;
 		padding-bottom: 8px;
 		grid-template-columns: repeat(var(--rows), 1fr);
