@@ -3,6 +3,10 @@ import { reactive, computed, readonly } from 'vue';
 // Holds the categories and associated data for the generated bingo card
 const bingoCard = reactive({});
 
+function saveToBrowser() {
+	localStorage.setItem('bingoCard', JSON.stringify(bingoCard));
+}
+
 export function useBingo() {
 	// Returns true if bingo card has been configured
 	const isBingoCardSet = computed(() => Object.keys(bingoCard).length !== 0);
@@ -26,13 +30,20 @@ export function useBingo() {
 		Object.entries(bingoCardTemp).forEach(([key, value]) => {
 			bingoCard[key] = value;
 		});
-		localStorage.setItem('bingoCard', JSON.stringify(bingoCard));
+		saveToBrowser();
+	}
+
+	function setGame(uuid, game) {
+		const index = bingoCard.categories.findIndex(cat => cat.uuid === uuid);
+		bingoCard.categories[index].game = game;
+		saveToBrowser();
 	}
 
 	return {
 		isBingoCardSet,
 		initializeData,
 		getBingoCard,
-		setBingoCard
+		setBingoCard,
+		setGame
 	};
 }

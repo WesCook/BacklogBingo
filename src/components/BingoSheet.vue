@@ -9,27 +9,32 @@
 	
 	const { getGameRules } = useGameRules();
 	const { getRowLength } = useCategories();
-	const { getBingoCard } = useBingo();
+	const { getBingoCard, setGame } = useBingo();
 
 	const bingoCard = getBingoCard();
-	const bingoValues = ref(new Map());
-
 	const gridSize = getGameRules().gridSize;
 	const rowLength = getRowLength(gridSize);
 
-	function editGame(uuid, text) {
-		bingoValues.value.set(uuid, text);
+	// Populate local map for UI changes, win checking, etc
+	const completionMap = ref(new Map());
+	bingoCard.categories.forEach(cat => {
+		completionMap.value.set(cat.uuid, Boolean(cat.game));
+	});
+
+	// Update bingo sheet values
+	function editGame(uuid, game) {
+		setGame(uuid, game);
+		completionMap.value.set(uuid, Boolean(game));
 	}
 
 	// Get index of tile from uuid, then calculate the offset and focus new tile
 	function keyboardNavigation(uuid, offset) {
 		const index = bingoCard.categories.findIndex(cat => cat.uuid === uuid);
 		const nextTile = bingoCard.categories[index + offset];
-		if (!nextTile) {
-			return;
+		if (nextTile) {
+			const elem = document.querySelector(`.bingo-tile[data-uuid='${nextTile.uuid}']`);
+			elem.focus();
 		}
-		const elem = document.querySelector(`.bingo-tile[data-uuid='${nextTile.uuid}']`);
-		elem.focus();
 	}
 </script>
 
@@ -45,7 +50,7 @@
 			:key="tile.uuid"
 			:data="tile"
 			:row-length="rowLength"
-			:valid="!!bingoValues.get(tile.uuid)"
+			:valid="completionMap.get(tile.uuid)"
 			@edit-game="editGame"
 			@navigate="keyboardNavigation"
 		/>

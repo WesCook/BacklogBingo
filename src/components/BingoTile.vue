@@ -45,6 +45,7 @@
 	>
 		<span>{{ data.name }}</span>
 		<input
+			:value="data.game"
 			@blur="submitGameChange"
 			@keyup.enter="submitGameChange"
 			@keydown="keyboardNavigation"
