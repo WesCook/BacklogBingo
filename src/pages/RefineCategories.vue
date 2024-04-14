@@ -202,8 +202,8 @@
 <template>
 	<div class="nav-bar">
 		<h1>Refine Categories</h1>
-		<RouterLink to="/gamerules"><button>← Go Back</button></RouterLink>
 		<StartOver />
+		<RouterLink to="/gamerules"><button>← Go Back</button></RouterLink>
 	</div>
 
 	<p>Now you can fine-tune the categories your bingo card will pick from.  Please uncheck any categories that you don't believe are possible for you to complete.</p>

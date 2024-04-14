@@ -1,28 +1,40 @@
 <script setup>
-	import { useBingo } from '../composables/bingo.js';
+	import { useGameRules } from '../composables/gamerules.js';
 
-	import StartOver from '../components/StartOver.vue';
+	import BingoSheet from '../components/BingoSheet.vue';
 
-	const { getBingoCard } = useBingo();
+	const { getGameRules } = useGameRules();
+
+	const winConditionMessage = getWinConditionMessage(getGameRules().winCondition);
+
+	function getWinConditionMessage(winCondition) {
+		if (winCondition === 'row-col-diag') {
+			return 'a row, column, or diagonal';
+		} else if (winCondition === 'row-col') {
+			return 'a row or column';
+		} else if (winCondition === 'blackout') {
+			return 'every tile (a blackout)';
+		}
+	}
 </script>
 
 <template>
-	<h1>Bingo Card</h1>
-	<p>Hooray, you've generated a bingo card!  This page isn't done yet, but you can click Reset below to start over.</p>
-	<StartOver />
+	<div class="nav-bar">
+		<h1>Bingo Card</h1>
+		<RouterLink to="/gamerules">
+			<button>Edit Rules</button>
+		</RouterLink>
+	</div>
+
+	<p>That's a spiffy looking Bingo card!  To win, you must complete {{ winConditionMessage }}.</p>
 	
-	<RouterLink to="/gamerules">
-		<button>Edit Game Rules</button>
-	</RouterLink>
-	<pre>{{ getBingoCard() }}</pre>
+	<BingoSheet />
 </template>
 
 <style scoped>
-	pre {
-		margin-top: 4em;
-	}
-
-	button + a {
-		margin-left: 1em;
+	.nav-bar {
+		display: flex;
+		justify-content: space-between;
+		align-items: start;
 	}
 </style>

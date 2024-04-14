@@ -37,12 +37,12 @@
 <template>
 	<div class="nav-bar">
 		<h1>Configure Game Rules</h1>
+		<StartOver />
 		<RouterLink
 			:to="(isBingoCardSet) ? '/bingo' : '/card'"
 		>
 			<button>← Go Back</button>
 		</RouterLink>
-		<StartOver />
 	</div>
 
 	<p v-if="!isBingoCardSet">
@@ -75,8 +75,8 @@
 	.nav-bar {
 		display: flex;
 		align-items: start;
-		gap: 10px;
 		justify-content: end;
+		gap: 10px;
 
 		h1 {
 			margin-right: auto;
