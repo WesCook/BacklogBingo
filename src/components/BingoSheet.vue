@@ -17,8 +17,19 @@
 	const gridSize = getGameRules().gridSize;
 	const rowLength = getRowLength(gridSize);
 
-	function editGame(id, text) {
-		bingoValues.value.set(id, text);
+	function editGame(uuid, text) {
+		bingoValues.value.set(uuid, text);
+	}
+
+	// Get index of tile from uuid, then calculate the offset and focus new tile
+	function keyboardNavigation(uuid, offset) {
+		const index = bingoCard.categories.findIndex(cat => cat.uuid === uuid);
+		const nextTile = bingoCard.categories[index + offset];
+		if (!nextTile) {
+			return;
+		}
+		const elem = document.querySelector(`.bingo-tile[data-uuid='${nextTile.uuid}']`);
+		elem.focus();
 	}
 </script>
 
@@ -33,8 +44,10 @@
 			v-for="tile in bingoCard.categories"
 			:key="tile.uuid"
 			:data="tile"
+			:row-length="rowLength"
 			:valid="!!bingoValues.get(tile.uuid)"
 			@edit-game="editGame"
+			@navigate="keyboardNavigation"
 		/>
 	</div>
 </template>

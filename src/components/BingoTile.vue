@@ -4,16 +4,36 @@
 			type: Object,
 			required: true
 		},
+		rowLength: {
+			type: Number,
+			required: true,
+		},
 		valid: {
 			type: Boolean,
 			required: false
 		}
 	});
 
-	const emit = defineEmits(['edit-game']);
+	const emit = defineEmits(['edit-game', 'navigate']);
 
 	function submitGameChange(event) {
 		emit('edit-game', props.data.uuid, event.target.value);
+	}
+
+	function keyboardNavigation(event) {
+		if (!event.ctrlKey || event.shiftKey) {
+			return;
+		}
+
+		if (event.key === 'ArrowUp') {
+			emit('navigate', props.data.uuid, -props.rowLength);
+		} else if (event.key === 'ArrowDown') {
+			emit('navigate', props.data.uuid, props.rowLength);
+		} else if (event.key === 'ArrowLeft') {
+			emit('navigate', props.data.uuid, -1);
+		} else if (event.key === 'ArrowRight') {
+			emit('navigate', props.data.uuid, 1);
+		}
 	}
 </script>
 
@@ -21,11 +41,13 @@
 	<label
 		class="bingo-tile"
 		:class="{ valid: valid }"
+		:data-uuid="data.uuid"
 	>
 		<span>{{ data.name }}</span>
 		<input
 			@blur="submitGameChange"
 			@keyup.enter="submitGameChange"
+			@keydown="keyboardNavigation"
 			@focus="$event.target.select()"
 		>
 	</label>

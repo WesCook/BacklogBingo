@@ -26,7 +26,7 @@
 		</RouterLink>
 	</div>
 
-	<p>That's a spiffy looking Bingo card!  To win, you must complete {{ winConditionMessage }}.</p>
+	<p>That's a spiffy looking Bingo card!  To win, you must complete {{ winConditionMessage }}.  You can use ctrl + arrow buttons to navigate.</p>
 	
 	<BingoSheet />
 </template>
