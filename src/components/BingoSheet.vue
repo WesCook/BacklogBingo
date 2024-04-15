@@ -6,6 +6,7 @@
 	import { useBingo } from '../composables/bingo.js';
 
 	import BingoTile from '../components/BingoTile.vue';
+	import { Fireworks } from '@fireworks-js/vue';
 	
 	const { getGameRules } = useGameRules();
 	const { getRowLength } = useCategories();
@@ -29,11 +30,27 @@
 	// Set of all UUIDs making up winning pattern
 	const winningTiles = ref(getWinningTiles());
 
+	// Fireworks setup
+	const fireworks = ref();
+	const options = ref({ opacity: 0.8 });
+	let fireworksTimeout;
+	const fireworksAnimationTime = 8000;
+
+	const setsAreEqual = (set1, set2) => set1.size === set2.size && [...set1].every(value => set2.has(value));
+
 	// Update bingo sheet values
-	function editGame(uuid, game) {
+	function editGameEvent(uuid, game) {
 		setGame(uuid, game); // Update composable and browser storage
 		completionMap.value.set(uuid, Boolean(game)); // Update completion map
-		winningTiles.value = getWinningTiles(); // Update winning tiles
+
+		// Update winning tiles and play fireworks
+		const newWinningTiles = getWinningTiles();
+		if (!setsAreEqual(newWinningTiles, winningTiles.value)) {
+			winningTiles.value = newWinningTiles;
+			if (winningTiles.value.size) {
+				startFireworks();
+			}
+		}
 	}
 
 	// Returns list of all UUIDs in set of winning tiles
@@ -130,9 +147,24 @@
 			elem.focus();
 		}
 	}
+
+	async function startFireworks() {
+		clearTimeout(fireworksTimeout);
+		fireworks.value.start();
+		fireworksTimeout = setTimeout(async () => {
+			await fireworks.value.waitStop();
+		}, fireworksAnimationTime);
+	}
 </script>
 
 <template>
+	<Fireworks
+		ref="fireworks"
+		:autostart="false"
+		:options="options"
+		class="fireworks"
+	/>
+
 	<div
 		class="bingo-card"
 		:class="{'data-size': gridSize}"
@@ -146,7 +178,7 @@
 			:row-length="rowLength"
 			:valid="completionMap.get(tile.uuid)"
 			:win="winningTiles.has(tile.uuid)"
-			@edit-game="editGame"
+			@edit-game="editGameEvent"
 			@navigate="keyboardNavigation"
 		/>
 	</div>
@@ -166,5 +198,14 @@
 			/* Normally rows are implicitly created.  This overrides them with a set size, so they share their height across all tiles. */
 			grid-template-rows: repeat(var(--rows), 1fr);
 		}
+	}
+
+	.fireworks {
+		position: fixed;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 5;
+		pointer-events: none;
 	}
 </style>
