@@ -8,7 +8,7 @@ const defaultGameModes = {
 	'standard': {
 		winCondition: 'row-col-diag',
 		gridSize: 'medium',
-		golf: false,
+		allowDuplicates: false,
 		lockRandom: false,
 		allowSimilar: false,
 		star: 'wildcard'
@@ -16,7 +16,7 @@ const defaultGameModes = {
 	'golf': {
 		winCondition: 'blackout',
 		gridSize: 'medium',
-		golf: true,
+		allowDuplicates: true,
 		lockRandom: false,
 		allowSimilar: false,
 		star: 'free'

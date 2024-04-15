@@ -88,19 +88,6 @@
 				</p>
 			</li>
 			<li>
-				<h3>Golf Rules</h3>
-				<label>
-					<input
-						id="golf"
-						type="checkbox"
-						:checked="gamerules.golf"
-						@change="setGameRule($event.target.id, $event.target.checked)"
-					>
-					<span>Enable golf rules</span>
-				</label>
-				<p>Golf rules allow games to apply to multiple categories.  This lets you focus on playing strategically.</p>
-			</li>
-			<li>
 				<h3>Star Tile</h3>
 				<select
 					id="star"
@@ -128,6 +115,19 @@
 					<span>Lock random</span>
 				</label>
 				<p>The random button helps you choose a category to focus on.  This setting locks the button until you satisfy the chosen category, for a more restrictive game style.</p>
+			</li>
+			<li>
+				<h3>Allow Duplicates</h3>
+				<label>
+					<input
+						id="allowDuplicates"
+						type="checkbox"
+						:checked="gamerules.allowDuplicates"
+						@change="setGameRule($event.target.id, $event.target.checked)"
+					>
+					<span>Allow duplicates</span>
+				</label>
+				<p>Allow the same game to be used in multiple categories.  This enables playing by golf rules, where you strategically choose games.</p>
 			</li>
 			<li>
 				<h3>Allow Similar</h3>
