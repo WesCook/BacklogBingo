@@ -11,8 +11,10 @@
 	const { getRowLength } = useCategories();
 	const { getBingoCard, setGame } = useBingo();
 
+	const gamerules = getGameRules();
 	const bingoCard = getBingoCard();
-	const gridSize = getGameRules().gridSize;
+
+	const gridSize = gamerules.gridSize;
 	const rowLength = getRowLength(gridSize);
 
 	// Populate local map for UI changes, win checking, etc
@@ -21,10 +23,97 @@
 		completionMap.value.set(cat.uuid, Boolean(cat.game));
 	});
 
+	// Array of all arrays of possible win conditions
+	const winStates = getWinStates(gamerules.winCondition);
+
+
 	// Update bingo sheet values
 	function editGame(uuid, game) {
 		setGame(uuid, game);
 		completionMap.value.set(uuid, Boolean(game));
+		if (checkWin()) {
+			console.log('Win!');
+		}
+	}
+
+	function checkWin() {
+		for (const winState of winStates) { // Check all possible win states
+			let match = true;
+			for (const uuid of winState) { // Check all UUIDs in current win state
+				if (!completionMap.value.get(uuid)) {
+					match = false;
+					break;
+				}
+			}
+
+			if (match) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	function getWinStates(winCondition) {
+		const winStates = [];
+		let currentReq;
+
+		// Rows
+		currentReq = [];
+		if (winCondition === 'row-col' || winCondition === 'row-col-diag') {
+			bingoCard.categories.forEach((tile, index) => {
+				currentReq.push(tile.uuid);
+				if ((index + 1) % rowLength === 0) {
+					winStates.push(currentReq);
+					currentReq = [];
+				}
+			});
+		}
+
+		// Cols
+		currentReq = [];
+		if (winCondition === 'row-col' || winCondition === 'row-col-diag') {
+			for (let col = 0; col < rowLength; col++) {
+				for (let row = 0; row < rowLength; row++) {
+					const index = col + row * rowLength;
+					const tile = bingoCard.categories[index];
+					currentReq.push(tile.uuid);
+				}
+				winStates.push(currentReq);
+				currentReq = [];
+			}
+		}
+
+		// Diagonals
+		if (winCondition === 'row-col-diag') {
+			// Top-left to bottom-right
+			currentReq = [];
+			for (let i = 0; i < rowLength * rowLength; i += rowLength + 1) {
+				const tile = bingoCard.categories[i];
+				currentReq.push(tile.uuid);
+			}
+			winStates.push(currentReq);
+
+			// Top-right to bottom-left
+			currentReq = [];
+			for (let i = rowLength - 1; i < rowLength * rowLength - 1; i += rowLength - 1) {
+				const tile = bingoCard.categories[i];
+				currentReq.push(tile.uuid);
+			}
+			winStates.push(currentReq);
+		}
+
+
+		// Blackout
+		if (winCondition === 'blackout') {
+			currentReq = [];
+			bingoCard.categories.forEach(tile => {
+				currentReq.push(tile.uuid);
+			});
+			winStates.push(currentReq);
+		}
+
+		return winStates;
 	}
 
 	// Get index of tile from uuid, then calculate the offset and focus new tile
