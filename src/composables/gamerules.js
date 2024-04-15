@@ -1,5 +1,7 @@
 import { reactive, computed, readonly, toRaw } from 'vue';
 
+import { objectsAreEqual } from '../utils/compare.js';
+
 // Holds the current game rules
 const gamerules = reactive({});
 
@@ -107,24 +109,13 @@ export function useGameRules() {
 	// Calculating instead of storing gamemode allows us to change the default later
 	// without creating conflicts.
 	function calculateGameMode(shrinkGrid) {
-		// Returns true if objects match
-		// Not using stringify for comparison because that's impacted by key order
-		const compareObjects = (obj1, obj2) => {
-			for (const key of Object.keys(obj1)) {
-				if (obj1[key] !== obj2[key]) {
-					return false;
-				}
-			}
-			return true;
-		};
-
 		// Get defaults, but transform if small grid is required
 		const std = (shrinkGrid) ? transformShrinkGrid(defaultGameModes['standard']) : defaultGameModes['standard'];
 		const golf = (shrinkGrid) ? transformShrinkGrid(defaultGameModes['golf']) : defaultGameModes['golf'];
 
-		if (compareObjects(gamerules, std)) {
+		if (objectsAreEqual(gamerules, std)) {
 			return 'standard';
-		} else if (compareObjects(gamerules, golf)) {
+		} else if (objectsAreEqual(gamerules, golf)) {
 			return 'golf';
 		}
 		return 'custom';

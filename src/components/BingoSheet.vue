@@ -4,6 +4,7 @@
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
+	import { setsAreEqual } from '../utils/compare.js';
 
 	import BingoTile from '../components/BingoTile.vue';
 	import { Fireworks } from '@fireworks-js/vue';
@@ -36,7 +37,6 @@
 	let fireworksTimeout;
 	const fireworksAnimationTime = 8000;
 
-	const setsAreEqual = (set1, set2) => set1.size === set2.size && [...set1].every(value => set2.has(value));
 
 	// Update bingo sheet values
 	function editGameEvent(uuid, game) {
