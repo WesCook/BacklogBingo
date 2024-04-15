@@ -26,17 +26,20 @@
 	// Array of all arrays of possible win conditions
 	const winStates = getWinStates(gamerules.winCondition);
 
+	// Set of all UUIDs making up winning pattern
+	const winningTiles = ref(getWinningTiles());
 
 	// Update bingo sheet values
 	function editGame(uuid, game) {
-		setGame(uuid, game);
-		completionMap.value.set(uuid, Boolean(game));
-		if (checkWin()) {
-			console.log('Win!');
-		}
+		setGame(uuid, game); // Update composable and browser storage
+		completionMap.value.set(uuid, Boolean(game)); // Update completion map
+		winningTiles.value = getWinningTiles(); // Update winning tiles
 	}
 
-	function checkWin() {
+	// Returns list of all UUIDs in set of winning tiles
+	// If blank set is returned, then it's not a victory
+	function getWinningTiles() {
+		const winningTiles = new Set();
 		for (const winState of winStates) { // Check all possible win states
 			let match = true;
 			for (const uuid of winState) { // Check all UUIDs in current win state
@@ -47,11 +50,13 @@
 			}
 
 			if (match) {
-				return true;
+				for (const uuid of winState) {
+					winningTiles.add(uuid);
+				}
 			}
 		}
 
-		return false;
+		return winningTiles;
 	}
 
 	function getWinStates(winCondition) {
@@ -140,6 +145,7 @@
 			:data="tile"
 			:row-length="rowLength"
 			:valid="completionMap.get(tile.uuid)"
+			:win="winningTiles.has(tile.uuid)"
 			@edit-game="editGame"
 			@navigate="keyboardNavigation"
 		/>

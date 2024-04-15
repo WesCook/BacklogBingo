@@ -6,11 +6,15 @@
 		},
 		rowLength: {
 			type: Number,
-			required: true,
+			required: true
 		},
 		valid: {
 			type: Boolean,
-			required: false
+			default: false
+		},
+		win: {
+			type: Boolean,
+			default: false
 		}
 	});
 
@@ -40,7 +44,7 @@
 <template>
 	<label
 		class="bingo-tile"
-		:class="{ valid: valid }"
+		:class="{ valid: valid, win: win }"
 		:data-uuid="data.uuid"
 	>
 		<span>{{ data.name }}</span>
@@ -55,6 +59,7 @@
 </template>
 
 <style scoped>
+	/* Tile layout */
 	.bingo-tile {
 		display: flex;
 		gap: 5px;
@@ -82,10 +87,15 @@
 		}
 	}
 
+	/* Tile states */
 	.valid {
 		background-color: var(--tone4);
 	}
+	.win {
+		background-color: var(--tone3);
+	}
 
+	/* Text boxes */
 	input {
 		margin-top: auto;
 		min-width: 10ch;
