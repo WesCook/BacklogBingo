@@ -7,8 +7,9 @@
 	import { setsAreEqual } from '../utils/compare.js';
 
 	import BingoTile from '../components/BingoTile.vue';
+	import BingoMarkdown from '../components/BingoMarkdown.vue';
 	import { Fireworks } from '@fireworks-js/vue';
-	
+
 	const { getGameRules } = useGameRules();
 	const { getRowLength } = useCategories();
 	const { getBingoCard, setGame } = useBingo();
@@ -18,6 +19,8 @@
 
 	const gridSize = gamerules.gridSize;
 	const rowLength = getRowLength(gridSize);
+
+	const markdown = ref('');
 
 	// Populate local map for UI changes, win checking, etc
 	const completionMap = ref(new Map());
@@ -182,6 +185,8 @@
 			@navigate="keyboardNavigation"
 		/>
 	</div>
+
+	<BingoMarkdown v-model="markdown" />
 </template>
 
 <style scoped>
