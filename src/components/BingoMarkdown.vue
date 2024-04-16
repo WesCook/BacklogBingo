@@ -19,20 +19,25 @@
 
 	// Update markdown initially and on change
 	markdown.value = generateMarkdown(bingoCard.categories, rowLength);
-	watch(bingoCard.categories, catArr => {
-		markdown.value = generateMarkdown(catArr, rowLength);
+	watch(bingoCard.categories, categories => {
+		markdown.value = generateMarkdown(categories, rowLength);
 	});
 
 
 	function generateMarkdown(categories, rowLength) {
 		let table = '';
 		let index = 0;
+		const centerCol = Math.floor(rowLength / 2);
 
 		// Generate table header
 		let header = '|';
 		for (let i = 0; i < rowLength; i++) {
-			if (i === Math.floor(rowLength / 2)) {
-				header += (bingoCard.win) ? ' Winning Bingo! |' : ' Bingo |';
+			if (i === centerCol - 1) {
+				header += ` Mode: ${capitalizeFirstLetter(gamemode)} |`;
+			} else if (i === centerCol) {
+				header += (bingoCard.win) ? ' Winning Bingo! |' : ' Bingo! |';
+			} else if (i === centerCol + 1) {
+				header += ` Finished ${bingoCard.categories.filter(obj => obj.game).length}/${bingoCard.categories.length} |`;
 			} else {
 				header += ' |';
 			}
@@ -49,7 +54,6 @@
 		// Generate table rows
 		while (index < categories.length) {
 			const row = categories.slice(index, index + rowLength);
-			// const rowCells = row.map(item => `| ${item.game ? `~~${item.cat}~~` : item.cat}${item.game ? `<br>**✔ ${item.game}**` : ''} `).join('') + '|'; // One-liner.  Split up for readability.
 			const rowCells = row.map(item => {
 				let cellContent = '';
 				if (item.game) {
@@ -79,6 +83,10 @@
 
 		// Copy to clipboard
 		navigator.clipboard.writeText(markdown.value);
+	}
+
+	function capitalizeFirstLetter(str) {
+		return str.charAt(0).toUpperCase() + str.slice(1);
 	}
 </script>
 
