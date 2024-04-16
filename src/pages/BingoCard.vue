@@ -2,6 +2,7 @@
 	import { useGameRules } from '../composables/gamerules.js';
 
 	import BingoSheet from '../components/BingoSheet.vue';
+	import BingoMarkdown from '../components/BingoMarkdown.vue';
 
 	const { getGameRules } = useGameRules();
 
@@ -27,8 +28,10 @@
 	</div>
 
 	<p>That's a spiffy looking Bingo card!  To win, you must complete {{ winConditionMessage }}.  You can use ctrl + arrow buttons to navigate.</p>
-	
 	<BingoSheet />
+
+	<p>And here's your Markdown-formatted card for easy sharing.</p>
+	<BingoMarkdown />
 </template>
 
 <style scoped>

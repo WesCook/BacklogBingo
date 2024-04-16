@@ -47,7 +47,7 @@
 		:class="{ valid: valid, win: win }"
 		:data-uuid="data.uuid"
 	>
-		<span>{{ data.name }}</span>
+		<span>{{ data.cat }}</span>
 		<input
 			:value="data.game"
 			@blur="submitGameChange"

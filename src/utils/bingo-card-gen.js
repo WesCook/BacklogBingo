@@ -14,6 +14,7 @@ export function generateBingoCard(name, categories) {
 	if (chosenCategories) {
 		const bingoCard = {
 			name: name,
+			win: false,
 			categories: chosenCategories
 		};
 		setBingoCard(bingoCard);

@@ -26,6 +26,7 @@ export function useBingo() {
 		return readonly(bingoCard);
 	}
 
+	// Overwrite entire card with new data
 	function setBingoCard(bingoCardTemp) {
 		Object.entries(bingoCardTemp).forEach(([key, value]) => {
 			bingoCard[key] = value;
@@ -33,10 +34,16 @@ export function useBingo() {
 		saveToBrowser();
 	}
 
+	// Save the game name entered in that tile's text box
 	function setGame(uuid, game) {
 		const index = bingoCard.categories.findIndex(cat => cat.uuid === uuid);
 		bingoCard.categories[index].game = game;
 		saveToBrowser();
+	}
+
+	// Current win state of the bingo card
+	function setWinning(state) {
+		bingoCard.win = state;
 	}
 
 	return {
@@ -44,6 +51,7 @@ export function useBingo() {
 		initializeData,
 		getBingoCard,
 		setBingoCard,
-		setGame
+		setGame,
+		setWinning
 	};
 }

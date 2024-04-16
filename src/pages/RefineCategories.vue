@@ -180,13 +180,13 @@
 		if (skip) {
 			catSubset = Array.from(categoryList).map(([uuid, catObj]) => ({
 				uuid,
-				name: catObj.name,
+				cat: catObj.name,
 				group: catObj.group
 			}));
 		} else {
 			catSubset = categoryValues.value.map(uuid => ({
 				uuid,
-				name: categoryList.get(uuid).name,
+				cat: categoryList.get(uuid).name,
 				group: categoryList.get(uuid).group
 			}));
 		}
