@@ -94,6 +94,7 @@
 	<textarea
 		:value="markdown"
 		class="textarea"
+		readonly
 	>&nbsp;</textarea>
 	<button
 		class="copy-btn"
@@ -116,11 +117,11 @@
 		height: 140px;
 		min-height: 100px;
 		max-height: 600px;
-		margin: 25px 0 10px 0;
 		padding: 10px;
 		font-family: monospace;
 		font-size: 0.9em;
 		transition: none;
+		margin-bottom: 10px;
 	}
 	.copy-btn {
 		all: unset;

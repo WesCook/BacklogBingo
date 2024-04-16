@@ -27,7 +27,7 @@
 		</RouterLink>
 	</div>
 
-	<p>That's a spiffy looking Bingo card!  To win, you must complete {{ winConditionMessage }}.  You can use ctrl + arrow buttons to navigate.</p>
+	<p>That's a spiffy looking Bingo card!  To win, you must complete {{ winConditionMessage }}.  You can use Ctrl + Arrow keys to navigate.</p>
 	<BingoSheet />
 
 	<p>And here's your Markdown-formatted card for easy sharing.</p>

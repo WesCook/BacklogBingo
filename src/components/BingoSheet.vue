@@ -194,6 +194,7 @@
 		overflow-x: auto;
 		padding-bottom: 8px;
 		grid-template-columns: repeat(var(--rows), 1fr);
+		margin: 2em 0 1.5em 0;
 	}
 
 	@media(min-width: 900px) {
