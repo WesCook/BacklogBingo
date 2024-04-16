@@ -21,7 +21,9 @@
 	const emit = defineEmits(['edit-game', 'navigate']);
 
 	function submitGameChange(event) {
-		emit('edit-game', props.data.uuid, event.target.value);
+		let game = event.target.value;
+		game = game.trim();
+		emit('edit-game', props.data.uuid, game);
 	}
 
 	function keyboardNavigation(event) {
