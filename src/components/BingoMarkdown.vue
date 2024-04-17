@@ -126,7 +126,7 @@
 	.copy-btn {
 		all: unset;
 		padding: 5px;
-		font-variant-emoji: normal;
+		font-variant-emoji: text;
 	}
 
 	.status {

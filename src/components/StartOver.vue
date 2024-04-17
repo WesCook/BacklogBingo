@@ -31,7 +31,7 @@
 	.btn {
 		border-color: #5f0000;
 		background-color: color-mix(in srgb, var(--background-shaded) 80%, #5f0000);
-		font-variant-emoji: normal;
+		font-variant-emoji: text;
 	}
 	.btn:hover {
 		background-color: color-mix(in srgb, var(--background-shaded) 60%, #5f0000);
