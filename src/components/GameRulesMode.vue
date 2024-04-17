@@ -89,6 +89,11 @@
 			transform: scale(1.12);
 		}
 
+		/* Subtly darken selected game mode */
+		label:has(input[type="radio"]:checked) {
+			filter: grayscale(15%);
+		}
+
 		/* Color strips */
 		label:nth-of-type(1) {background-color: var(--tone1);}
 		label:nth-of-type(2) {background-color: var(--tone2);}
