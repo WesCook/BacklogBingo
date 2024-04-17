@@ -85,9 +85,15 @@ a:active {
 	color: var(--link-active);
 }
 
+/* Fake buttons */
+a.button {
+	text-decoration: none;
+}
+
 /* Controls */
 input,
 button,
+a.button,
 textarea,
 select,
 input[type="file"]::file-selector-button {
@@ -98,6 +104,7 @@ input[type="file"]::file-selector-button {
 }
 
 button,
+a.button,
 input[type="submit"],
 input[type="button"] {
 	padding: 8px;

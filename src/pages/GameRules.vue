@@ -40,8 +40,9 @@
 		<StartOver />
 		<RouterLink
 			:to="(isBingoCardSet) ? '/bingo' : '/card'"
+			class="button"
 		>
-			<button>← Go Back</button>
+			← Go Back
 		</RouterLink>
 	</div>
 
@@ -65,8 +66,9 @@
 		<RouterLink
 			v-if="!isBingoCardSet"
 			to="categories"
+			class="button"
 		>
-			<button>Confirm Game Rules</button>
+			Confirm Game Rules
 		</RouterLink>
 	</div>
 </template>

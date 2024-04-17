@@ -22,8 +22,11 @@
 <template>
 	<div class="nav-bar">
 		<h1>Bingo Card</h1>
-		<RouterLink to="/gamerules">
-			<button>Edit Rules</button>
+		<RouterLink
+			to="/gamerules"
+			class="button"
+		>
+			Edit Rules
 		</RouterLink>
 	</div>
 
