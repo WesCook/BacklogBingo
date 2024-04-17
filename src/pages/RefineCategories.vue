@@ -211,17 +211,6 @@
 	<p>Now you can fine-tune the categories your bingo card will pick from.  Please uncheck any categories that you don't believe are possible for you to complete.</p>
 	<p>When you're ready, click <em>Generate Card</em> to create a unique bingo card from the selected categories, or click <em>Skip</em> to include all categories.</p>
 
-	<div class="btn-bar">
-		<button @click="generateCard(true)">Skip this step</button>
-		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
-		<button
-			:disabled="buttonsDisabled"
-			@click="generateCard(false)"
-		>
-			Generate Card
-		</button>
-	</div>
-
 	<!-- Group Toggles -->
 	<div
 		v-if="groupList.size"
@@ -265,6 +254,7 @@
 	<p>Your card will be saved locally, and no information is stored online.  To avoid data loss, please do not delete your browser data.</p>
 	<p>You need to select at least <span>{{ minCategories }}</span> categories for a full Bingo card.</p>
 
+	<!-- Navigation Buttons -->
 	<div class="btn-bar">
 		<button @click="generateCard(true)">Skip this step</button>
 		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
