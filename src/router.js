@@ -8,7 +8,6 @@ const { isCardSourceSet } = useCategories();
 const { isBingoCardSet } = useBingo();
 const { setError, clearError } = useErrors();
 
-import HomePage from './pages/HomePage.vue';
 import CardSource from './pages/CardSource.vue';
 import GameRules from './pages/GameRules.vue';
 import RefineCategories from './pages/RefineCategories.vue';
@@ -16,7 +15,15 @@ import BingoCard from './pages/BingoCard.vue';
 import NotFound from './pages/NotFound.vue';
 
 const routes = [
-	{ path: '/', component: HomePage },
+	{ path: '/', component: NotFound, beforeEnter: () => {
+		if (isBingoCardSet.value) {
+			return '/bingo';
+		} else if (isCardSourceSet.value) {
+			return '/gamerules';
+		} else {
+			return '/card';
+		}
+	} },
 	{ path: '/card', component: CardSource, beforeEnter: () => {
 		if (isBingoCardSet.value) {
 			setError('You cannot access that page once a bingo card has been generated.  You have been redirected.');
