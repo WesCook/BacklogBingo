@@ -58,11 +58,9 @@ export function useGameRules() {
 
 	// Load data from browser and update local state
 	function initializeData() {
-		const gamerulesTemp = JSON.parse(localStorage.getItem('gamerules'));
-		if (gamerulesTemp) {
-			Object.entries(gamerulesTemp).forEach(([key, value]) => {
-				gamerules[key] = value; // Mutate values to avoid losing reactivity
-			});
+		const gamerulesStored = JSON.parse(localStorage.getItem('gamerules'));
+		if (gamerulesStored) {
+			Object.assign(gamerules, gamerulesStored);
 		}
 	}
 

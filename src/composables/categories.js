@@ -14,11 +14,9 @@ export function useCategories() {
 	// Load data from browser and update local state
 	// Mutate values to avoid losing reactivity
 	function initializeData() {
-		const cardSourceTemp = JSON.parse(localStorage.getItem('cardSource'));
-		if (cardSourceTemp) {
-			Object.entries(cardSourceTemp).forEach(([key, value]) => {
-				cardSource[key] = value;
-			});
+		const cardSourceStored = JSON.parse(localStorage.getItem('cardSource'));
+		if (cardSourceStored) {
+			Object.assign(cardSource, cardSourceStored);
 		}
 	}
 
@@ -39,10 +37,8 @@ export function useCategories() {
 		return cardSource.categories.length;
 	}
 
-	function setCardSource(categoriesObj) {
-		Object.entries(categoriesObj).forEach(([key, value]) => {
-			cardSource[key] = value; // Mutate values to avoid losing reactivity
-		});
+	function setCardSource(cardSourceNew) {
+		Object.assign(cardSource, cardSourceNew);
 		localStorage.setItem('cardSource', JSON.stringify(cardSource));
 	}
 

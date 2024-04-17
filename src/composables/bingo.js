@@ -14,11 +14,9 @@ export function useBingo() {
 	// Load data from browser and update local state
 	// Mutate values to avoid losing reactivity
 	function initializeData() {
-		const bingoCardTemp = JSON.parse(localStorage.getItem('bingoCard'));
-		if (bingoCardTemp) {
-			Object.entries(bingoCardTemp).forEach(([key, value]) => {
-				bingoCard[key] = value;
-			});
+		const bingoCardStored = JSON.parse(localStorage.getItem('bingoCard'));
+		if (bingoCardStored) {
+			Object.assign(bingoCard, bingoCardStored);
 		}
 	}
 
@@ -27,10 +25,8 @@ export function useBingo() {
 	}
 
 	// Overwrite entire card with new data
-	function setBingoCard(bingoCardTemp) {
-		Object.entries(bingoCardTemp).forEach(([key, value]) => {
-			bingoCard[key] = value;
-		});
+	function setBingoCard(bingoCardNew) {
+		Object.assign(bingoCard, bingoCardNew);
 		saveToBrowser();
 	}
 
