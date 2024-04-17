@@ -28,6 +28,9 @@
 	// Array of all arrays of possible win conditions
 	const winStates = getWinStates(gamerules.winCondition);
 
+	// Set of all UUIDs with duplicate entries
+	const duplicateTiles = ref(getDuplicateTiles());
+
 	// Set of all UUIDs making up winning pattern
 	const winningTiles = ref(getWinningTiles());
 
@@ -42,6 +45,7 @@
 	function editEntryEvent(uuid, entry) {
 		updateEntry(uuid, entry); // Update composable and browser storage
 		completionMap.value.set(uuid, Boolean(entry)); // Update completion map
+		duplicateTiles.value = getDuplicateTiles(); // Update duplicates set
 
 		// Update winning tiles and play fireworks
 		const newWinningTiles = getWinningTiles();
@@ -52,8 +56,32 @@
 				startFireworks();
 			} else {
 				setWinning(false);
+				fireworks.value.waitStop();
 			}
 		}
+	}
+
+	function getDuplicateTiles() {
+		const seenEntries = new Set();
+		const duplicateUUIDs = new Set();
+
+		bingoCard.categories.forEach(cat => {
+			// Ignore empty strings and undefined
+			if (!cat.entry) {
+				return;
+			}
+			const entry = cat.entry.toLowerCase();
+
+			// Make list of entries we've seen before.  If a dupe is found, add all UUIDs with that entry to dupes list
+			if (seenEntries.has(entry)) {
+				const uuids = bingoCard.categories.filter(cardCat => String(cardCat.entry).toLowerCase() === entry).map(cardCat => cardCat.uuid);
+				uuids.forEach(uuid => duplicateUUIDs.add(uuid));
+			} else {
+				seenEntries.add(entry);
+			}
+		});
+
+		return duplicateUUIDs;
 	}
 
 	// Returns list of all UUIDs in set of winning tiles
@@ -63,7 +91,7 @@
 		for (const winState of winStates) { // Check all possible win states
 			let match = true;
 			for (const uuid of winState) { // Check all UUIDs in current win state
-				if (!completionMap.value.get(uuid)) {
+				if (!completionMap.value.get(uuid) || (!gamerules.allowDuplicates && duplicateTiles.value.has(uuid))) {
 					match = false;
 					break;
 				}
@@ -181,6 +209,7 @@
 			:row-length="rowLength"
 			:valid="completionMap.get(tile.uuid)"
 			:win="winningTiles.has(tile.uuid)"
+			:dupe="!gamerules.allowDuplicates && duplicateTiles.has(tile.uuid)"
 			@edit-entry="editEntryEvent"
 			@navigate="keyboardNavigation"
 		/>

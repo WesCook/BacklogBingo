@@ -15,6 +15,10 @@
 		win: {
 			type: Boolean,
 			default: false
+		},
+		dupe: {
+			type: Boolean,
+			default: false
 		}
 	});
 
@@ -46,7 +50,7 @@
 <template>
 	<label
 		class="bingo-tile"
-		:class="{ valid: valid, win: win }"
+		:class="{ valid, win, dupe }"
 		:data-uuid="data.uuid"
 	>
 		<span>{{ data.cat }}</span>
@@ -96,6 +100,16 @@
 	.win {
 		background-color: var(--tone3);
 	}
+	.dupe {
+		background-color: color-mix(in srgb, var(--tone1) 40%, var(--background-shaded));
+
+		input:not(:focus) {
+			animation-name: colorFade;
+			animation-duration: 4s;
+			animation-timing-function: linear;
+			animation-iteration-count: infinite;
+		}
+	}
 
 	/* Text boxes */
 	input {
@@ -106,5 +120,12 @@
 	}
 	input:focus {
 		outline: 1px solid color-mix(in srgb, var(--foreground-color) 60%, var(--background-color));
+	}
+
+	/* Color animation */
+	@keyframes colorFade {
+		0%   { border-color: var(--border-color); }
+		50%  { border-color: #AD301B; }
+		100% { border-color: var(--border-color); }
 	}
 </style>
