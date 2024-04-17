@@ -23,6 +23,7 @@
 	}
 
 	const loadedJSON = ref();
+	const previewActive = ref();
 	
 	// If we're returning, load the stored card source
 	if (isCardSourceSet.value) {
@@ -40,11 +41,6 @@
 		clearError();
 		setCardSource(loadedJSON.value);
 		router.push('/gamerules');
-	}
-
-	const previewActive = ref();
-	function preview() {
-		previewActive.value = true;
 	}
 </script>
 
@@ -111,7 +107,7 @@
 		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
 		<p>When you're ready, click <em>Confirm Source</em> to move to the next step and configure your game rules.</p>
 		<div class="btn-bar">
-			<button @click="preview">Preview Categories</button>
+			<button @click="previewActive = true;">Preview Categories</button>
 			<button @click="confirmSource">Confirm Source</button>
 		</div>
 	</section>
@@ -120,6 +116,7 @@
 		<ModalWindow
 			v-if="previewActive"
 			:title="loadedJSON.name"
+			:show-close="true"
 			@close="previewActive = false"
 		>
 			<ol class="preview-list">

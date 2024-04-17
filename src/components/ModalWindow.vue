@@ -6,6 +6,10 @@
 		title: {
 			type: String,
 			default: ''
+		},
+		showClose: {
+			type: Boolean,
+			default: false
 		}
 	});
 
@@ -52,7 +56,12 @@
 			<div class="modal-content">
 				<slot />
 			</div>
-			<button @click="closeModal">Close</button>
+			<button
+				v-if="showClose"
+				@click="closeModal"
+			>
+				Close
+			</button>
 		</div>
 	</dialog>
 </template>
@@ -80,7 +89,7 @@
 	.modal-content {
 		max-height: 50vh;
 		overflow-y: auto;
-		padding-bottom: 2em;
+		padding-bottom: 1.5em;
 	}
 
 	.modal-header {
