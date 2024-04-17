@@ -342,6 +342,6 @@
 	.required-tally {
 		align-self: center;
 		font-size: 0.8em;
-		color: grey;
+		color: color-mix(in srgb, var(--foreground-color) 61%, var(--background-color));
 	}
 </style>
