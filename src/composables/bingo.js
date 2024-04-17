@@ -41,6 +41,12 @@ export function useBingo() {
 		saveToBrowser();
 	}
 
+	function clearBingoCard() {
+		delete bingoCard.name;
+		delete bingoCard.win;
+		delete bingoCard.categories;
+	}
+
 	// Current win state of the bingo card
 	function setWinning(state) {
 		bingoCard.win = state;
@@ -52,6 +58,7 @@ export function useBingo() {
 		getBingoCard,
 		setBingoCard,
 		setGame,
+		clearBingoCard,
 		setWinning
 	};
 }
