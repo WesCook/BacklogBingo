@@ -21,7 +21,7 @@
 				@change="resetGameRules('standard', isBingoCardSet.value, shouldShrinkGrid());"
 			>
 			<h3>Standard</h3>
-			<p>The main way to play.  Complete a row, column, or diagonal to win.  Each game only counts for one category.</p>
+			<p>The main way to play.  Complete a row, column, or diagonal to win.  Each entry only counts for one category.</p>
 		</label>
 		<label>
 			<input
@@ -32,7 +32,7 @@
 				@change="resetGameRules('golf', isBingoCardSet.value, shouldShrinkGrid());"
 			>
 			<h3>Golf</h3>
-			<p>Focus on strategy, and try to finish a whole board playing as few unique titles as possible.</p>
+			<p>Focus on strategy, and try to finish a whole board with as few unique entries as possible.</p>
 		</label>
 		<label>
 			<input

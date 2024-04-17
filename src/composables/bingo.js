@@ -34,10 +34,10 @@ export function useBingo() {
 		saveToBrowser();
 	}
 
-	// Save the game name entered in that tile's text box
-	function setGame(uuid, game) {
+	// Save the entry name entered in that tile's text box
+	function updateEntry(uuid, entry) {
 		const index = bingoCard.categories.findIndex(cat => cat.uuid === uuid);
-		bingoCard.categories[index].game = game;
+		bingoCard.categories[index].entry = entry;
 		saveToBrowser();
 	}
 
@@ -57,7 +57,7 @@ export function useBingo() {
 		initializeData,
 		getBingoCard,
 		setBingoCard,
-		setGame,
+		updateEntry,
 		clearBingoCard,
 		setWinning
 	};

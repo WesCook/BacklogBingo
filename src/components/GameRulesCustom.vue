@@ -100,7 +100,7 @@
 				</select>
 				<p>
 					The center tile is often marked as a freebie.  This lets you customize its behaviour.<br>
-					A free space counts as a completed game, while a wildcard allows any game with no specific category.
+					A free space counts as a completed tile, while a wildcard allows any type of entry with no specific category.
 				</p>
 			</li>
 			<li>
@@ -127,7 +127,7 @@
 					>
 					<span>Allow duplicates</span>
 				</label>
-				<p>Allow the same game to be used in multiple categories.  This enables playing by golf rules, where you strategically choose games.</p>
+				<p>Allow the same entry to be used in multiple categories.  This enables playing by golf rules, where you try to optimize overlapping category.</p>
 			</li>
 			<li>
 				<h3>Allow Similar</h3>

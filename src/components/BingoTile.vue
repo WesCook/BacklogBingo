@@ -18,12 +18,12 @@
 		}
 	});
 
-	const emit = defineEmits(['edit-game', 'navigate']);
+	const emit = defineEmits(['edit-entry', 'navigate']);
 
-	function submitGameChange(event) {
-		let game = event.target.value;
-		game = game.trim();
-		emit('edit-game', props.data.uuid, game);
+	function submitEntryChange(event) {
+		let entry = event.target.value;
+		entry = entry.trim();
+		emit('edit-entry', props.data.uuid, entry);
 	}
 
 	function keyboardNavigation(event) {
@@ -51,9 +51,9 @@
 	>
 		<span>{{ data.cat }}</span>
 		<input
-			:value="data.game"
-			@blur="submitGameChange"
-			@keyup.enter="submitGameChange"
+			:value="data.entry"
+			@blur="submitEntryChange"
+			@keyup.enter="submitEntryChange"
 			@keydown="keyboardNavigation"
 			@focus="$event.target.select()"
 		>

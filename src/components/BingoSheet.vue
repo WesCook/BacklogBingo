@@ -11,7 +11,7 @@
 
 	const { getGameRules } = useGameRules();
 	const { getRowLength } = useCategories();
-	const { getBingoCard, setGame, setWinning } = useBingo();
+	const { getBingoCard, updateEntry, setWinning } = useBingo();
 
 	const gamerules = getGameRules();
 	const bingoCard = getBingoCard();
@@ -22,7 +22,7 @@
 	// Populate local map for UI changes, win checking, etc
 	const completionMap = ref(new Map());
 	bingoCard.categories.forEach(cat => {
-		completionMap.value.set(cat.uuid, Boolean(cat.game));
+		completionMap.value.set(cat.uuid, Boolean(cat.entry));
 	});
 
 	// Array of all arrays of possible win conditions
@@ -39,9 +39,9 @@
 
 
 	// Update bingo sheet values
-	function editGameEvent(uuid, game) {
-		setGame(uuid, game); // Update composable and browser storage
-		completionMap.value.set(uuid, Boolean(game)); // Update completion map
+	function editEntryEvent(uuid, entry) {
+		updateEntry(uuid, entry); // Update composable and browser storage
+		completionMap.value.set(uuid, Boolean(entry)); // Update completion map
 
 		// Update winning tiles and play fireworks
 		const newWinningTiles = getWinningTiles();
@@ -181,7 +181,7 @@
 			:row-length="rowLength"
 			:valid="completionMap.get(tile.uuid)"
 			:win="winningTiles.has(tile.uuid)"
-			@edit-game="editGameEvent"
+			@edit-entry="editEntryEvent"
 			@navigate="keyboardNavigation"
 		/>
 	</div>

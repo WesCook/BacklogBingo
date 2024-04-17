@@ -37,7 +37,7 @@
 			} else if (i === centerCol) {
 				header += (bingoCard.win) ? ' Winning Bingo! |' : ' Bingo! |';
 			} else if (i === centerCol + 1) {
-				header += ` Finished ${bingoCard.categories.filter(obj => obj.game).length}/${bingoCard.categories.length} |`;
+				header += ` Finished ${bingoCard.categories.filter(obj => obj.entry).length}/${bingoCard.categories.length} |`;
 			} else {
 				header += ' |';
 			}
@@ -56,13 +56,13 @@
 			const row = categories.slice(index, index + rowLength);
 			const rowCells = row.map(item => {
 				let cellContent = '';
-				if (item.game) {
+				if (item.entry) {
 					cellContent += `~~${item.cat}~~`;
 				} else {
 					cellContent += item.cat;
 				}
-				if (item.game) {
-					cellContent += `<br>**✔ ${item.game}**`;
+				if (item.entry) {
+					cellContent += `<br>**✔ ${item.entry}**`;
 				}
 				return `| ${cellContent} `;
 			}).join('') + '|';
