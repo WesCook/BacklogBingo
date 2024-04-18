@@ -1,7 +1,7 @@
 <script setup>
 	import { ref } from 'vue';
+	
 	import { useRouter } from 'vue-router';
-
 	import { useBingo } from '../composables/bingo.js';
 
 	import ModalWindow from '../components/ModalWindow.vue';

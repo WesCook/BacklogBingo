@@ -67,7 +67,6 @@
 	<p>That's a spiffy looking Bingo card!  To win, you must complete {{ winConditionMessage }}.  You can use Ctrl + Arrow keys to navigate.</p>
 	<BingoSheet @win-update="winUpdate" />
 
-	<p>And here's your Markdown-formatted card for easy sharing.</p>
 	<BingoMarkdown :win-state="winState" />
 
 	<Fireworks

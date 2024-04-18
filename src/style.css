@@ -117,6 +117,7 @@ input[type="button"] {
 
 	&:focus {
 		outline: 2px solid var(--foreground-color);
+		background-color: color-mix(in srgb, var(--background-shaded) 95%, var(--foreground-color));
 	}
 
 	&:not(:disabled):active {

@@ -23,7 +23,7 @@
 	}
 
 	const loadedJSON = ref();
-	const previewActive = ref();
+	const modalActive = ref();
 	
 	// If we're returning, load the stored card source
 	if (isCardSourceSet.value) {
@@ -107,17 +107,17 @@
 		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
 		<p>When you're ready, click <em>Confirm Source</em> to move to the next step and configure your game rules.</p>
 		<div class="btn-bar">
-			<button @click="previewActive = true;">Preview Categories</button>
+			<button @click="modalActive = true;">Preview Categories</button>
 			<button @click="confirmSource">Confirm Source</button>
 		</div>
 	</section>
 
 	<teleport to="body">
 		<ModalWindow
-			v-if="previewActive"
+			v-if="modalActive"
 			:title="loadedJSON.name"
 			:show-close="true"
-			@close="previewActive = false"
+			@close="modalActive = false"
 		>
 			<ol class="preview-list">
 				<li

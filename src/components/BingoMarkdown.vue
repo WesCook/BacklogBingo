@@ -1,9 +1,11 @@
 <script setup>
-	import { ref, watch } from 'vue';
+	import { ref, watch, computed } from 'vue';
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
+
+	import BingoMarkdownInfo from '../components/BingoMarkdownInfo.vue';
 
 	const props = defineProps({
 		winState: {
@@ -128,21 +130,25 @@
 </script>
 
 <template>
+	<div class="header">
+		<span>Markdown Table</span>
+		<BingoMarkdownInfo />
+		<span
+			ref="status"
+			class="status"
+		>Copied!</span>
+		<button
+			class="copy-btn"
+			@click="copy"
+		>
+			📋&#xFE0E; &nbsp;Copy
+		</button>
+	</div>
 	<textarea
 		:value="markdown"
 		class="textarea"
 		readonly
 	>&nbsp;</textarea>
-	<button
-		class="copy-btn"
-		@click="copy"
-	>
-		📋&#xFE0E; &nbsp;Copy Table
-	</button>
-	<span
-		ref="status"
-		class="status"
-	>Copied!</span>
 </template>
 
 <style scoped>
@@ -160,10 +166,25 @@
 		transition: none;
 		margin-bottom: 10px;
 	}
+
+	.header {
+		display: flex;
+		align-items: center;
+		justify-content: start;
+		gap: 5px;
+		margin-bottom: 0.6em;
+
+		.status {
+			margin-left: auto;
+			margin-right: 12px;
+		}
+	}
+
 	.copy-btn {
 		all: unset;
 		padding: 5px;
 		font-variant-emoji: text;
+		white-space: nowrap;
 	}
 
 	.status {

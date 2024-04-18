@@ -58,6 +58,7 @@
 			</div>
 			<button
 				v-if="showClose"
+				class="close-button"
 				@click="closeModal"
 			>
 				Close
@@ -95,5 +96,9 @@
 	.modal-header {
 		text-align: center;
 		margin: 1em;
+	}
+
+	.close-button:focus {
+		outline: none;
 	}
 </style>
