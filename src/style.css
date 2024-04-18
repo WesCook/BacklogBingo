@@ -54,15 +54,16 @@ body {
 }
 
 /* Modal <dialog> */
-html {
-	/* Prevents layout shift on tall pages when opening modal.  However, uses up too much horizontal space currently. */
-	scrollbar-gutter: stable;
-}
 body:has(dialog[open]) {
 	overflow: hidden; /* Prevent scrolling with active modal */
 }
 dialog {
 	margin: auto; /* Re-center as reset clears this */
+}
+@media(min-width: 1000px) {
+	html {
+		scrollbar-gutter: stable;
+	}
 }
 
 /* Text spacing */

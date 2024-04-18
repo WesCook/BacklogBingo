@@ -37,15 +37,15 @@ export function useBingo() {
 		saveToBrowser();
 	}
 
+	function getStarTile() {
+		const starIndex = Math.floor(bingoCard.categories.length / 2);
+		return bingoCard.categories[starIndex].uuid;
+	}
+
 	function clearBingoCard() {
 		delete bingoCard.name;
 		delete bingoCard.win;
 		delete bingoCard.categories;
-	}
-
-	// Current win state of the bingo card
-	function setWinning(state) {
-		bingoCard.win = state;
 	}
 
 	return {
@@ -54,7 +54,7 @@ export function useBingo() {
 		getBingoCard,
 		setBingoCard,
 		updateEntry,
-		clearBingoCard,
-		setWinning
+		getStarTile,
+		clearBingoCard
 	};
 }

@@ -8,6 +8,10 @@
 			type: Number,
 			required: true
 		},
+		star: {
+			type: String,
+			default: ''
+		},
 		valid: {
 			type: Boolean,
 			default: false
@@ -53,18 +57,38 @@
 		:class="{ valid, win, dupe }"
 		:data-uuid="data.uuid"
 	>
-		<span>{{ data.cat }}</span>
+		<!-- Free star -->
 		<span
-			v-if="dupe"
-			class="dupe-message"
-		>Duplicate Entry</span>
-		<input
-			:value="data.entry"
-			@blur="submitEntryChange"
-			@keyup.enter="submitEntryChange"
-			@keydown="keyboardNavigation"
-			@focus="$event.target.select()"
+			v-if="star === 'free'"
+			class="star-free"
 		>
+			★
+		</span>
+		<template v-else>
+			<!-- Category -->
+			<span
+				v-if="star === 'wildcard'"
+				class="star-wildcard"
+			>Wildcard<br>(anything goes!)</span>
+			<span v-else>{{ data.cat }}</span>
+
+			<!-- Duplicate message -->
+			<span
+				v-if="dupe"
+				class="dupe-message"
+			>
+				Duplicate Entry
+			</span>
+
+			<!-- Entry -->
+			<input
+				:value="data.entry"
+				@blur="submitEntryChange"
+				@keyup.enter="submitEntryChange"
+				@keydown="keyboardNavigation"
+				@focus="$event.target.select()"
+			>
+		</template>
 	</label>
 </template>
 
@@ -113,6 +137,28 @@
 			animation-timing-function: linear;
 			animation-iteration-count: infinite;
 		}
+	}
+
+	/* Star tile */
+	label:has(> span[class^=star-]) {
+		container: star / inline-size;
+		place-content: center;
+		position: relative;
+	}
+	span[class^=star-] {
+		font-variant-emoji: text;
+	}
+	.star-free {
+		font-size: 45cqw;
+	}
+	.star-wildcard::after {
+		position: absolute;
+		top: 55%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		content: "★";
+		font-size: 40cqw;
+		opacity: 65%;
 	}
 
 	/* Duplicate message */

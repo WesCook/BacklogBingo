@@ -1,17 +1,17 @@
 <script setup>
-	import { ref } from 'vue';
+	import { ref, computed } from 'vue';
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
-	import { setsAreEqual } from '../utils/compare.js';
 
 	import BingoTile from '../components/BingoTile.vue';
-	import { Fireworks } from '@fireworks-js/vue';
+
+	const emit = defineEmits(['win-update']);
 
 	const { getGameRules } = useGameRules();
 	const { getRowLength } = useCategories();
-	const { getBingoCard, updateEntry, setWinning } = useBingo();
+	const { getBingoCard, getStarTile, updateEntry } = useBingo();
 
 	const gamerules = getGameRules();
 	const bingoCard = getBingoCard();
@@ -25,20 +25,31 @@
 		completionMap.value.set(cat.uuid, Boolean(cat.entry));
 	});
 
-	// Array of all arrays of possible win conditions
-	const winStates = getWinStates(gamerules.winCondition);
+	// Same values as completionMap, but overrides free star tile to true
+	const completionMapStar = computed(() => {
+		if (gamerules.star !== 'free') {
+			return completionMap.value;
+		}
+
+		// Duplicate map by value, to avoid mutating original
+		const completionMapNew = new Map();
+		completionMap.value.forEach((value, key) => {
+			completionMapNew.set(key, value);
+		});
+
+		const starUUID = getStarTile();
+		completionMapNew.set(starUUID, true);
+
+		return completionMapNew;
+	});
 
 	// Set of all UUIDs with duplicate entries
 	const duplicateTiles = ref(getDuplicateTiles());
 
-	// Set of all UUIDs making up winning pattern
-	const winningTiles = ref(getWinningTiles());
-
-	// Fireworks setup
-	const fireworks = ref();
-	const options = ref({ opacity: 0.8 });
-	let fireworksTimeout;
-	const fireworksAnimationTime = 8000;
+	// Win detection
+	const winStates = getWinStates(gamerules.winCondition); // Array of all arrays of possible win conditions
+	const winningTiles = ref(new Set()); // Set of all UUIDs making up winning pattern
+	checkWin();
 
 
 	// Update bingo sheet values
@@ -46,22 +57,7 @@
 		updateEntry(uuid, entry); // Update composable and browser storage
 		completionMap.value.set(uuid, Boolean(entry)); // Update completion map
 		duplicateTiles.value = getDuplicateTiles(); // Update duplicates set
-
-		// Update winning tiles and play fireworks
-		const newWinningTiles = getWinningTiles();
-		if (!setsAreEqual(newWinningTiles, winningTiles.value)) { // Only update if there's a change
-			if (newWinningTiles.size) { // Winning tiles found means at least one winning pattern was detected
-				setWinning(true);
-				if (newWinningTiles.size > winningTiles.value.size) {
-					startFireworks(); // Fireworks play only when number of winning tiles has gone up
-				}
-			} else { // Tiles were removed that undid the win
-				setWinning(false);
-				fireworks.value.waitStop();
-			}
-
-			winningTiles.value = newWinningTiles;
-		}
+		checkWin(); // Updates winningTiles, plays fireworks, and emits event
 	}
 
 	function getDuplicateTiles() {
@@ -87,6 +83,26 @@
 		return duplicateUUIDs;
 	}
 
+	// Checks if any win conditions are met
+	// Has side effects.  Updates winningTiles Set, and emits win state to parent
+	function checkWin() {
+		const newWinningTiles = getWinningTiles();
+		
+		// Winning tiles found means at least one winning pattern was detected
+		if (newWinningTiles.size) {
+			// Fireworks play only when number of winning tiles has gone up
+			if (newWinningTiles.size > winningTiles.value.size) {
+				emit('win-update', true, true);
+			} else {
+				emit('win-update', true);
+			}
+		} else { // Tiles were removed that undid the win
+			emit('win-update', false);
+		}
+
+		winningTiles.value = newWinningTiles;
+	}
+
 	// Returns list of all UUIDs in set of winning tiles
 	// If blank set is returned, then it's not a victory
 	function getWinningTiles() {
@@ -94,7 +110,7 @@
 		for (const winState of winStates) { // Check all possible win states
 			let match = true;
 			for (const uuid of winState) { // Check all UUIDs in current win state
-				if (!completionMap.value.get(uuid) || (!gamerules.allowDuplicates && duplicateTiles.value.has(uuid))) {
+				if (!completionMapStar.value.get(uuid) || (!gamerules.allowDuplicates && duplicateTiles.value.has(uuid))) {
 					match = false;
 					break;
 				}
@@ -172,6 +188,20 @@
 		return winStates;
 	}
 
+	// Returns 'free' or 'wildcard' for center tile if enabled
+	function isStarTile(uuid) {
+		if (gamerules.star === 'disabled') {
+			return;
+		}
+
+		const starUUID = getStarTile();
+		if (uuid === starUUID) {
+			return gamerules.star;
+		}
+
+		return '';
+	}
+
 	// Get index of tile from uuid, then calculate the offset and focus new tile
 	function keyboardNavigation(uuid, offset) {
 		const index = bingoCard.categories.findIndex(cat => cat.uuid === uuid);
@@ -181,24 +211,9 @@
 			elem.focus();
 		}
 	}
-
-	async function startFireworks() {
-		clearTimeout(fireworksTimeout);
-		fireworks.value.start();
-		fireworksTimeout = setTimeout(async () => {
-			await fireworks.value.waitStop();
-		}, fireworksAnimationTime);
-	}
 </script>
 
 <template>
-	<Fireworks
-		ref="fireworks"
-		:autostart="false"
-		:options="options"
-		class="fireworks"
-	/>
-
 	<div
 		class="bingo-card"
 		:class="{'data-size': gridSize}"
@@ -210,7 +225,8 @@
 			:key="tile.uuid"
 			:data="tile"
 			:row-length="rowLength"
-			:valid="completionMap.get(tile.uuid)"
+			:star="isStarTile(tile.uuid)"
+			:valid="completionMapStar.get(tile.uuid)"
 			:win="winningTiles.has(tile.uuid)"
 			:dupe="!gamerules.allowDuplicates && duplicateTiles.has(tile.uuid)"
 			@edit-entry="editEntryEvent"
@@ -234,14 +250,5 @@
 			/* Normally rows are implicitly created.  This overrides them with a set size, so they share their height across all tiles. */
 			grid-template-rows: repeat(var(--rows), 1fr);
 		}
-	}
-
-	.fireworks {
-		position: fixed;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 5;
-		pointer-events: none;
 	}
 </style>

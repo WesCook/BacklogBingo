@@ -5,22 +5,34 @@
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
 
+	const props = defineProps({
+		winState: {
+			type: Boolean,
+			default: false
+		}
+	});
+
 	const { getGameRules, calculateGameMode } = useGameRules();
 	const { getRowLength, shouldShrinkGrid } = useCategories();
-	const { getBingoCard } = useBingo();
+	const { getBingoCard, getStarTile } = useBingo();
 
+	const gamerules = getGameRules();
 	const bingoCard = getBingoCard();
 	const gamemode = calculateGameMode(shouldShrinkGrid());
-	const gridSize = getGameRules().gridSize;
-	const rowLength = getRowLength(gridSize);
 
 	const markdown = ref();
 	const status = ref(); // Template ref
+
+	const gridSize = gamerules.gridSize;
+	const rowLength = getRowLength(gridSize);
 
 	// Update markdown initially and on change
 	markdown.value = generateMarkdown(bingoCard.categories, rowLength);
 	watch(bingoCard.categories, categories => {
 		markdown.value = generateMarkdown(categories, rowLength);
+	});
+	watch(props, () => {
+		markdown.value = generateMarkdown(bingoCard.categories, rowLength);
 	});
 
 
@@ -28,6 +40,18 @@
 		let table = '';
 		let index = 0;
 		const centerCol = Math.floor(rowLength / 2);
+		const starUUID = getStarTile();
+
+		// Get category numbers
+		let currentCategories;
+		let totalCategories;
+		if (gamerules.star !== 'free') {
+			currentCategories = bingoCard.categories.filter(cat => cat.entry).length;
+			totalCategories = bingoCard.categories.length;
+		} else {
+			currentCategories = bingoCard.categories.filter(cat => cat.entry && cat.uuid !== starUUID).length;
+			totalCategories = bingoCard.categories.length - 1;
+		}
 
 		// Generate table header
 		let header = '|';
@@ -35,9 +59,9 @@
 			if (i === centerCol - 1) {
 				header += ` Mode: ${capitalizeFirstLetter(gamemode)} |`;
 			} else if (i === centerCol) {
-				header += (bingoCard.win) ? ' Winning Bingo! |' : ' Bingo! |';
+				header += (props.winState) ? ' Winning Bingo! |' : ' Bingo! |';
 			} else if (i === centerCol + 1) {
-				header += ` Finished ${bingoCard.categories.filter(obj => obj.entry).length}/${bingoCard.categories.length} |`;
+				header += ` Finished ${currentCategories}/${totalCategories} |`;
 			} else {
 				header += ' |';
 			}
@@ -56,13 +80,26 @@
 			const row = categories.slice(index, index + rowLength);
 			const rowCells = row.map(item => {
 				let cellContent = '';
-				if (item.entry) {
-					cellContent += `~~${item.cat}~~`;
-				} else {
-					cellContent += item.cat;
+				let catName = item.cat;
+
+				// Star tiles
+				if (gamerules.star === 'free' && item.uuid === starUUID) { // Free
+					return '| ★ ';
 				}
+				if (item.uuid === starUUID && gamerules.star === 'wildcard') { // Wildcard
+					catName = 'Wildcard';
+				}
+				
+				// Category
 				if (item.entry) {
-					cellContent += `<br>**✔ ${item.entry}**`;
+					cellContent += `~~${catName}~~`;
+				} else {
+					cellContent += catName;
+				}
+
+				// Entry
+				if (item.entry || (item.entry && gamerules.star === 'wildcard' && item.uuid === starUUID)) {
+					cellContent += ` <br> **✔ ${item.entry}**`;
 				}
 				return `| ${cellContent} `;
 			}).join('') + '|';
