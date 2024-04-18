@@ -54,6 +54,10 @@
 		:data-uuid="data.uuid"
 	>
 		<span>{{ data.cat }}</span>
+		<span
+			v-if="dupe"
+			class="dupe-message"
+		>Duplicate Entry</span>
 		<input
 			:value="data.entry"
 			@blur="submitEntryChange"
@@ -109,6 +113,15 @@
 			animation-timing-function: linear;
 			animation-iteration-count: infinite;
 		}
+	}
+
+	/* Duplicate message */
+	.dupe-message {
+		margin-top: auto;
+		font-size: 0.8em;
+	}
+	.dupe-message + input {
+		margin-top: 0.1em;
 	}
 
 	/* Text boxes */
