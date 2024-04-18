@@ -49,15 +49,18 @@
 
 		// Update winning tiles and play fireworks
 		const newWinningTiles = getWinningTiles();
-		if (!setsAreEqual(newWinningTiles, winningTiles.value)) {
-			winningTiles.value = newWinningTiles;
-			if (winningTiles.value.size) {
+		if (!setsAreEqual(newWinningTiles, winningTiles.value)) { // Only update if there's a change
+			if (newWinningTiles.size) { // Winning tiles found means at least one winning pattern was detected
 				setWinning(true);
-				startFireworks();
-			} else {
+				if (newWinningTiles.size > winningTiles.value.size) {
+					startFireworks(); // Fireworks play only when number of winning tiles has gone up
+				}
+			} else { // Tiles were removed that undid the win
 				setWinning(false);
 				fireworks.value.waitStop();
 			}
+
+			winningTiles.value = newWinningTiles;
 		}
 	}
 
