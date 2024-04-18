@@ -204,8 +204,17 @@
 
 	// Get index of tile from uuid, then calculate the offset and focus new tile
 	function keyboardNavigation(uuid, offset) {
-		const index = bingoCard.categories.findIndex(cat => cat.uuid === uuid);
-		const nextTile = bingoCard.categories[index + offset];
+		const getTile = (uuid, offset) =>  {
+			const index = bingoCard.categories.findIndex(cat => cat.uuid === uuid);
+			return bingoCard.categories[index + offset];
+		};
+
+		// Skip over free star tile
+		let nextTile = getTile(uuid, offset);
+		if (gamerules.star === 'free' && nextTile?.uuid === getStarTile()) {
+			nextTile = getTile(uuid, offset * 2);
+		}
+
 		if (nextTile) {
 			const elem = document.querySelector(`.bingo-tile[data-uuid='${nextTile.uuid}']`);
 			elem.focus();
