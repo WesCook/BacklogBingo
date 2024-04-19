@@ -39,7 +39,15 @@
 		<h1>Configure Game Rules</h1>
 		<StartOver />
 		<RouterLink
-			:to="(isBingoCardSet) ? '/bingo' : '/card'"
+			v-if="isBingoCardSet"
+			to="/bingo"
+			class="button"
+		>
+			Back to Card
+		</RouterLink>
+		<RouterLink
+			v-else
+			to="/card"
 			class="button"
 		>
 			← Go Back
@@ -58,19 +66,18 @@
 	</h2>
 	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
 
-	<p v-if="!isBingoCardSet">
-		When you're ready, click <em>Confirm Game Rules</em> to move to the next step and refine your categories.
-	</p>
+	<template v-if="!isBingoCardSet">
+		<p>When you're ready, click <em>Confirm Game Rules</em> to move to the next step and refine your categories.</p>
 
-	<div class="btn-bar">
-		<RouterLink
-			v-if="!isBingoCardSet"
-			to="categories"
-			class="button"
-		>
-			Confirm Game Rules
-		</RouterLink>
-	</div>
+		<div class="btn-bar">
+			<RouterLink
+				to="categories"
+				class="button"
+			>
+				Confirm Game Rules
+			</RouterLink>
+		</div>
+	</template>
 </template>
 
 <style scoped>

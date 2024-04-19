@@ -71,7 +71,7 @@
 
 		.buttons {
 			display: flex;
-			justify-content: flex-end;
+			justify-content: end;
 			margin-right: 2px;
 			gap: 1.5em;
 			margin-top: 2em;

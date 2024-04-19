@@ -1,5 +1,5 @@
 <script setup>
-	import { ref, watch, computed } from 'vue';
+	import { ref, watch } from 'vue';
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';

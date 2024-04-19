@@ -127,7 +127,7 @@
 					>
 					<span>Allow duplicates</span>
 				</label>
-				<p>Allow the same entry to be used in multiple categories.  This enables playing by golf rules, where you try to optimize overlapping category.</p>
+				<p>Allow the same entry to be used in multiple categories.  This enables playing by golf rules, where you try to optimize overlapping categories.</p>
 			</li>
 			<li>
 				<h3>Allow Similar</h3>

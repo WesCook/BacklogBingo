@@ -214,7 +214,6 @@
 	</div>
 
 	<p>Now you can fine-tune the categories your bingo card will pick from.  Please uncheck any categories that you don't believe are possible for you to complete.</p>
-	<p>When you're ready, click <em>Generate Card</em> to create a unique bingo card from the selected categories, or click <em>Skip</em> to include all categories.</p>
 
 	<!-- Group Toggles -->
 	<div
@@ -256,8 +255,8 @@
 		/>
 	</ul>
 
-	<p>Your card will be saved locally, and no information is stored online.  To avoid data loss, please do not delete your browser data.</p>
-	<p>You need to select at least <span>{{ minCategories }}</span> categories for a full Bingo card.</p>
+	<p>When you're ready, click <em>Generate Card</em> to create a unique bingo card from the selected categories, or click <em>Skip</em> to include all categories.</p>
+	<p>Your card will be saved locally, and no information is stored online.  To avoid data loss, <em>please do not delete your browser data</em>.</p>
 
 	<!-- Navigation Buttons -->
 	<div class="btn-bar">
@@ -331,6 +330,11 @@
 		.categories-list {
 			columns: 2;
 			column-gap: 24px;
+		}
+	}
+	@media (max-width: 699px) {
+		.categories-list li {
+			margin-bottom: 1px;
 		}
 	}
 
