@@ -65,15 +65,15 @@
 			<p>Bingo card sources from various online events.</p>
 			<ul class="list">
 				<CardSourceEvent
-					title="Tildes Gaming Backlog Nov 2023"
-					file="tildes-gaming-nov-2023.json"
+					title="Tildes Backlog Burner - May 2024"
+					file="tildes-gaming-may-2024.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
 				<CardSourceEvent
-					title="Tildes Gaming Backlog May 2024 - WIP"
-					file="tildes-gaming-may-2024.json"
+					title="Tildes Backlog Burner - Nov 2023"
+					file="tildes-gaming-nov-2023.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
