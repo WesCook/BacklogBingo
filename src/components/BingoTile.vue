@@ -65,11 +65,13 @@
 			★
 		</span>
 		<template v-else>
+			<!-- Wildcard Star -->
+			<template v-if="star === 'wildcard'">
+				<span>Wildcard<br>(anything goes!)</span>
+				<span class="star-wildcard">★</span>
+			</template>
+
 			<!-- Category -->
-			<span
-				v-if="star === 'wildcard'"
-				class="star-wildcard"
-			>Wildcard<br>(anything goes!)</span>
 			<span v-else>{{ data.cat }}</span>
 
 			<!-- Duplicate message -->
@@ -115,7 +117,7 @@
 			aspect-ratio: 1;
 		}
 	}
-	@media(min-width: 650px) {
+	@media(min-width: 670px) {
 		.bingo-card[data-size="medium"] .bingo-tile {
 			aspect-ratio: 1;
 		}
@@ -151,14 +153,10 @@
 	.star-free {
 		font-size: 45cqw;
 	}
-	.star-wildcard::after {
-		position: absolute;
-		top: 55%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		content: "★";
-		font-size: 40cqw;
-		opacity: 65%;
+	.star-wildcard {
+		font-size: 30cqw;
+		line-height: 1;
+		opacity: 80%;
 	}
 
 	/* Duplicate message */

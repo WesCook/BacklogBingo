@@ -64,7 +64,7 @@
 		</RouterLink>
 	</div>
 
-	<p>That's a spiffy looking Bingo card!  To win, you must complete {{ winConditionMessage }}.  You can use Ctrl + Arrow keys to navigate.</p>
+	<p>That's a spiffy looking bingo card!  To win, you must complete {{ winConditionMessage }}.  You can use Ctrl + Arrow keys to navigate.</p>
 	<BingoSheet @win-update="winUpdate" />
 
 	<BingoMarkdown :win-state="winState" />
