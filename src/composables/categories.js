@@ -4,42 +4,42 @@ import { useErrors } from '../composables/errors.js';
 
 const { setError } = useErrors();
 
-// Holds JSON data from the card source
-const cardSource = reactive({});
+// Holds JSON data from the category list
+const categoryList = reactive({});
 
 export function useCategories() {
-	// Returns true if card source has been configured
-	const isCardSourceSet = computed(() => Object.keys(cardSource).length !== 0);
+	// Returns true if category list has been configured
+	const isCategoryListSet = computed(() => Object.keys(categoryList).length !== 0);
 
 	// Load data from browser and update local state
 	// Mutate values to avoid losing reactivity
 	function initializeData() {
-		const cardSourceStored = JSON.parse(localStorage.getItem('cardSource'));
-		if (cardSourceStored) {
-			Object.assign(cardSource, cardSourceStored);
+		const categoryListStored = JSON.parse(localStorage.getItem('categoryList'));
+		if (categoryListStored) {
+			Object.assign(categoryList, categoryListStored);
 		}
 	}
 
-	function getCardSource() {
-		return readonly(cardSource);
+	function getCategoryList() {
+		return readonly(categoryList);
 	}
 
 	// Returns array of unique groups
-	function getCardSourceGroups() {
-		const groups = new Set(getCardSource().categories.map(category => category.group));
+	function getCategoryListGroups() {
+		const groups = new Set(getCategoryList().categories.map(category => category.group));
 		if (groups.has(undefined)) { // Empty values get caught as undefined so let's remove that
 			groups.delete(undefined);
 		}
 		return Array.from(groups);
 	}
 
-	function getCardSourceCatNumber() {
-		return cardSource.categories.length;
+	function getCategoryListCatNumber() {
+		return categoryList.categories.length;
 	}
 
-	function setCardSource(cardSourceNew) {
-		Object.assign(cardSource, cardSourceNew);
-		localStorage.setItem('cardSource', JSON.stringify(cardSource));
+	function setCategoryList(categoryListNew) {
+		Object.assign(categoryList, categoryListNew);
+		localStorage.setItem('categoryList', JSON.stringify(categoryList));
 	}
 
 	// Calculate max grid size from category number, rounded down to nearest accepted size
@@ -97,19 +97,19 @@ export function useCategories() {
 	}
 
 	function shouldShrinkGrid() {
-		if (cardSource.categories && getGridLabel(getMaxGridSize(getCardSourceCatNumber())) === 'small') {
+		if (categoryList.categories && getGridLabel(getMaxGridSize(getCategoryListCatNumber())) === 'small') {
 			return true;
 		}
 		return false;
 	}
 
 	return {
-		isCardSourceSet,
+		isCategoryListSet,
 		initializeData,
-		getCardSource,
-		getCardSourceGroups,
-		getCardSourceCatNumber,
-		setCardSource,
+		getCategoryList,
+		getCategoryListGroups,
+		getCategoryListCatNumber,
+		setCategoryList,
 		getMaxGridSize,
 		getGridLabel,
 		getCategoryNumber,

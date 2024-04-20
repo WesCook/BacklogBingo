@@ -4,11 +4,11 @@ import { useErrors } from './composables/errors.js';
 import { useCategories } from './composables/categories.js';
 import { useBingo } from './composables/bingo.js';
 
-const { isCardSourceSet } = useCategories();
+const { isCategoryListSet } = useCategories();
 const { isBingoCardSet } = useBingo();
 const { setError, clearError } = useErrors();
 
-import CardSource from './pages/CardSource.vue';
+import CategoryList from './pages/CategoryList.vue';
 import GameRules from './pages/GameRules.vue';
 import RefineCategories from './pages/RefineCategories.vue';
 import BingoCard from './pages/BingoCard.vue';
@@ -22,18 +22,18 @@ const routes = [
 		beforeEnter: () => {
 			if (isBingoCardSet.value) {
 				return '/bingo';
-			} else if (isCardSourceSet.value) {
+			} else if (isCategoryListSet.value) {
 				return '/gamerules';
 			} else {
-				return '/card';
+				return '/list';
 			}
 		}
 	},
 	{
-		path: '/card',
-		component: CardSource,
+		path: '/list',
+		component: CategoryList,
 		meta: {
-			title: 'Card Source - Backlog Bingo'
+			title: 'Category List - Backlog Bingo'
 		},
 		beforeEnter: () => {
 			if (isBingoCardSet.value) {
@@ -49,22 +49,22 @@ const routes = [
 			title: 'Game Rules - Backlog Bingo'
 		},
 		beforeEnter: () => {
-			if (!isCardSourceSet.value && !isBingoCardSet.value) {
-				setError('You cannot access that page without first defining a card source or bingo card.  You have been redirected to do so now.');
-				return '/card';
+			if (!isCategoryListSet.value && !isBingoCardSet.value) {
+				setError('You cannot access that page without first defining a category list or bingo card.  You have been redirected to do so now.');
+				return '/list';
 			}
 		}
 	},
 	{
-		path: '/categories',
+		path: '/refine',
 		component: RefineCategories,
 		meta: {
 			title: 'Refine Categories - Backlog Bingo'
 		},
 		beforeEnter: () => {
-			if (!isCardSourceSet.value) {
-				setError('You cannot access that page without first defining a card source.  You have been redirected to do so now.');
-				return '/card';
+			if (!isCategoryListSet.value) {
+				setError('You cannot access that page without first defining a category list.  You have been redirected to do so now.');
+				return '/list';
 			}
 			if (isBingoCardSet.value) {
 				setError('You cannot access that page once a bingo card has been generated.  You have been redirected.');
@@ -81,8 +81,8 @@ const routes = [
 		beforeEnter: () => {
 			if (!isBingoCardSet.value) {
 				setError('You cannot access that page without first generating a bingo card.  You have been redirected to do so now.');
-				if (!isCardSourceSet.value) {
-					return '/card';
+				if (!isCategoryListSet.value) {
+					return '/list';
 				} else {
 					return '/gamerules';
 				}

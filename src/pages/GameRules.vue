@@ -13,7 +13,7 @@
 	const { shouldShrinkGrid } = useCategories();
 	const { isBingoCardSet } = useBingo();
 
-	// When card source category limit is too low, the default grid size must be small.
+	// When category list limit is too low, the default grid size must be small.
 	// We need to inform the reset and comparisons functions of this.
 	const shouldShrink = shouldShrinkGrid();
 
@@ -23,7 +23,7 @@
 		resetGameRules('standard', false, shouldShrink);
 	}
 
-	// Shrink grid if category limit is too low.  Needs to run when changing card sources.
+	// Shrink grid if category limit is too low.  Needs to run when changing category lists.
 	if (shouldShrink) {
 		setGameRule('gridSize', 'small');
 	}
@@ -47,7 +47,7 @@
 		</RouterLink>
 		<RouterLink
 			v-else
-			to="/card"
+			to="/list"
 			class="button"
 		>
 			← Go Back
@@ -71,7 +71,7 @@
 
 		<div class="btn-bar">
 			<RouterLink
-				to="categories"
+				to="/refine"
 				class="button"
 			>
 				Confirm Game Rules

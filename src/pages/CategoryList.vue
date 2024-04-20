@@ -6,13 +6,13 @@
 	import { useCategories } from '../composables/categories.js';
 	import { validateJSON } from '../utils/json-parse.js';
 
-	import CardSourceEvent from '../components/CardSourceEvent.vue';
-	import CardSourceFile from '../components/CardSourceFile.vue';
-	import CardSourceURL from '../components/CardSourceURL.vue';
+	import CategoryListEvent from '../components/CategoryListEvent.vue';
+	import CategoryListFile from '../components/CategoryListFile.vue';
+	import CategoryListURL from '../components/CategoryListURL.vue';
 	import ModalWindow from '../components/ModalWindow.vue';
 
 	const router = useRouter();
-	const { getCardSource, setCardSource, isCardSourceSet } = useCategories();
+	const { getCategoryList, setCategoryList, isCategoryListSet } = useCategories();
 	const { clearError } = useErrors();
 
 	// Locking fieldset to disable all buttons when network request is active
@@ -25,9 +25,9 @@
 	const loadedJSON = ref();
 	const modalActive = ref();
 	
-	// If we're returning, load the stored card source
-	if (isCardSourceSet.value) {
-		loadedJSON.value = getCardSource();
+	// If we're returning, load the stored category list
+	if (isCategoryListSet.value) {
+		loadedJSON.value = getCategoryList();
 	}
 
 	function loadFile(json) {
@@ -37,20 +37,20 @@
 		}
 	}
 
-	function confirmSource() {
+	function confirmList() {
 		clearError();
-		setCardSource(loadedJSON.value);
+		setCategoryList(loadedJSON.value);
 		router.push('/gamerules');
 	}
 </script>
 
 <template>
-	<h1>Choose Bingo Card Source</h1>
+	<h1>Choose Category List</h1>
 	<p>
-		Select a bingo card from an event, or provide your own via JSON.
+		Select a category list from an event, or provide your own via JSON.
 		<em>
 			<a
-				href="https://github.com/WesCook/BacklogBingo/blob/main/public/event-cards/tildes-gaming-nov-2023.json"
+				href="https://github.com/WesCook/BacklogBingo/blob/main/public/event-lists/tildes-gaming-nov-2023.json"
 				target="_blank"
 			>Example Format</a>
 		</em>
@@ -61,17 +61,17 @@
 		class="card-wrapper"
 	>
 		<div class="card-event">
-			<h3>Prebuilt Event Cards</h3>
-			<p>Bingo card sources from various online events.</p>
+			<h3>Prebuilt Event Lists</h3>
+			<p>Bingo category lists from online events.</p>
 			<ul class="list">
-				<CardSourceEvent
+				<CategoryListEvent
 					title="Tildes Backlog Burner - May 2024"
 					file="tildes-gaming-may-2024.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
-				<CardSourceEvent
+				<CategoryListEvent
 					title="Tildes Backlog Burner - Nov 2023"
 					file="tildes-gaming-nov-2023.json"
 					:selected-name="loadedJSON?.name"
@@ -84,7 +84,7 @@
 		<div class="card-url">
 			<h3>From URL</h3>
 			<p>You may download from a URL online.</p>
-			<CardSourceURL
+			<CategoryListURL
 				@load-file="loadFile"
 				@lock-download="lockDownload"
 			/>
@@ -93,7 +93,7 @@
 		<div class="card-file">
 			<h3>From File</h3>
 			<p>Or select a file from your PC.</p>
-			<CardSourceFile
+			<CategoryListFile
 				@load-file="loadFile"
 				@lock-download="lockDownload"
 			/>
@@ -105,10 +105,10 @@
 		class="confirmation-panel"
 	>
 		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
-		<p>When you're ready, click <em>Confirm Source</em> to move to the next step and configure your game rules.</p>
+		<p>When you're ready, click <em>Confirm List</em> to move to the next step and configure your game rules.</p>
 		<div class="btn-bar">
 			<button @click="modalActive = true;">Preview Categories</button>
-			<button @click="confirmSource">Confirm Source</button>
+			<button @click="confirmList">Confirm List</button>
 		</div>
 	</section>
 

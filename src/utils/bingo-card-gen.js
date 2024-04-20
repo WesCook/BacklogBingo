@@ -17,7 +17,7 @@ export function generateBingoCard(name, categories) {
 			categories: chosenCategories
 		};
 		setBingoCard(bingoCard);
-		localStorage.removeItem('cardSource');
+		localStorage.removeItem('categoryList');
 		return true;
 	}
 	return false;

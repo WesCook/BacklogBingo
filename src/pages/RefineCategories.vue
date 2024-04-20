@@ -7,18 +7,18 @@
 	import { getThemedColors } from '../utils/color-gen.js';
 	import { generateBingoCard } from '../utils/bingo-card-gen.js';
 
-	import CategoriesGroup from '../components/CategoriesGroup.vue';
-	import CategoriesItem from '../components/CategoriesItem.vue';
+	import RefineCategoriesGroup from '../components/RefineCategoriesGroup.vue';
+	import RefineCategoriesItem from '../components/RefineCategoriesItem.vue';
 	import StartOver from '../components/StartOver.vue';
 
 	const router = useRouter();
 	const { getGameRules } = useGameRules();
-	const { getCardSource, getCategoryNumber } = useCategories();
+	const { getCategoryList, getCategoryNumber } = useCategories();
 
-	const cardSource = getCardSource();
+	const categoryList = getCategoryList();
 
 	// Category, group, and color lookup
-	const { categoryList, groupList } = populateCategoryAndGroups();
+	const { categoryMap, groupMap } = populateCategoryAndGroups();
 	const groupColors = generateColors();
 
 	// Checkbox state: initialize with all entries so they are checked by default
@@ -35,41 +35,40 @@
 	// Build new list of categories and groups for easier manipulation
 	// Using UUIDs as keys.  Avoiding using raw values in template and v-for keys.
 	function populateCategoryAndGroups() {
-		const categoryList = new Map();
-		const groupList = new Map();
-		const groupMap = new Map(); // Reverse map of UUID to group name
+		const categoryMap = new Map();
+		const groupMap = new Map();
+		const groupUUIDMap = new Map(); // Reverse map of UUID to group name
 
-		for (const categorySource of cardSource.categories) {
+		for (const catSource of categoryList.categories) {
 			// Create new, mutable category object
 			const category = {
-				name: categorySource.name
+				name: catSource.name
 			};
 
 			// Generate group UUID if needed, then add to object and Groups List
-			if (categorySource.group) {
+			if (catSource.group) {
 				let groupID;
-				if (groupMap.has(categorySource.group)) {
-					groupID = groupMap.get(categorySource.group);
+				if (groupUUIDMap.has(catSource.group)) {
+					groupID = groupUUIDMap.get(catSource.group);
 				} else {
 					groupID = crypto.randomUUID();
-					groupList.set(groupID, categorySource.group);
-					groupMap.set(categorySource.group, groupID);
+					groupMap.set(groupID, catSource.group);
+					groupUUIDMap.set(catSource.group, groupID);
 				}
 				category.group = groupID;
 			}
 
-			// Add to Category List
-			categoryList.set(crypto.randomUUID(), category);
+			categoryMap.set(crypto.randomUUID(), category);
 		}
 
-		return { categoryList, groupList };
+		return { categoryMap, groupMap };
 	}
 
 	// Generate colors to be assigned in template
 	function generateColors() {
-		const colors = getThemedColors(groupList.size);
+		const colors = getThemedColors(groupMap.size);
 		const groupColors = {};
-		Array.from(groupList).forEach((groupArray, index) => {
+		Array.from(groupMap).forEach((groupArray, index) => {
 			groupColors[groupArray[0]] = colors[index];
 		});
 
@@ -77,11 +76,11 @@
 	}
 
 	function getAllGroups() {
-		return [...groupList.keys()];
+		return [...groupMap.keys()];
 	}
 
 	function getAllCategories() {
-		return [...categoryList.keys()];
+		return [...categoryMap.keys()];
 	}
 
 	function selectAll() {
@@ -96,7 +95,7 @@
 
 	// Returns all category UUIDs for a given group UUID
 	function getCategoriesFromGroup(group) {
-		return Array.from(categoryList)
+		return Array.from(categoryMap)
 			.filter(([_catID, category]) => category.group === group)
 			.map(([uuid, _cat]) => uuid);
 	}
@@ -123,7 +122,7 @@
 		return groupsCategories.reduce((count, catID) => categoryValues.value.includes(catID) ? count + 1 : count, 0);
 	}
 
-	// Event from CategoriesGroup when group checkbox changes
+	// Event from RefineCategoriesGroup when group checkbox changes
 	function groupChangeEvent(group, checked) {
 		const groupsCategories = getCategoriesFromGroup(group);
 		if (checked) {
@@ -133,10 +132,10 @@
 		}
 	}
 
-	// Event from CategoriesItem when category checkbox changes
+	// Event from RefineCategoriesItem when category checkbox changes
 	function categoryChangeEvent(category) {
 		// Get group from category
-		const group = categoryList.get(category).group;
+		const group = categoryMap.get(category).group;
 
 		if (!group) {
 			return;
@@ -171,14 +170,14 @@
 	function generateCard(skip) {
 		// Collect all or only checked categories, then flatten into accessible structure (arr of objs)
 		let catSubset = [];
-		catSubset = Array.from(categoryList).map(([uuid, catObj]) => ({
+		catSubset = Array.from(categoryMap).map(([uuid, catObj]) => ({
 			uuid,
-			name: (skip) ? catObj.name : categoryList.get(uuid).name,
-			group: (skip) ? catObj.group : categoryList.get(uuid).group
+			name: (skip) ? catObj.name : categoryMap.get(uuid).name,
+			group: (skip) ? catObj.group : categoryMap.get(uuid).group
 		}));
 
 		if (skip) {
-			catSubset = Array.from(categoryList).map(([uuid, catObj]) => ({
+			catSubset = Array.from(categoryMap).map(([uuid, catObj]) => ({
 				uuid,
 				cat: catObj.name,
 				group: catObj.group
@@ -186,12 +185,12 @@
 		} else {
 			catSubset = categoryValues.value.map(uuid => ({
 				uuid,
-				cat: categoryList.get(uuid).name,
-				group: categoryList.get(uuid).group
+				cat: categoryMap.get(uuid).name,
+				group: categoryMap.get(uuid).group
 			}));
 		}
 
-		const success = generateBingoCard(cardSource.name, catSubset);
+		const success = generateBingoCard(categoryList.name, catSubset);
 		if (success) {
 			console.log('Bingo card generated!');
 			router.push('/bingo');
@@ -217,13 +216,13 @@
 
 	<!-- Group Toggles -->
 	<div
-		v-if="groupList.size"
+		v-if="groupMap.size"
 		class="groups-toggle"
 	>
 		<strong>Quick Toggle</strong>
 		<ul class="groups-list">
-			<CategoriesGroup
-				v-for="[uuid, group] of groupList"
+			<RefineCategoriesGroup
+				v-for="[uuid, group] of groupMap"
 				:key="uuid"
 				v-model="groupValues"
 				:uuid="uuid"
@@ -244,13 +243,13 @@
 
 	<!-- Category List -->
 	<ul class="categories-list">
-		<CategoriesItem
-			v-for="[uuid, category] of categoryList"
+		<RefineCategoriesItem
+			v-for="[uuid, category] of categoryMap"
 			:key="uuid"
 			v-model="categoryValues"
 			:uuid="uuid"
 			:category-name="category.name"
-			:color="groupColors[categoryList.get(uuid).group]"
+			:color="groupColors[categoryMap.get(uuid).group]"
 			@category-change="categoryChangeEvent"
 		/>
 	</ul>

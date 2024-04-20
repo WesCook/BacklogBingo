@@ -14,7 +14,7 @@
 	function doRestart() {
 		clearBingoCard(); // Overwrite bingo card in memory so navigation guard doesn't kick us out
 		localStorage.clear(); // Clear all local data
-		router.push('/card').then(() => { // Update URL and reload, clearing all memory
+		router.push('/list').then(() => { // Update URL and reload, clearing all memory
 			location.reload();
 		});
 	}
