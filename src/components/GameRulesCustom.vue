@@ -104,19 +104,6 @@
 				</p>
 			</li>
 			<li>
-				<h3>Lock Random</h3>
-				<label>
-					<input
-						id="lockRandom"
-						type="checkbox"
-						:checked="gamerules.lockRandom"
-						@change="setGameRule($event.target.id, $event.target.checked)"
-					>
-					<span>Lock random</span>
-				</label>
-				<p>The random button helps you choose a category to focus on.  This setting locks the button until you satisfy the chosen category, for a more restrictive game style.</p>
-			</li>
-			<li>
 				<h3>Allow Duplicates</h3>
 				<label>
 					<input

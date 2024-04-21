@@ -11,7 +11,6 @@ const defaultGameModes = {
 		winCondition: 'row-col-diag',
 		gridSize: 'medium',
 		allowDuplicates: false,
-		lockRandom: false,
 		allowSimilar: false,
 		star: 'wildcard'
 	},
@@ -19,7 +18,6 @@ const defaultGameModes = {
 		winCondition: 'blackout',
 		gridSize: 'medium',
 		allowDuplicates: true,
-		lockRandom: false,
 		allowSimilar: false,
 		star: 'free'
 	}
