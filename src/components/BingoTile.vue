@@ -23,6 +23,10 @@
 		dupe: {
 			type: Boolean,
 			default: false
+		},
+		unrevealed: {
+			type: Boolean,
+			default: false
 		}
 	});
 
@@ -54,7 +58,7 @@
 <template>
 	<label
 		class="bingo-tile"
-		:class="{ valid, win, dupe }"
+		:class="{ valid, win, dupe, unrevealed }"
 		:data-uuid="data.uuid"
 	>
 		<!-- Free star -->
@@ -106,6 +110,12 @@
 		font-size: clamp(0.8em, calc(1vw + 0.3em), 0.95em);
 		text-align: center;
 		background-color: var(--tone1);
+
+		/* 3D effect */
+		position: relative;
+		perspective: 600px;
+		transform-style: preserve-3d;
+		transition: transform 1.2s;
 	}
 	.bingo-tile:focus-within {
 		border-color: color-mix(in srgb, var(--foreground-color) 70%, var(--background-color));
@@ -143,7 +153,6 @@
 
 	/* Star tile */
 	label:has(> span[class^=star-]) {
-		container: star / inline-size;
 		place-content: center;
 		position: relative;
 	}
@@ -151,10 +160,10 @@
 		font-variant-emoji: text;
 	}
 	.star-free {
-		font-size: 45cqw;
+		font-size: clamp(3em, 9vw, 6em);
 	}
 	.star-wildcard {
-		font-size: 30cqw;
+		font-size: clamp(2em, 5vw, 4em);
 		line-height: 1;
 		opacity: 80%;
 	}
@@ -177,6 +186,28 @@
 	}
 	input:focus {
 		outline: 1px solid color-mix(in srgb, var(--foreground-color) 60%, var(--background-color));
+	}
+
+	/* 3D tile backing */
+	.bingo-tile::after {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		content: "?";
+		font-size: clamp(2.5em, 6vw, 4em);
+		background-color: var(--background-shaded);
+		border-radius: 10px;
+		backface-visibility: hidden;
+		transform: rotateY(180deg);
+	}
+	.bingo-tile.unrevealed {
+		transform: rotateY(180deg);
+		background-color: transparent;
+	}
+	.bingo-tile.unrevealed > * {
+		visibility: hidden;
 	}
 
 	/* Color animation */

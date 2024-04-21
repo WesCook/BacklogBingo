@@ -1,6 +1,7 @@
-export function setsAreEqual(set1, set2) {
+// Set equality test - No longer used
+/*export function setsAreEqual(set1, set2) {
 	return set1.size === set2.size && [...set1].every(value => set2.has(value));
-}
+}*/
 
 // Returns true if objects match
 // Not using stringify for comparison because that's impacted by key order
@@ -19,4 +20,15 @@ export function objectsAreEqual(obj1, obj2) {
     }
 
     return true;
+}
+
+// Shuffle array
+// Adapted from https://stackoverflow.com/a/12646864
+export function shuffleArray(arr) {
+	const shuffled = [...arr];
+	for (let i = shuffled.length-1; i>0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled;
 }

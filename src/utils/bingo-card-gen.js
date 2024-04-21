@@ -2,6 +2,7 @@ import { useGameRules } from '../composables/gamerules.js';
 import { useCategories } from '../composables/categories.js';
 import { useBingo } from '../composables/bingo.js';
 import { useErrors } from '../composables/errors.js';
+import { shuffleArray } from '../utils/object-utils.js';
 
 const { getGameRules } = useGameRules();
 const { getCategoryNumber } = useCategories();
@@ -32,7 +33,7 @@ function chooseCategories(categories) {
 	const categoryNumber = getCategoryNumber(gamerules.gridSize);
 
 	// Store pools of categories for sorting
-	const catPoolPrimary = shuffle(categories); // Holds all categories initially
+	const catPoolPrimary = shuffleArray(categories); // Holds all categories initially
 	const catPoolSecondary = []; // Fallback pool used when allowSimilar is false.  Reused groups are sent here.
 	const catFinalList = []; // The final list of saved bingo categories
 	const usedGroups = []; // Array of strings of category groups already chosen from primary pool
@@ -76,15 +77,4 @@ function chooseCategories(categories) {
 	catFinalList.forEach(cat => delete cat.group);
 
 	return catFinalList;
-}
-
-// Shuffle array
-// Adapted from https://stackoverflow.com/a/12646864
-function shuffle(arr) {
-	const shuffled = [...arr];
-	for (let i = shuffled.length-1; i>0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-	}
-	return shuffled;
 }

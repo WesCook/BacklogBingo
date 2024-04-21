@@ -1,6 +1,6 @@
 import { reactive, computed, readonly, toRaw } from 'vue';
 
-import { objectsAreEqual } from '../utils/compare.js';
+import { objectsAreEqual } from '../utils/object-utils.js';
 
 // Holds the current game rules
 const gamerules = reactive({});

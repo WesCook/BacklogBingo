@@ -1,7 +1,11 @@
-import { reactive, computed, readonly } from 'vue';
+import { ref, reactive, computed, readonly } from 'vue';
 
 // Holds the categories and associated data for the generated bingo card
 const bingoCard = reactive({});
+
+// When first generating bingo card, play a reveal animation
+// Setting this to true will enable the animation every page load
+const doBingoAnimation = ref(false);
 
 function saveToBrowser() {
 	localStorage.setItem('bingoCard', JSON.stringify(bingoCard));
@@ -48,6 +52,14 @@ export function useBingo() {
 		delete bingoCard.categories;
 	}
 
+	function setRevealAnimation(state) {
+		doBingoAnimation.value = state;
+	}
+
+	function getRevealAnimation() {
+		return doBingoAnimation;
+	}
+
 	return {
 		isBingoCardSet,
 		initializeData,
@@ -55,6 +67,8 @@ export function useBingo() {
 		setBingoCard,
 		updateEntry,
 		getStarTile,
-		clearBingoCard
+		clearBingoCard,
+		setRevealAnimation,
+		getRevealAnimation
 	};
 }

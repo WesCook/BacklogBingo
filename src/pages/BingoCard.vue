@@ -2,15 +2,18 @@
 	import { ref } from 'vue';
 
 	import { useGameRules } from '../composables/gamerules.js';
+	import { useBingo } from '../composables/bingo.js';
 
 	import BingoSheet from '../components/BingoSheet.vue';
 	import BingoMarkdown from '../components/BingoMarkdown.vue';
 	import { Fireworks } from '@fireworks-js/vue';
 
 	const { getGameRules } = useGameRules();
+	const { getRevealAnimation, setRevealAnimation } = useBingo();
+
+	const doBingoAnimation = getRevealAnimation();
 
 	const winState = ref(false);
-
 	const winConditionMessage = getWinConditionMessage(getGameRules().winCondition);
 
 	// Fireworks setup
@@ -64,10 +67,26 @@
 		</RouterLink>
 	</div>
 
-	<p>That's a spiffy looking bingo card!  To win, you must complete {{ winConditionMessage }}.  You can use Ctrl + Arrow keys to navigate.</p>
+	<p v-if="doBingoAnimation">
+		Now let's find out which categories were chosen!
+	</p>
+	<p v-else>
+		That's a spiffy looking bingo card!  To win, you must finish {{ winConditionMessage }}.  You can use Ctrl + Arrow keys to navigate.
+	</p>
 	<BingoSheet @win-update="winUpdate" />
 
-	<BingoMarkdown :win-state="winState" />
+	<button
+		v-if="doBingoAnimation"
+		class="skip-btn"
+		@click="setRevealAnimation(false)"
+	>
+		Skip Animation
+	</button>
+
+	<BingoMarkdown
+		v-if="!doBingoAnimation"
+		:win-state="winState"
+	/>
 
 	<Fireworks
 		ref="fireworks"
@@ -82,6 +101,11 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: start;
+	}
+
+	.skip-btn {
+		display: flex;
+  		margin: 0 auto 1em auto;
 	}
 
 	.fireworks {

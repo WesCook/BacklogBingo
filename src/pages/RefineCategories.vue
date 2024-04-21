@@ -4,6 +4,7 @@
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
+	import { useBingo } from '../composables/bingo.js';
 	import { getThemedColors } from '../utils/color-gen.js';
 	import { generateBingoCard } from '../utils/bingo-card-gen.js';
 
@@ -14,6 +15,7 @@
 	const router = useRouter();
 	const { getGameRules } = useGameRules();
 	const { getCategoryList, getCategoryNumber } = useCategories();
+	const { setRevealAnimation } = useBingo();
 
 	const categoryList = getCategoryList();
 
@@ -193,6 +195,7 @@
 		const success = generateBingoCard(categoryList.name, catSubset);
 		if (success) {
 			console.log('Bingo card generated!');
+			setRevealAnimation(true);
 			router.push('/bingo');
 		} else {
 			console.error('Could not generate bingo card');

@@ -1,9 +1,10 @@
 <script setup>
-	import { ref, computed } from 'vue';
+	import { ref, computed, watch } from 'vue';
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
+	import { shuffleArray } from '../utils/object-utils.js';
 
 	import BingoTile from '../components/BingoTile.vue';
 
@@ -11,7 +12,7 @@
 
 	const { getGameRules } = useGameRules();
 	const { getRowLength } = useCategories();
-	const { getBingoCard, getStarTile, updateEntry } = useBingo();
+	const { getBingoCard, getStarTile, updateEntry, getRevealAnimation, setRevealAnimation } = useBingo();
 
 	const gamerules = getGameRules();
 	const bingoCard = getBingoCard();
@@ -50,6 +51,34 @@
 	const winStates = getWinStates(gamerules.winCondition); // Array of all arrays of possible win conditions
 	const winningTiles = ref(new Set()); // Set of all UUIDs making up winning pattern
 	checkWin();
+
+
+	// Reveal animation
+	const doBingoAnimation = getRevealAnimation();
+	const revealMap = ref(new Map());
+
+	// Populate map
+	bingoCard.categories.forEach(cat => {
+		revealMap.value.set(cat.uuid, !doBingoAnimation.value);
+	});
+
+	// Start animation
+	if (doBingoAnimation.value) {
+		revealAnimStart();
+	}
+
+	// Skip animation if low motion is set for accessibility
+	const reducedMotion = matchMedia('(prefers-reduced-motion)').matches;
+	if (reducedMotion) {
+		revealAnimEnd();
+	}
+
+	// Stop animation if skip button is clicked
+	watch(doBingoAnimation, (newState, prevState) => {
+		if (prevState === true && newState === false) {
+			revealAnimEnd();
+		}
+	});
 
 
 	// Update bingo sheet values
@@ -202,6 +231,37 @@
 		return '';
 	}
 
+	// Play animation of revealing all tiles
+	async function revealAnimStart() {
+		// Shuffle reveal map into random order, except with the middle tile at the end
+		const middleIndex = Math.floor(bingoCard.categories.length / 2);
+		const middleTile = bingoCard.categories[middleIndex].uuid;
+		const randomUUIDs = shuffleArray([...revealMap.value.keys()].filter(uuid => uuid !== middleTile));
+		randomUUIDs.push(middleTile, false);
+
+		// Loop through keys and reveal tiles in increasing speed
+		const delay = 1400;
+		const speedUp = 0.04; // Speed up per iteration
+		for (let i=0; i<randomUUIDs.length; i++) {
+			const uuid = randomUUIDs[i];
+			if (i === randomUUIDs.length - 2) {
+				await new Promise(resolve => setTimeout(resolve, 1200)); // Dramatically delay last item
+			} else {
+				await new Promise(resolve => setTimeout(resolve, Math.max(400, delay - delay * speedUp * i)));
+			}
+			revealMap.value.set(uuid, true);
+		}
+		setRevealAnimation(false); // Remove skip button
+	}
+
+	// Reveal all tiles immediately and remove skip button
+	function revealAnimEnd() {
+		revealMap.value.forEach((_value, key, map) => {
+			map.set(key, true);
+		});
+		setRevealAnimation(false);
+	}
+
 	// Get index of tile from uuid, then calculate the offset and focus new tile
 	function keyboardNavigation(uuid, offset) {
 		const getTile = (uuid, offset) =>  {
@@ -238,6 +298,7 @@
 			:valid="completionMapStar.get(tile.uuid)"
 			:win="winningTiles.has(tile.uuid)"
 			:dupe="!gamerules.allowDuplicates && duplicateTiles.has(tile.uuid)"
+			:unrevealed="!revealMap.get(tile.uuid)"
 			@edit-entry="editEntryEvent"
 			@navigate="keyboardNavigation"
 		/>
