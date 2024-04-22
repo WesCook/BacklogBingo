@@ -138,7 +138,7 @@
 		background-color: var(--tone4);
 	}
 	.win {
-		background-color: var(--tone3);
+		background-color: var(--bingo-win);
 	}
 	.dupe {
 		background-color: color-mix(in srgb, var(--tone1) 40%, var(--background-shaded));
