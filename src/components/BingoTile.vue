@@ -167,6 +167,9 @@
 		line-height: 1;
 		opacity: 80%;
 	}
+	.dupe .star-wildcard {
+		font-size: 1.8em;
+	}
 
 	/* Duplicate message */
 	.dupe-message {
