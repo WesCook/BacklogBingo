@@ -115,7 +115,7 @@
 		position: relative;
 		perspective: 600px;
 		transform-style: preserve-3d;
-		transition: transform 1.2s;
+		transition: transform 1.2s, background-color 0.4s;
 	}
 	.bingo-tile:focus-within {
 		border-color: color-mix(in srgb, var(--foreground-color) 70%, var(--background-color));
