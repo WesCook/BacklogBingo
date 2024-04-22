@@ -86,7 +86,7 @@
 	.modal-wrapper {
 		display: flex;
 		flex-direction: column;
-		width: min(60vw, 700px);
+		width: min(75vw, 600px);
 	}
 
 	.modal-content {
