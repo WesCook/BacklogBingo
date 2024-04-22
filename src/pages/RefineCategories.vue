@@ -17,22 +17,17 @@
 	const { getCategoryList, getCategoryNumber } = useCategories();
 	const { setRevealAnimation } = useBingo();
 
+	///////////////////
+	// Initial State //
+	///////////////////
+
+	const gamerules = getGameRules();
 	const categoryList = getCategoryList();
-
-	// Category, group, and color lookup
 	const { categoryMap, groupMap } = populateCategoryAndGroups();
-	const groupColors = generateColors();
 
-	// Checkbox state: initialize with all entries so they are checked by default
+	// Group and category checkboxes - initialize with all values so they're checked by default
 	const groupValues = ref(getAllGroups());
 	const categoryValues = ref(getAllCategories());
-
-	// Track selected categories to meet minimum
-	const gamerules = getGameRules();
-	const minCategories = ref(getCategoryNumber(gamerules.gridSize));
-	const currentCount = computed(() => categoryValues.value.length);
-	const buttonsDisabled = computed(() => currentCount.value < minCategories.value);
-
 
 	// Build new list of categories and groups for easier manipulation
 	// Using UUIDs as keys.  Avoiding using raw values in template and v-for keys.
@@ -66,16 +61,9 @@
 		return { categoryMap, groupMap };
 	}
 
-	// Generate colors to be assigned in template
-	function generateColors() {
-		const colors = getThemedColors(groupMap.size);
-		const groupColors = {};
-		Array.from(groupMap).forEach((groupArray, index) => {
-			groupColors[groupArray[0]] = colors[index];
-		});
-
-		return groupColors;
-	}
+	///////////////////////////
+	// Checkbox Manipulation //
+	///////////////////////////
 
 	function getAllGroups() {
 		return [...groupMap.keys()];
@@ -95,13 +83,6 @@
 		categoryValues.value = [];
 	}
 
-	// Returns all category UUIDs for a given group UUID
-	function getCategoriesFromGroup(group) {
-		return Array.from(categoryMap)
-			.filter(([_catID, category]) => category.group === group)
-			.map(([uuid, _cat]) => uuid);
-	}
-
 	// Accepts array of category IDs to check
 	// Filter out those that are already included
 	function checkCategories(categories) {
@@ -118,11 +99,33 @@
 		});
 	}
 
+	///////////////////////////////
+	// Get State from Checkboxes //
+	///////////////////////////////
+
 	// Get number of checked categories in a group
 	function getGroupCheckedCount(group) {
 		const groupsCategories = getCategoriesFromGroup(group);
 		return groupsCategories.reduce((count, catID) => categoryValues.value.includes(catID) ? count + 1 : count, 0);
 	}
+
+	// When group checkboxes are neither full nor empty, they are indeterminate
+	function getIndeterminate(group) {
+		const groupsCategories = getCategoriesFromGroup(group);
+		const checkCount = getGroupCheckedCount(group);
+		return checkCount > 0 && checkCount < groupsCategories.length;
+	}
+
+	// Returns all category UUIDs for a given group UUID
+	function getCategoriesFromGroup(group) {
+		return Array.from(categoryMap)
+			.filter(([_catID, category]) => category.group === group)
+			.map(([uuid, _cat]) => uuid);
+	}
+
+	///////////////////////////
+	// Checkbox Click Events //
+	///////////////////////////
 
 	// Event from RefineCategoriesGroup when group checkbox changes
 	function groupChangeEvent(group, checked) {
@@ -162,12 +165,9 @@
 		}
 	}
 
-	// When group checkboxes are neither full nor empty, they are indeterminate
-	function getIndeterminate(group) {
-		const groupsCategories = getCategoriesFromGroup(group);
-		const checkCount = getGroupCheckedCount(group);
-		return checkCount > 0 && checkCount < groupsCategories.length;
-	}
+	///////////////////
+	// Generate Card //
+	///////////////////
 
 	function generateCard(skip) {
 		// Collect all or only checked categories, then flatten into accessible structure (arr of objs)
@@ -200,6 +200,27 @@
 		} else {
 			console.error('Could not generate bingo card');
 		}
+	}
+
+	///////////////////
+	// Template Data //
+	///////////////////
+
+	// Track selected categories to meet minimum
+	const minCategories = ref(getCategoryNumber(gamerules.gridSize));
+	const currentCount = computed(() => categoryValues.value.length);
+	const buttonsDisabled = computed(() => currentCount.value < minCategories.value);
+
+	// Generate colors to be assigned in template
+	const groupColors = generateColors();
+	function generateColors() {
+		const colors = getThemedColors(groupMap.size);
+		const groupColors = {};
+		Array.from(groupMap).forEach((groupArray, index) => {
+			groupColors[groupArray[0]] = colors[index];
+		});
+
+		return groupColors;
 	}
 </script>
 

@@ -23,20 +23,19 @@
 	const gamemode = calculateGameMode(shouldShrinkGrid());
 
 	const markdown = ref();
-	const status = ref(); // Template ref
-
 	const gridSize = gamerules.gridSize;
 	const rowLength = getRowLength(gridSize);
 
 	// Update markdown initially and on change
 	markdown.value = generateMarkdown(bingoCard.categories, rowLength);
+
 	watch(bingoCard.categories, categories => {
 		markdown.value = generateMarkdown(categories, rowLength);
 	});
+
 	watch(props, () => {
 		markdown.value = generateMarkdown(bingoCard.categories, rowLength);
 	});
-
 
 	function generateMarkdown(categories, rowLength) {
 		let table = '';
@@ -113,6 +112,7 @@
 		return table;
 	}
 
+	const status = ref(); // Template ref
 	function copy() {
 		// Play Copied! animation and pause at end of animation
 		status.value.style.animationPlayState = 'running';

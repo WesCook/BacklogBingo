@@ -20,10 +20,12 @@
 		// so we do that rather than setting [open] manually in the template.
 		modal.value.showModal();
 
-		// Detect clicks outside of dialog and close
-		// It's not possible to differenciate between the dialog and the ::backdrop pseudo-element,
-		// so for this to work consistently we remove padding on the dialog and compare click targets.
-		// If the inner div is the immediate target, then the backdrop was not clicked.
+		/*
+		Detect clicks outside of dialog and close
+		It's not possible to differenciate between the dialog and the ::backdrop pseudo-element,
+		so for this to work consistently we remove padding on the dialog and compare click targets.
+		If the inner div is the immediate target, then the backdrop was not clicked.
+		*/
 		modal.value.addEventListener('mousedown', event => {
 			if (event.target === event.currentTarget) {
 				emit('close');

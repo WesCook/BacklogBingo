@@ -13,15 +13,11 @@
 
 	const doBingoAnimation = getRevealAnimation();
 
+	////////////////
+	// Win Update //
+	////////////////
+
 	const winState = ref(false);
-	const winConditionMessage = getWinConditionMessage(getGameRules().winCondition);
-
-	// Fireworks setup
-	const fireworks = ref();
-	const options = ref({ opacity: 0.8 });
-	let fireworksTimeout;
-	const fireworksAnimationTime = 8000;
-
 	function winUpdate(state, doFireworks=false) {
 		winState.value = state;
 
@@ -31,6 +27,25 @@
 			fireworks.value?.waitStop(); // Undefined during setup()
 		}
 	}
+
+	const winConditionMessage = getWinConditionMessage(getGameRules().winCondition);
+	function getWinConditionMessage(winCondition) {
+		if (winCondition === 'row-col-diag') {
+			return 'a row, column, or diagonal';
+		} else if (winCondition === 'row-col') {
+			return 'a row or column';
+		} else if (winCondition === 'blackout') {
+			return 'every tile (a blackout)';
+		}
+	}
+
+	///////////////
+	// Fireworks //
+	///////////////
+
+	const fireworks = ref();
+	const options = ref({ opacity: 0.8 });
+	let fireworksTimeout;
 
 	async function startFireworks() {
 		// Undefined during setup(), which prevents fireworks from firing on first load
@@ -42,17 +57,7 @@
 		fireworks.value.start();
 		fireworksTimeout = setTimeout(async () => {
 			await fireworks.value?.waitStop();
-		}, fireworksAnimationTime);
-	}
-
-	function getWinConditionMessage(winCondition) {
-		if (winCondition === 'row-col-diag') {
-			return 'a row, column, or diagonal';
-		} else if (winCondition === 'row-col') {
-			return 'a row or column';
-		} else if (winCondition === 'blackout') {
-			return 'every tile (a blackout)';
-		}
+		}, 8000); // Fireworks animation time
 	}
 </script>
 

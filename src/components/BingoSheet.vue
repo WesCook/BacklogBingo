@@ -20,6 +20,10 @@
 	const gridSize = gamerules.gridSize;
 	const rowLength = getRowLength(gridSize);
 
+	////////////////////
+	// Completion Map //
+	////////////////////
+
 	// Populate local map for UI changes, win checking, etc
 	const completionMap = ref(new Map());
 	bingoCard.categories.forEach(cat => {
@@ -44,50 +48,12 @@
 		return completionMapNew;
 	});
 
+	/////////////////////
+	// Duplicate Tiles //
+	/////////////////////
+
 	// Set of all UUIDs with duplicate entries
 	const duplicateTiles = ref(getDuplicateTiles());
-
-	// Win detection
-	const winStates = getWinStates(gamerules.winCondition); // Array of all arrays of possible win conditions
-	const winningTiles = ref(new Set()); // Set of all UUIDs making up winning pattern
-	checkWin();
-
-
-	// Reveal animation
-	const doBingoAnimation = getRevealAnimation();
-	const revealMap = ref(new Map());
-
-	// Populate map
-	bingoCard.categories.forEach(cat => {
-		revealMap.value.set(cat.uuid, !doBingoAnimation.value);
-	});
-
-	// Start animation
-	if (doBingoAnimation.value) {
-		revealAnimStart();
-	}
-
-	// Skip animation if low motion is set for accessibility
-	const reducedMotion = matchMedia('(prefers-reduced-motion)').matches;
-	if (reducedMotion) {
-		revealAnimEnd();
-	}
-
-	// Stop animation if skip button is clicked
-	watch(doBingoAnimation, (newState, prevState) => {
-		if (prevState === true && newState === false) {
-			revealAnimEnd();
-		}
-	});
-
-
-	// Update bingo sheet values
-	function editEntryEvent(uuid, entry) {
-		updateEntry(uuid, entry); // Update composable and browser storage
-		completionMap.value.set(uuid, Boolean(entry)); // Update completion map
-		duplicateTiles.value = getDuplicateTiles(); // Update duplicates set
-		checkWin(); // Updates winningTiles, plays fireworks, and emits event
-	}
 
 	function getDuplicateTiles() {
 		const seenEntries = new Set();
@@ -112,6 +78,14 @@
 		return duplicateUUIDs;
 	}
 
+	///////////////////
+	// Win Detection //
+	///////////////////
+
+	const winStates = getWinStates(gamerules.winCondition); // Array of all arrays of possible win conditions
+	const winningTiles = ref(new Set()); // Set of all UUIDs making up winning pattern
+	checkWin();
+
 	// Checks if any win conditions are met
 	// Has side effects.  Updates winningTiles Set, and emits win state to parent
 	function checkWin() {
@@ -132,29 +106,8 @@
 		winningTiles.value = newWinningTiles;
 	}
 
-	// Returns list of all UUIDs in set of winning tiles
-	// If blank set is returned, then it's not a victory
-	function getWinningTiles() {
-		const winningTiles = new Set();
-		for (const winState of winStates) { // Check all possible win states
-			let match = true;
-			for (const uuid of winState) { // Check all UUIDs in current win state
-				if (!completionMapStar.value.get(uuid) || (!gamerules.allowDuplicates && duplicateTiles.value.has(uuid))) {
-					match = false;
-					break;
-				}
-			}
-
-			if (match) {
-				for (const uuid of winState) {
-					winningTiles.add(uuid);
-				}
-			}
-		}
-
-		return winningTiles;
-	}
-
+	// Return array of of arrays of available win conditions
+	// If any one is satisfied, the game is won
 	function getWinStates(winCondition) {
 		const winStates = [];
 		let currentReq;
@@ -217,19 +170,58 @@
 		return winStates;
 	}
 
-	// Returns 'free' or 'wildcard' for center tile if enabled
-	function isStarTile(uuid) {
-		if (gamerules.star === 'disabled') {
-			return;
+	// Returns list of all UUIDs in set of winning tiles
+	// If blank set is returned, then it's not a victory
+	function getWinningTiles() {
+		const winningTiles = new Set();
+		for (const winState of winStates) { // Check all possible win states
+			let match = true;
+			for (const uuid of winState) { // Check all UUIDs in current win state
+				if (!completionMapStar.value.get(uuid) || (!gamerules.allowDuplicates && duplicateTiles.value.has(uuid))) {
+					match = false;
+					break;
+				}
+			}
+
+			if (match) {
+				for (const uuid of winState) {
+					winningTiles.add(uuid);
+				}
+			}
 		}
 
-		const starUUID = getStarTile();
-		if (uuid === starUUID) {
-			return gamerules.star;
-		}
-
-		return '';
+		return winningTiles;
 	}
+
+	//////////////////////
+	// Reveal Animation //
+	//////////////////////
+
+	const doBingoAnimation = getRevealAnimation();
+	const revealMap = ref(new Map());
+
+	// Populate map
+	bingoCard.categories.forEach(cat => {
+		revealMap.value.set(cat.uuid, !doBingoAnimation.value);
+	});
+
+	// Start animation
+	if (doBingoAnimation.value) {
+		revealAnimStart();
+	}
+
+	// Skip animation if low motion is set for accessibility
+	const reducedMotion = matchMedia('(prefers-reduced-motion)').matches;
+	if (reducedMotion) {
+		revealAnimEnd();
+	}
+
+	// Stop animation if skip button is clicked
+	watch(doBingoAnimation, (newState, prevState) => {
+		if (prevState === true && newState === false) {
+			revealAnimEnd();
+		}
+	});
 
 	// Play animation of revealing all tiles
 	async function revealAnimStart() {
@@ -245,7 +237,7 @@
 		for (let i=0; i<randomUUIDs.length; i++) {
 			const uuid = randomUUIDs[i];
 			if (i === randomUUIDs.length - 2) {
-				await new Promise(resolve => setTimeout(resolve, 1200)); // Dramatically delay last item
+				await new Promise(resolve => setTimeout(resolve, 1100)); // Dramatically delay last item
 			} else {
 				await new Promise(resolve => setTimeout(resolve, Math.max(400, delay - delay * speedUp * i)));
 			}
@@ -260,6 +252,18 @@
 			map.set(key, true);
 		});
 		setRevealAnimation(false);
+	}
+
+	///////////
+	// Child //
+	///////////
+
+	// Update bingo sheet on entry changes
+	function editEntryEvent(uuid, entry) {
+		updateEntry(uuid, entry); // Update composable and browser storage
+		completionMap.value.set(uuid, Boolean(entry)); // Update completion map
+		duplicateTiles.value = getDuplicateTiles(); // Update duplicates set
+		checkWin(); // Updates winningTiles, plays fireworks, and emits event
 	}
 
 	// Get index of tile from uuid, then calculate the offset and focus new tile
@@ -279,6 +283,20 @@
 			const elem = document.querySelector(`.bingo-tile[data-uuid='${nextTile.uuid}']`);
 			elem.focus();
 		}
+	}
+
+	// Returns 'free' or 'wildcard' for center tile if enabled
+	function isStarTile(uuid) {
+		if (gamerules.star === 'disabled') {
+			return;
+		}
+
+		const starUUID = getStarTile();
+		if (uuid === starUUID) {
+			return gamerules.star;
+		}
+
+		return '';
 	}
 </script>
 
