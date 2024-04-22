@@ -47,3 +47,53 @@ export function validateJSON(json) {
 
 	return true;
 }
+
+// Detects if string contains dynamic category for additional parsing
+export function detectDynamicCategory(input) {
+	const regex = /(NUMBER|CHOOSE)\[[^\]]+\]/g;
+	return regex.test(input);
+}
+
+// Parses dynamic tags in text, validates them, and returns a new string.  Supports:
+// - NUMBER[1,5] - Chooses a random integer from min to max values
+// - CHOOSE[term1|term2|term3...] - Chooses a term/phrase separated by pipes
+export function parseDynamicCategory(input) {
+	return input.replaceAll(/(NUMBER|CHOOSE)\[([^\]]+)\]/g, (match, type, values) => {
+		if (type === 'NUMBER') {
+			// Cast to number and destructure
+			const [min, max] = values.split(',').map(Number);
+
+			// Error checking
+			if (values.split(',').length > 2) {
+				setError(`A dynamic category contains too many values ${match} in the following line:\n\n${input}\n\nExpected format: NUMBER[min,max]`);
+			}
+			if (isNaN(min) || isNaN(max) || min >= max) {
+				setError(`A dynamic category contains an invalid range ${match} in the following line:\n\n${input}\n\nExpected format: NUMBER[min,max]`);
+			}
+			if (!Number.isInteger(min) || !Number.isInteger(max)) {
+				setError(`A dynamic category contains a non-integer ${match} in the following line:\n\n${input}\n\nOnly integers are supported.`);
+			}
+			
+
+			return getRandomNumber(min, max);
+		} else if (type === 'CHOOSE') {
+			const terms = values.split('|');
+
+			// Error checking
+			if (terms.length < 2) {
+				setError(`A dynamic category contains too few values ${match} in the following line:\n\n${input}\n\nExpected format: CHOOSE[term1|term2|term3...] with at least two terms.`);
+			}
+
+			return chooseRandomWord(terms);
+		}
+	});
+}
+
+function getRandomNumber(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function chooseRandomWord(terms) {
+	const index = Math.floor(Math.random() * terms.length);
+	return terms[index];
+}

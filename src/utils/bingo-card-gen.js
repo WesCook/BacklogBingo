@@ -3,6 +3,7 @@ import { useCategories } from '../composables/categories.js';
 import { useBingo } from '../composables/bingo.js';
 import { useErrors } from '../composables/errors.js';
 import { shuffleArray } from '../utils/object-utils.js';
+import { detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
 
 const { getGameRules } = useGameRules();
 const { getCategoryNumber } = useCategories();
@@ -12,16 +13,26 @@ const { setError } = useErrors();
 // Generate and save the bingo card.  Returns true on success.
 export function generateBingoCard(name, categories) {
 	const chosenCategories = chooseCategories(categories);
-	if (chosenCategories) {
-		const bingoCard = {
-			name: name,
-			categories: chosenCategories
-		};
-		setBingoCard(bingoCard);
-		localStorage.removeItem('categoryList');
-		return true;
+	if (!chosenCategories) {
+		return false;
 	}
-	return false;
+
+	// Evaluate dynamic categories
+	for (const cat of chosenCategories) {
+		if (detectDynamicCategory(cat.cat)) {
+			cat.cat = parseDynamicCategory(cat.cat);
+		}
+	}
+
+	// Create card
+	const bingoCard = {
+		name: name,
+		categories: chosenCategories
+	};
+	setBingoCard(bingoCard);
+
+	localStorage.removeItem('categoryList');
+	return true;
 }
 
 // Returns array of categories based on required grid size

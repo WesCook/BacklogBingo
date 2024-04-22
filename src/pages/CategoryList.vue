@@ -4,7 +4,7 @@
 	import { useErrors } from '../composables/errors.js';
 
 	import { useCategories } from '../composables/categories.js';
-	import { validateJSON } from '../utils/json-parse.js';
+	import { validateJSON, detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
 
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
 	import CategoryListFile from '../components/CategoryListFile.vue';
@@ -13,7 +13,7 @@
 
 	const router = useRouter();
 	const { getCategoryList, setCategoryList, isCategoryListSet } = useCategories();
-	const { clearError } = useErrors();
+	const { clearError, getError } = useErrors();
 
 	// Locking fieldset to disable all buttons when network request is active
 	// Set true to lock, false to unlock
@@ -24,17 +24,29 @@
 
 	const loadedJSON = ref();
 	const modalActive = ref();
-	
-	// If we're returning, load the stored category list
+
+	// If we're returning from another page, load the stored category list
 	if (isCategoryListSet.value) {
 		loadedJSON.value = getCategoryList();
 	}
 
 	function loadFile(json) {
-		if (validateJSON(json)) {
-			clearError();
-			loadedJSON.value = json;
+		if (!validateJSON(json)) {
+			return;
 		}
+		clearError();
+
+		// Detect and parse dynamic categories to report any errors early
+		for (const cat of json.categories) {
+			if (detectDynamicCategory(cat.name)) {
+				parseDynamicCategory(cat.name); // Throws error if invalid, so bail out
+				if (getError().value) {
+					return;
+				}
+			}
+		}
+
+		loadedJSON.value = json;
 	}
 
 	function confirmList() {
