@@ -21,9 +21,10 @@
 	function winUpdate(state, doFireworks=false) {
 		winState.value = state;
 
-		if (state === true && doFireworks) {
+		if (state && doFireworks) {
 			startFireworks();
-		} else {
+		}
+		if (!state) {
 			fireworks.value?.waitStop(); // Undefined during setup()
 		}
 	}
