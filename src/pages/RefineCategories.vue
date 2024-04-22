@@ -347,7 +347,7 @@
 		list-style: none;
 		padding: 15px;
 		border: 1px solid var(--border-color);
-		background-color: color-mix(in srgb, var(--background-shaded) 92%, var(--foreground-color));
+		background-color: var(--background-section);
 	}
 	@media (min-width: 700px) {
 		.categories-list {
