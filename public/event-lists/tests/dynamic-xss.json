@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"name": "Dynamic XSS",
+	"categories": [
+		{ "name": "There's at least CHOOSE[</span><script>alert(1)</script><strong>|evil] reviews" },
+		{ "name": "You wanted to play it when you were younger but never did" },
+		{ "name": "You can complete it in one sitting" },
+		{ "name": "You can complete in only a few hours" },
+		{ "name": "Known for its CHOOSE[soundtrack|art style|charming good looks]" },
+		{ "name": "CHOOSE[A very long string|They don't even need to be related|This could be something entirely different]" },
+		{ "name": "CHOOSE[A very long string|They don\"t even\" need to be related|This could be something entirely different]" },
+		{ "name": "Recommended by someone on Tildes" },
+		{ "name": "Recommended by CHOOSE[a friend|an enemy|a teacher|a partner] at least NUMBER[2,5] times" },
+		{ "name": "Chosen for you by someone else" },
+		{ "name": "Begins with NUMBER[2,3] of your CHOOSE[least favourite|favourite] characters, a CHOOSE[food|colour|animal], and NUMBER[50,150] game-breaking bugs." }
+	]
+}

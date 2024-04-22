@@ -1,0 +1,16 @@
+{
+	"version": 1,
+	"name": "Dynamic Invalid",
+	"categories": [
+		{ "name": "There's at least NUMBER[3,4,5] reviews" },
+		{ "name": "You wanted to play it when you were younger but never did" },
+		{ "name": "You can complete it in one sitting" },
+		{ "name": "You can complete in only a few hours" },
+		{ "name": "Known for its CHOOSING[soundtrack|art style|charming good looks]" },
+		{ "name": "CHOOSE[A very long string|They don't even need to be related|This could be something entirely different]" },
+		{ "name": "Recommended by someone on Tildes" },
+		{ "name": "Recommended by CHOOSE[a friend|an enemy|a teacher|a partner] at least NUMBER[2.3,5] times" },
+		{ "name": "Chosen for you by CHOOSE[only one term]" },
+		{ "name": "Begins with NUMBER[3,1] of your CHOOSE[least favourite|favourite] characters, a CHOOSE[food|colour|animal], and NUMBER[50,150] game-breaking bugs." }
+	]
+}

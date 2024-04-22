@@ -3,7 +3,7 @@ import { useCategories } from '../composables/categories.js';
 import { useBingo } from '../composables/bingo.js';
 import { useErrors } from '../composables/errors.js';
 import { shuffleArray } from '../utils/object-utils.js';
-import { detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
+import { parseDynamicCategory } from '../utils/json-parse.js';
 
 const { getGameRules } = useGameRules();
 const { getCategoryNumber } = useCategories();
@@ -19,10 +19,16 @@ export function generateBingoCard(name, categories) {
 
 	// Evaluate dynamic categories
 	for (const cat of chosenCategories) {
-		if (detectDynamicCategory(cat.cat)) {
+		if (cat.dynamic) {
 			cat.cat = parseDynamicCategory(cat.cat);
 		}
 	}
+
+	// Trim excess metadata not needed for card
+	chosenCategories.forEach(cat => {
+		delete cat.group;
+		delete cat.dynamic;
+	});
 
 	// Create card
 	const bingoCard = {
@@ -83,9 +89,6 @@ function chooseCategories(categories) {
 		setError(`A card could not be generated.  There were not enough categories provided (${catFinalList.length}/${categoryNumber}).`);
 		return;
 	}
-
-	// Remove group as it's no longer needed
-	catFinalList.forEach(cat => delete cat.group);
 
 	return catFinalList;
 }

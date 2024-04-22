@@ -49,29 +49,29 @@ export function validateJSON(json) {
 }
 
 // Detects if string contains dynamic category for additional parsing
-export function detectDynamicCategory(input) {
+export function detectDynamicCategory(catName) {
 	const regex = /(NUMBER|CHOOSE)\[[^\]]+\]/g;
-	return regex.test(input);
+	return regex.test(catName);
 }
 
 // Parses dynamic tags in text, validates them, and returns a new string.  Supports:
 // - NUMBER[1,5] - Chooses a random integer from min to max values
 // - CHOOSE[term1|term2|term3...] - Chooses a term/phrase separated by pipes
-export function parseDynamicCategory(input) {
-	return input.replaceAll(/(NUMBER|CHOOSE)\[([^\]]+)\]/g, (match, type, values) => {
+export function parseDynamicCategory(catName) {
+	return catName.replaceAll(/(NUMBER|CHOOSE)\[([^\]]+)\]/g, (match, type, values) => {
 		if (type === 'NUMBER') {
 			// Cast to number and destructure
 			const [min, max] = values.split(',').map(Number);
 
 			// Error checking
 			if (values.split(',').length > 2) {
-				setError(`A dynamic category contains too many values ${match} in the following line:\n\n${input}\n\nExpected format: NUMBER[min,max]`);
+				setError(`A dynamic category contains too many values ${match} in the following line:\n\n${catName}\n\nExpected format: NUMBER[min,max]`);
 			}
 			if (isNaN(min) || isNaN(max) || min >= max) {
-				setError(`A dynamic category contains an invalid range ${match} in the following line:\n\n${input}\n\nExpected format: NUMBER[min,max]`);
+				setError(`A dynamic category contains an invalid range ${match} in the following line:\n\n${catName}\n\nExpected format: NUMBER[min,max]`);
 			}
 			if (!Number.isInteger(min) || !Number.isInteger(max)) {
-				setError(`A dynamic category contains a non-integer ${match} in the following line:\n\n${input}\n\nOnly integers are supported.`);
+				setError(`A dynamic category contains a non-integer ${match} in the following line:\n\n${catName}\n\nOnly integers are supported.`);
 			}
 			
 
@@ -81,7 +81,7 @@ export function parseDynamicCategory(input) {
 
 			// Error checking
 			if (terms.length < 2) {
-				setError(`A dynamic category contains too few values ${match} in the following line:\n\n${input}\n\nExpected format: CHOOSE[term1|term2|term3...] with at least two terms.`);
+				setError(`A dynamic category contains too few values ${match} in the following line:\n\n${catName}\n\nExpected format: CHOOSE[term1|term2|term3...] with at least two terms.`);
 			}
 
 			return chooseRandomWord(terms);
@@ -96,4 +96,37 @@ function getRandomNumber(min, max) {
 function chooseRandomWord(terms) {
 	const index = Math.floor(Math.random() * terms.length);
 	return terms[index];
+}
+
+// Returns HTML for embedding cleaner version of dynamic categories
+// Only the first entry will be shown, with the rest on hover
+export function renderDynamicCategory(catName) {
+	// Create a new element to sanitize string and avoid XSS concerns
+	// https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#safe-sinks
+	const element = document.createElement('div');
+	element.innerHTML = catName;
+	let safeName = element.textContent;
+	
+	// Escape special characters for nicer embedding (not a security measure)
+	safeName = safeName.replace(/["&'<>]/g, function (match) {
+        switch (match) {
+            case '"': return '&quot;';
+            case '&': return '&amp;';
+            case '\'': return '&#39;';
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            default: return match;
+        }
+    });
+
+	// Wrap dynamic portions in HTML tags and return
+	return safeName.replaceAll(/(NUMBER|CHOOSE)\[([^\]]+)\]/g, (_match, type, values) => {
+		if (type === 'NUMBER') {
+			const [min, max] = values.split(',').map(Number);
+			return `<span class='dynamic-category' title="Random integer between ${min} and ${max}">${min}–${max}</span>`;
+		} else if (type === 'CHOOSE') {
+			const terms = values.split('|');
+			return `<span class='dynamic-category' title="Available options:\n- ${terms.join('\n- ')}">${terms[0]}</span>`;
+		}
+	});
 }

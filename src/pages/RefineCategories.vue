@@ -39,7 +39,8 @@
 		for (const catSource of categoryList.categories) {
 			// Create new, mutable category object
 			const category = {
-				name: catSource.name
+				name: catSource.name,
+				dynamic: catSource.dynamic
 			};
 
 			// Generate group UUID if needed, then add to object and Groups List
@@ -169,26 +170,24 @@
 	// Generate Card //
 	///////////////////
 
+	// Skip determines if filters are used, or if Skip button was clicked
 	function generateCard(skip) {
 		// Collect all or only checked categories, then flatten into accessible structure (arr of objs)
 		let catSubset = [];
-		catSubset = Array.from(categoryMap).map(([uuid, catObj]) => ({
-			uuid,
-			name: (skip) ? catObj.name : categoryMap.get(uuid).name,
-			group: (skip) ? catObj.group : categoryMap.get(uuid).group
-		}));
 
 		if (skip) {
 			catSubset = Array.from(categoryMap).map(([uuid, catObj]) => ({
 				uuid,
 				cat: catObj.name,
-				group: catObj.group
+				group: catObj.group,
+				dynamic: catObj.dynamic
 			}));
 		} else {
 			catSubset = categoryValues.value.map(uuid => ({
 				uuid,
 				cat: categoryMap.get(uuid).name,
-				group: categoryMap.get(uuid).group
+				group: categoryMap.get(uuid).group,
+				dynamic: categoryMap.get(uuid).dynamic
 			}));
 		}
 
@@ -273,6 +272,7 @@
 			v-model="categoryValues"
 			:uuid="uuid"
 			:category-name="category.name"
+			:dynamic="category.dynamic"
 			:color="groupColors[categoryMap.get(uuid).group]"
 			@category-change="categoryChangeEvent"
 		/>
@@ -355,10 +355,8 @@
 			column-gap: 24px;
 		}
 	}
-	@media (max-width: 699px) {
-		.categories-list li {
-			margin-bottom: 1px;
-		}
+	.categories-list li {
+		margin-bottom: 2px;
 	}
 
 	.required-tally {

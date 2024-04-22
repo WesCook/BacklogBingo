@@ -4,7 +4,7 @@
 	import { useErrors } from '../composables/errors.js';
 
 	import { useCategories } from '../composables/categories.js';
-	import { validateJSON, detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
+	import { validateJSON, detectDynamicCategory, parseDynamicCategory, renderDynamicCategory } from '../utils/json-parse.js';
 
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
 	import CategoryListFile from '../components/CategoryListFile.vue';
@@ -39,6 +39,7 @@
 		// Detect and parse dynamic categories to report any errors early
 		for (const cat of json.categories) {
 			if (detectDynamicCategory(cat.name)) {
+				cat.dynamic = true;
 				parseDynamicCategory(cat.name); // Throws error if invalid, so bail out
 				if (getError().value) {
 					return;
@@ -136,7 +137,11 @@
 					v-for="category in loadedJSON.categories"
 					:key="category"
 				>
-					{{ category.name }}
+					<span
+						v-if="category.dynamic"
+						v-html="renderDynamicCategory(category.name)"
+					/>
+					<span v-else>{{ category.name }}</span>
 				</li>
 			</ol>
 		</ModalWindow>
@@ -211,9 +216,16 @@
 	.preview-list {
 		list-style: decimal;
 		padding-left: 50px;
+		margin: 2px;
 
 		li {
-			margin-bottom: 3px;
+			margin-bottom: 4px;
 		}
+	}
+	::v-deep(.dynamic-category) {
+		padding: 3px;
+		background-color: var(--background-shaded);
+		outline: 1px solid color-mix(in srgb, var(--foreground-color) 50%, var(--background-color));
+		cursor: help;
 	}
 </style>
