@@ -140,7 +140,7 @@
 					<span
 						v-if="category.dynamic"
 						v-html="renderDynamicCategory(category.name)"
-					/>
+					></span>
 					<span v-else>{{ category.name }}</span>
 				</li>
 			</ol>

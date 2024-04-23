@@ -40,6 +40,13 @@ export default [
 			'vue/singleline-html-element-content-newline': ['warn', {
 				'externalIgnores': ['button', 'option', 'RouterLink']
 			}],
+			'vue/html-self-closing': ['error', {
+				html: {
+					normal: "never",
+					void: "never",
+					component: "always"
+				}
+			}],
 
 			// Reactivity loss
 			'vue/no-ref-object-reactivity-loss': 'warn',

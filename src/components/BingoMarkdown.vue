@@ -148,7 +148,7 @@
 		:value="markdown"
 		class="textarea"
 		readonly
-	>&nbsp;</textarea>
+	></textarea>
 </template>
 
 <style scoped>

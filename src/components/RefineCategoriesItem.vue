@@ -38,7 +38,7 @@
 				v-if="dynamic"
 				:style="{ color: color }"
 				v-html="renderDynamicCategory(categoryName)"
-			/>
+			></span>
 			<span
 				v-else
 				:style="{ color: color }"

@@ -56,7 +56,7 @@
 				{{ title }}
 			</h3>
 			<div class="modal-content">
-				<slot />
+				<slot></slot>
 			</div>
 			<button
 				v-if="showClose"
