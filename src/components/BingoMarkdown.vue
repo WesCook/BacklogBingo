@@ -88,7 +88,7 @@
 					return '| ★ ';
 				}
 				if (item.uuid === starUUID && gamerules.star === 'wildcard') { // Wildcard
-					catName = 'Wildcard';
+					catName = '★ Wildcard';
 				}
 				
 				// Category
