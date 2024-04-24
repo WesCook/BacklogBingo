@@ -4,7 +4,7 @@
 	import { useRouter } from 'vue-router';
 	import { useBingo } from '../composables/bingo.js';
 
-	import ModalWindow from '../components/ModalWindow.vue';
+	import UIModal from '../components/UIModal.vue';
 
 	const router = useRouter();
 	const { clearBingoCard } = useBingo();
@@ -30,7 +30,7 @@
 	</button>
 
 	<teleport to="body">
-		<ModalWindow
+		<UIModal
 			v-if="modalActive"
 			title="Confirm Restart"
 			:show-close="false"
@@ -47,7 +47,7 @@
 					Restart
 				</button>
 			</div>
-		</ModalWindow>
+		</UIModal>
 	</teleport>
 </template>
 

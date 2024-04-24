@@ -9,7 +9,7 @@
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
 	import CategoryListFile from '../components/CategoryListFile.vue';
 	import CategoryListURL from '../components/CategoryListURL.vue';
-	import ModalWindow from '../components/ModalWindow.vue';
+	import UIModal from '../components/UIModal.vue';
 
 	const router = useRouter();
 	const { getCategoryList, setCategoryList, isCategoryListSet } = useCategories();
@@ -126,7 +126,7 @@
 	</section>
 
 	<teleport to="body">
-		<ModalWindow
+		<UIModal
 			v-if="modalActive"
 			:title="loadedJSON.name"
 			:show-close="true"
@@ -144,7 +144,7 @@
 					<span v-else>{{ category.name }}</span>
 				</li>
 			</ol>
-		</ModalWindow>
+		</UIModal>
 	</teleport>
 </template>
 

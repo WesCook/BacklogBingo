@@ -1,7 +1,7 @@
 <script setup>
 	import { ref } from 'vue';
 
-	import ModalWindow from '../components/ModalWindow.vue';
+	import UIModal from '../components/UIModal.vue';
 
 	const modalActive = ref();
 </script>
@@ -14,7 +14,7 @@
 		🛈
 	</button>
 	<teleport to="body">
-		<ModalWindow
+		<UIModal
 			v-if="modalActive"
 			title="Markdown Information"
 			:show-close="false"
@@ -28,7 +28,7 @@
 			>
 				Got it!
 			</button>
-		</ModalWindow>
+		</UIModal>
 	</teleport>
 </template>
 
