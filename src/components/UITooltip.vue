@@ -78,28 +78,30 @@
 		<slot></slot>
 	</button>
 
-	<div
-		v-if="visible"
-		ref="tooltipElem"
-		class="tooltip"
-		:style="floatingStyles"
-	>
-		<span role="tooltip">{{ tooltip }}</span>
-
+	<transition>
 		<div
-			ref="tooltipArrowElem"
-			class="arrow"
-			:style="{
-				left: arrowX,
-				top: arrowY,
-				[arrowSide]: arrowSidePosition, // eg. right: -6px
-				'border-top-color': (calculatedSide === 'bottom' || calculatedSide === 'left') ? 'var(--foreground-color)' : 'transparent',
-				'border-right-color': (calculatedSide === 'top' || calculatedSide === 'left') ? 'var(--foreground-color)' : 'transparent',
-				'border-bottom-color': (calculatedSide === 'top' || calculatedSide === 'right') ? 'var(--foreground-color)' : 'transparent',
-				'border-left-color': (calculatedSide === 'bottom' || calculatedSide === 'right') ? 'var(--foreground-color)' : 'transparent'
-			}"
-		></div>
-	</div>
+			v-if="visible"
+			ref="tooltipElem"
+			class="tooltip"
+			:style="floatingStyles"
+		>
+			<span role="tooltip">{{ tooltip }}</span>
+
+			<div
+				ref="tooltipArrowElem"
+				class="arrow"
+				:style="{
+					left: arrowX,
+					top: arrowY,
+					[arrowSide]: arrowSidePosition, // eg. right: -6px
+					'border-top-color': (calculatedSide === 'bottom' || calculatedSide === 'left') ? 'var(--foreground-color)' : 'transparent',
+					'border-right-color': (calculatedSide === 'top' || calculatedSide === 'left') ? 'var(--foreground-color)' : 'transparent',
+					'border-bottom-color': (calculatedSide === 'top' || calculatedSide === 'right') ? 'var(--foreground-color)' : 'transparent',
+					'border-left-color': (calculatedSide === 'bottom' || calculatedSide === 'right') ? 'var(--foreground-color)' : 'transparent'
+				}"
+			></div>
+		</div>
+	</transition>
 </template>
 
 <style scoped>
@@ -129,12 +131,22 @@
 
 	.arrow {
 		position: absolute;
-		background: var(--background-shaded);;
+		background: var(--background-shaded);
 		border-width: 1px;
 		border-style: solid;
 		width: 12px;
 		height: 12px;
 		transform: rotate(45deg);
 		z-index: -5;
+	}
+
+	.v-enter-active,
+	.v-leave-active {
+		transition: opacity 0.4s ease;
+	}
+
+	.v-enter-from,
+	.v-leave-to {
+		opacity: 0;
 	}
 </style>
