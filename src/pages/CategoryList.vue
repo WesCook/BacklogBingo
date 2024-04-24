@@ -59,12 +59,12 @@
 </script>
 
 <template>
-	<h1>Choose Category List</h1>
+	<h1>Backlog Bingo</h1>
 	<p>
-		Select a category list from an event, or provide your own via JSON.
+		Welcome to Backlog Bingo!  This web app lets you generate a bingo card, either from a prebuilt category list or from your own provided JSON.
 		<em>
 			<a
-				href="https://github.com/WesCook/BacklogBingo/blob/main/public/event-lists/tildes-gaming-nov-2023.json"
+				href="https://github.com/WesCook/BacklogBingo/blob/main/public/event-lists/tildes-gaming-may-2024.json"
 				target="_blank"
 			>Example Format</a>
 		</em>
@@ -75,7 +75,7 @@
 		class="card-wrapper"
 	>
 		<div class="card-event">
-			<h3>Prebuilt Event Lists</h3>
+			<h3>Prebuilt Category Lists</h3>
 			<p>Bingo category lists from online events.</p>
 			<ul class="list">
 				<CategoryListEvent
@@ -158,6 +158,7 @@
 			"card-event card-url"
 			"card-event card-file";
 		gap: 1em;
+		margin-top: 1.2em;
 		padding: 0;
 		& > div {
 			padding: 25px;
