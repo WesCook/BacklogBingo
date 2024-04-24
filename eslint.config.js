@@ -15,9 +15,6 @@ export default [
 			// Technical errors
 			'prefer-const': 'warn',
 
-			// Would prefer to opt-out per line after scrutiny, but that's often difficult in templates where this is used
-			'vue/no-v-html': 'off',
-
 			// Missing elements
 			quotes: ['warn', 'single'],
 			semi: ['warn', 'always'],

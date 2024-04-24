@@ -2,8 +2,8 @@
 	"version": 1,
 	"name": "Dynamic Valid",
 	"categories": [
-		{ "name": "There's at least NUMBER[1,5] reviews" },
-		{ "name": "You wanted to play it when you were younger but never did" },
+		{ "name": "There's at least NUMBER[1,5] reviews", "group": "review" },
+		{ "name": "You wanted to play it when you were younger but never did", "group": "review" },
 		{ "name": "You can complete it in one sitting" },
 		{ "name": "You can complete in only a few hours" },
 		{ "name": "Known for its CHOOSE[soundtrack|art style|charming good looks]" },

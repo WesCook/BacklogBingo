@@ -4,11 +4,12 @@
 	import { useErrors } from '../composables/errors.js';
 
 	import { useCategories } from '../composables/categories.js';
-	import { validateJSON, detectDynamicCategory, parseDynamicCategory, renderDynamicCategory } from '../utils/json-parse.js';
+	import { validateJSON, detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
 
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
 	import CategoryListFile from '../components/CategoryListFile.vue';
 	import CategoryListURL from '../components/CategoryListURL.vue';
+	import DynamicCategory from '../components/DynamicCategory.vue';
 	import UIModal from '../components/UIModal.vue';
 
 	const router = useRouter();
@@ -137,10 +138,10 @@
 					v-for="category in loadedJSON.categories"
 					:key="category"
 				>
-					<span
+					<DynamicCategory
 						v-if="category.dynamic"
-						v-html="renderDynamicCategory(category.name)"
-					></span>
+						:name="category.name"
+					/>
 					<span v-else>{{ category.name }}</span>
 				</li>
 			</ol>
@@ -221,11 +222,5 @@
 		li {
 			margin-bottom: 4px;
 		}
-	}
-	::v-deep(.dynamic-category) {
-		padding: 3px;
-		background-color: var(--background-shaded);
-		outline: 1px solid color-mix(in srgb, var(--foreground-color) 50%, var(--background-color));
-		cursor: help;
 	}
 </style>

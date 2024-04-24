@@ -1,4 +1,5 @@
 import { useErrors } from '../composables/errors.js';
+
 const { setError } = useErrors();
 
 // Parses provided URL for json, local or remote
@@ -95,37 +96,4 @@ function getRandomNumber(min, max) {
 function chooseRandomWord(terms) {
 	const index = Math.floor(Math.random() * terms.length);
 	return terms[index];
-}
-
-// Returns HTML for embedding cleaner version of dynamic categories
-// Only the first entry will be shown, with the rest on hover
-export function renderDynamicCategory(catName) {
-	// Create a new element to sanitize string and avoid XSS concerns
-	// https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#safe-sinks
-	const element = document.createElement('div');
-	element.innerHTML = catName;
-	let safeName = element.textContent;
-	
-	// Escape special characters for nicer embedding (not a security measure)
-	safeName = safeName.replace(/["&'<>]/g, function (match) {
-        switch (match) {
-            case '"': return '&quot;';
-            case '&': return '&amp;';
-            case '\'': return '&#39;';
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            default: return match;
-        }
-    });
-
-	// Wrap dynamic portions in HTML tags and return
-	return safeName.replaceAll(/(NUMBER|CHOOSE)\[([^\]]+)\]/g, (_match, type, values) => {
-		if (type === 'NUMBER') {
-			const [min, max] = values.split(',').map(Number);
-			return `<span class='dynamic-category' title="Random integer between ${min} and ${max}">${min}–${max}</span>`;
-		} else if (type === 'CHOOSE') {
-			const terms = values.split('|');
-			return `<span class='dynamic-category' title="Available options:\n- ${terms.join('\n- ')}">${terms[0]}</span>`;
-		}
-	});
 }

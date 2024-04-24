@@ -1,5 +1,5 @@
 <script setup>
-	import { renderDynamicCategory } from '../utils/json-parse.js';
+	import DynamicCategory from './DynamicCategory.vue';
 
 	defineProps({
 		uuid: {
@@ -34,24 +34,24 @@
 				:value="uuid"
 				@change="$emit('category-change', uuid)"
 			>
-			<span
+
+			<DynamicCategory
 				v-if="dynamic"
-				:style="{ color: color }"
-				v-html="renderDynamicCategory(categoryName)"
-			></span>
+				:style="{ color }"
+				:name="categoryName"
+			/>
 			<span
 				v-else
-				:style="{ color: color }"
+				:style="{ color }"
 			>{{ categoryName }}</span>
+
 		</label>
 	</li>
 </template>
 
 <style scoped>
-	::v-deep(.dynamic-category) {
-		padding: 3px;
-		background-color: var(--background-shaded);
-		outline: 1px solid color-mix(in srgb, var(--foreground-color) 50%, var(--background-color));
-		cursor: help;
+	label {
+		display: flex;
+		align-items: baseline;
 	}
 </style>
