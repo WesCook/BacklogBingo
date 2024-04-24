@@ -90,7 +90,7 @@
 				if (item.uuid === starUUID && gamerules.star === 'wildcard') { // Wildcard
 					catName = '★ Wildcard';
 				}
-				
+
 				// Category
 				if (item.entry) {
 					cellContent += `~~${catName}~~`;

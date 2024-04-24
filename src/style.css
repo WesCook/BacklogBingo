@@ -113,7 +113,7 @@ a.button,
 input[type="submit"],
 input[type="button"] {
 	padding: 8px;
-	
+
 	&:not(:disabled):hover {
 		cursor: pointer;
 		background-color: color-mix(in srgb, var(--background-shaded) 88%, var(--foreground-color));

@@ -90,7 +90,7 @@
 	// Has side effects.  Updates winningTiles Set, and emits win state to parent
 	function checkWin() {
 		const newWinningTiles = getWinningTiles();
-		
+
 		// Winning tiles found means at least one winning pattern was detected
 		if (newWinningTiles.size) {
 			// Fireworks play only when number of winning tiles has gone up
@@ -156,7 +156,6 @@
 			}
 			winStates.push(currentReq);
 		}
-
 
 		// Blackout
 		if (winCondition === 'blackout') {
