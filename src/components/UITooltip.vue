@@ -1,7 +1,7 @@
 <script setup>
 	import { ref, computed } from 'vue';
 
-	import { useFloating, arrow, autoUpdate, flip, shift, offset } from '@floating-ui/vue';
+	import { useFloating, autoUpdate, offset, flip, shift, arrow, hide } from '@floating-ui/vue';
 
 	const props = defineProps({
 		tooltip: {
@@ -37,7 +37,8 @@
 				offset(12),
 				flip(),
 				shift({ padding: 5 }),
-				arrow({ element: tooltipArrowElem })
+				arrow({ element: tooltipArrowElem }),
+				hide()
 			]
 		}
 	);
@@ -83,7 +84,10 @@
 			v-if="visible"
 			ref="tooltipElem"
 			class="tooltip"
-			:style="floatingStyles"
+			:style="{
+				...floatingStyles,
+				visibility: middlewareData.hide?.referenceHidden ? 'hidden' : 'visible'
+			}"
 		>
 			<span role="tooltip">{{ tooltip }}</span>
 
