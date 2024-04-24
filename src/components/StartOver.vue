@@ -1,6 +1,6 @@
 <script setup>
 	import { ref } from 'vue';
-	
+
 	import { useRouter } from 'vue-router';
 	import { useBingo } from '../composables/bingo.js';
 
@@ -39,12 +39,7 @@
 		>
 			<p>Are you sure you want to delete all local data and start again?  This cannot be undone.</p>
 			<div class="buttons">
-				<button
-					
-					@click="modalActive = false"
-				>
-					Cancel
-				</button>
+				<button @click="modalActive = false">Cancel</button>
 				<button
 					autofocus
 					@click="doRestart"

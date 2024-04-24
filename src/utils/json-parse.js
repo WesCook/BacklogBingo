@@ -73,7 +73,6 @@ export function parseDynamicCategory(catName) {
 			if (!Number.isInteger(min) || !Number.isInteger(max)) {
 				setError(`A dynamic category contains a non-integer ${match} in the following line:\n\n${catName}\n\nOnly integers are supported.`);
 			}
-			
 
 			return getRandomNumber(min, max);
 		} else if (type === 'CHOOSE') {
