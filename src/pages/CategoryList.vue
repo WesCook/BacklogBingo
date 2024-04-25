@@ -49,6 +49,7 @@
 		}
 
 		loadedJSON.value = json;
+		document.getElementById('confirm').scrollIntoView({ behavior: 'smooth' });
 	}
 
 	function confirmList() {
@@ -116,6 +117,7 @@
 
 	<section
 		v-if="loadedJSON"
+		id="confirm"
 		class="confirmation-panel"
 	>
 		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
