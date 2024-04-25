@@ -103,12 +103,6 @@
 </template>
 
 <style scoped>
-	.nav-bar {
-		display: flex;
-		justify-content: space-between;
-		align-items: start;
-	}
-
 	.skip-btn {
 		display: flex;
   		margin: 0 auto 1em auto;

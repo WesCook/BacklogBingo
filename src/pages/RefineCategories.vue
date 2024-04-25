@@ -295,17 +295,6 @@
 </template>
 
 <style scoped>
-	.nav-bar {
-		display: flex;
-		align-items: start;
-		gap: 10px;
-		justify-content: end;
-
-		h1 {
-			margin-right: auto;
-		}
-	}
-
 	.btn-bar {
 		display: flex;
 		justify-content: end;

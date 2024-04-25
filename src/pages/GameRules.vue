@@ -81,17 +81,6 @@
 </template>
 
 <style scoped>
-	.nav-bar {
-		display: flex;
-		align-items: start;
-		justify-content: end;
-		gap: 10px;
-
-		h1 {
-			margin-right: auto;
-		}
-	}
-
 	.gamerules-header {
 		margin-top: 1.4em;
 	}

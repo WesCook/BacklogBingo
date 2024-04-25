@@ -136,3 +136,16 @@ input[type="button"] {
 input[type="checkbox"] {
 	margin-right: 7px;
 }
+
+/* Common classes */
+.nav-bar {
+	display: flex;
+	align-items: start;
+	justify-content: end;
+	gap: 10px;
+
+	h1 {
+		margin-right: auto;
+		margin-bottom: 0;
+	}
+}

@@ -60,7 +60,10 @@
 </script>
 
 <template>
-	<h1>Backlog Bingo</h1>
+	<div class="nav-bar">
+		<h1>Backlog Bingo</h1>
+	</div>
+
 	<p>
 		Welcome to Backlog Bingo!  This web app lets you generate a bingo card, either from a prebuilt category list or from your own provided JSON.
 		<em>
