@@ -49,7 +49,7 @@
 		}
 
 		loadedJSON.value = json;
-		document.getElementById('confirm').scrollIntoView({ behavior: 'smooth' });
+		document.getElementById('confirm')?.scrollIntoView({ behavior: 'smooth' });
 	}
 
 	function confirmList() {
