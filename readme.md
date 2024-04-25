@@ -14,10 +14,10 @@ Once loaded, this app runs entirely in your browser.  None of your settings are 
 
 ## Features
 
-- [Category lists](/WesCook/BacklogBingo/wiki/Category-List) come included, or can be imported via file or URL
-- [Group system](/WesCook/BacklogBingo/wiki/Groups) to discourage similar categories from generating together
-- [Dynamic categories](/WesCook/BacklogBingo/wiki/Dynamic-Categories) for more unique combinations
-- [Game rules](/WesCook/BacklogBingo/wiki/Game-Rules) can be customized individually, or chosen as game modes
+- [Category lists](https://github.com/WesCook/BacklogBingo/wiki/Category-List) come included, or can be imported via file or URL
+- [Group system](https://github.com/WesCook/BacklogBingo/wiki/Groups) to discourage similar categories from generating together
+- [Dynamic categories](https://github.com/WesCook/BacklogBingo/wiki/Dynamic-Categories) for more unique combinations
+- [Game rules](https://github.com/WesCook/BacklogBingo/wiki/Game-Rules) can be customized individually, or chosen as game modes
 - Light and dark mode support
 - Accessibility for mobile and keyboard navigation
 - Duplicate entry and win detection logic
