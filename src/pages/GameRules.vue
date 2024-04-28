@@ -69,14 +69,14 @@
 	<template v-if="!isBingoCardSet">
 		<p>When you're ready, click <em>Confirm Game Rules</em> to move to the next step and refine your categories.</p>
 
-		<div class="btn-bar">
+		<nav class="btn-bar">
 			<RouterLink
 				to="/refine"
 				class="button"
 			>
 				Confirm Game Rules
 			</RouterLink>
-		</div>
+		</nav>
 	</template>
 </template>
 

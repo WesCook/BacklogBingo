@@ -282,7 +282,7 @@
 	<p>Your card will be saved locally, and no information is stored online.  To avoid data loss, <em>please do not delete your browser data</em>.</p>
 
 	<!-- Navigation Buttons -->
-	<div class="btn-bar">
+	<nav class="btn-bar">
 		<button @click="generateCard(true)">Skip this step</button>
 		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
 		<button
@@ -291,7 +291,7 @@
 		>
 			Generate Card
 		</button>
-	</div>
+	</nav>
 </template>
 
 <style scoped>

@@ -125,10 +125,10 @@
 	>
 		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
 		<p>When you're ready, click <em>Confirm List</em> to move to the next step and configure your game rules.</p>
-		<div class="btn-bar">
+		<nav class="btn-bar">
 			<button @click="modalActive = true;">Preview Categories</button>
 			<button @click="confirmList">Confirm List</button>
-		</div>
+		</nav>
 	</section>
 
 	<teleport to="body">
