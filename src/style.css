@@ -145,6 +145,7 @@ input[type="checkbox"] {
 	gap: 10px;
 
 	h1 {
+		font-size: 2em;
 		margin-right: auto;
 		margin-bottom: 0;
 	}

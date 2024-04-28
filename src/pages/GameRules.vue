@@ -35,7 +35,7 @@
 </script>
 
 <template>
-	<div class="nav-bar">
+	<nav class="nav-bar">
 		<h1>Configure Game Rules</h1>
 		<StartOver />
 		<RouterLink
@@ -52,7 +52,7 @@
 		>
 			← Go Back
 		</RouterLink>
-	</div>
+	</nav>
 
 	<p v-if="!isBingoCardSet">
 		Now to choose how you want to play!  Unless otherwise noted, these settings can be changed later.

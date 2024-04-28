@@ -224,7 +224,7 @@
 </script>
 
 <template>
-	<div class="nav-bar">
+	<nav class="nav-bar">
 		<h1>Refine Categories</h1>
 		<StartOver />
 		<RouterLink
@@ -233,7 +233,7 @@
 		>
 			← Go Back
 		</RouterLink>
-	</div>
+	</nav>
 
 	<p>Now you can fine-tune the categories your bingo card will pick from.  Please uncheck any categories that you don't believe are possible for you to complete.</p>
 

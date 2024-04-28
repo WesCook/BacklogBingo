@@ -63,7 +63,7 @@
 </script>
 
 <template>
-	<div class="nav-bar">
+	<nav class="nav-bar">
 		<h1>Bingo Card</h1>
 		<RouterLink
 			to="/gamerules"
@@ -71,7 +71,7 @@
 		>
 			Edit Rules
 		</RouterLink>
-	</div>
+	</nav>
 
 	<p v-if="doBingoAnimation">
 		Now let's find out which categories were chosen!
