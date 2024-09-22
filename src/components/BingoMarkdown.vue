@@ -100,7 +100,7 @@
 
 				// Entry
 				if (item.entry || (item.entry && gamerules.star === 'wildcard' && item.uuid === starUUID)) {
-					cellContent += ` <br> **✔ ${item.entry}**`;
+					cellContent += ` <br> **✅ ${item.entry}**`;
 				}
 				return `| ${cellContent} `;
 			}).join('') + '|';
