@@ -18,37 +18,21 @@
 	});
 
 	function generateOutput(categories) {
-		const complete = [];
-		const incomplete = [];
-
-		categories.forEach(category => {
-			if (category.entry) {
-				complete.push(`${category.cat}: ${category.entry}`);
-			} else {
-				incomplete.push(category.cat);
-			}
-		});
-
-		const list = [];
-		if (complete.length > 0) {
-			list.push('Complete:');
-			list.push(...complete);
-			list.push('');
-		}
-		if (incomplete.length > 0) {
-			list.push('Incomplete:');
-			list.push(...incomplete);
-			list.push('');
-		}
-
-		return list.join('\n');
+		return [
+			'| | **Category** | **Entry** |',
+			':-|:-|:-|',
+			...categories.map(
+				({ cat, entry }) => `| ${entry ? '✅' : '⬜'} | ${cat} | ${entry || ''} |`
+			),
+			''
+		].join('\n');
 	}
 </script>
 
 <template>
 	<div>
 		<div class="header">
-			<span>A plain text list, separated by completion state.</span>
+			<span>A checklist in Markdown, well-suited for sharing blackout cards.</span>
 			<CopyToClipboard
 				:text="output"
 				alignment="right"

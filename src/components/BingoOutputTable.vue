@@ -5,7 +5,6 @@
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
 
-	import BingoOutputMarkdownInfo from '../components/BingoOutputMarkdownInfo.vue';
 	import CopyToClipboard from '../components/CopyToClipboard.vue';
 
 	const props = defineProps({
@@ -23,22 +22,22 @@
 	const bingoCard = getBingoCard();
 	const gamemode = calculateGameMode(shouldShrinkGrid());
 
-	const markdown = ref();
+	const output = ref();
 	const gridSize = gamerules.gridSize;
 	const rowLength = getRowLength(gridSize);
 
 	// Update markdown initially and on change
-	markdown.value = generateMarkdown(bingoCard.categories, rowLength);
+	output.value = generateOutput(bingoCard.categories, rowLength);
 
 	watch(bingoCard.categories, categories => {
-		markdown.value = generateMarkdown(categories, rowLength);
+		output.value = generateOutput(categories, rowLength);
 	});
 
 	watch(props, () => {
-		markdown.value = generateMarkdown(bingoCard.categories, rowLength);
+		output.value = generateOutput(bingoCard.categories, rowLength);
 	});
 
-	function generateMarkdown(categories, rowLength) {
+	function generateOutput(categories, rowLength) {
 		let table = '';
 		let index = 0;
 		const centerCol = Math.floor(rowLength / 2);
@@ -121,15 +120,14 @@
 <template>
 	<div>
 		<div class="header">
-			<span>Markdown Table</span>
-			<BingoOutputMarkdownInfo />
+			<span>A table in Markdown, for easy sharing of your bingo card across various social media sites.</span>
 			<CopyToClipboard
-				:text="markdown"
+				:text="output"
 				alignment="right"
 			/>
 		</div>
 		<textarea
-			:value="markdown"
+			:value="output"
 			class="textarea"
 			readonly
 		></textarea>

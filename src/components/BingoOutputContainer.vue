@@ -1,7 +1,8 @@
 <script setup>
 	import { ref } from 'vue';
 
-	import BingoOutputMarkdown from '../components/BingoOutputMarkdown.vue';
+	import BingoOutputTable from '../components/BingoOutputTable.vue';
+	import BingoOutputChecklist from '../components/BingoOutputChecklist.vue';
 	import BingoOutputPlaintext from '../components/BingoOutputPlaintext.vue';
 
 	const props = defineProps({
@@ -12,12 +13,13 @@
 	});
 
 	const tabs = [
-		{ id: 'markdown', label: 'Markdown', component: BingoOutputMarkdown },
+		{ id: 'table', label: 'Table', component: BingoOutputTable },
+		{ id: 'checklist', label: 'Checklist', component: BingoOutputChecklist },
 		{ id: 'plaintext', label: 'Plain Text', component: BingoOutputPlaintext }
 	];
 
 	// Stores ID of current tab, uses a default value
-	const currentTab = ref('markdown');
+	const currentTab = ref('table');
 
 	const setCurrentTab = tabID => {
 		currentTab.value = tabID;
