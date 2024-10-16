@@ -74,6 +74,8 @@
 		background-color: transparent;
 		border-right-width: 0;
 		border-bottom: none;
+		padding: 8px 13px;
+		height: 100%;
 	}
 
 	.tab-list li[aria-selected="true"] .tab-button {

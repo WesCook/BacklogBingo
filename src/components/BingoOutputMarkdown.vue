@@ -6,6 +6,7 @@
 	import { useBingo } from '../composables/bingo.js';
 
 	import BingoOutputMarkdownInfo from '../components/BingoOutputMarkdownInfo.vue';
+	import CopyToClipboard from '../components/CopyToClipboard.vue';
 
 	const props = defineProps({
 		winState: {
@@ -112,18 +113,6 @@
 		return table;
 	}
 
-	const status = ref(); // Template ref
-	function copy() {
-		// Play Copied! animation and pause at end of animation
-		status.value.style.animationPlayState = 'running';
-		status.value.addEventListener('animationiteration', () => {
-			status.value.style.animationPlayState = 'paused';
-		});
-
-		// Copy to clipboard
-		navigator.clipboard.writeText(markdown.value);
-	}
-
 	function capitalizeFirstLetter(str) {
 		return str.charAt(0).toUpperCase() + str.slice(1);
 	}
@@ -134,16 +123,10 @@
 		<div class="header">
 			<span>Markdown Table</span>
 			<BingoOutputMarkdownInfo />
-			<span
-				ref="status"
-				class="status"
-			>Copied!</span>
-			<button
-				class="copy-btn"
-				@click="copy"
-			>
-				📋&#xFE0E; &nbsp;Copy
-			</button>
+			<CopyToClipboard
+				:text="markdown"
+				alignment="right"
+			/>
 		</div>
 		<textarea
 			:value="markdown"
@@ -175,46 +158,8 @@
 		justify-content: start;
 		gap: 5px;
 		margin-bottom: 0.6em;
-
-		.status {
-			margin-left: auto;
-			margin-right: 12px;
-		}
 	}
-
-	.copy-btn {
-		all: unset;
-		padding: 5px;
-		font-variant-emoji: text;
-		white-space: nowrap;
-	}
-
-	.status {
-		margin-left: 10px;
-		animation-name: fadeOut;
-		animation-duration: 3.5s;
-		animation-timing-function: linear;
-		animation-iteration-count: infinite; /* We catch it with an event instead */
-		animation-play-state: paused;
-		visibility: hidden;
-		opacity: 0;
-	}
-	@keyframes fadeOut {
-		0% {
-			visibility: hidden;
-			opacity: 0;
-		}
-		15% {
-			visibility: visible;
-			opacity: 1;
-		}
-		70% {
-			visibility: visible;
-			opacity: 1;
-		}
-		100% {
-			visibility: hidden;
-			opacity: 0;
-		}
+	.header div:last-child {
+		margin-left: auto;
 	}
 </style>

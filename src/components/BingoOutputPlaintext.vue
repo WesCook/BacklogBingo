@@ -3,6 +3,8 @@
 
 	import { useBingo } from '../composables/bingo.js';
 
+	import CopyToClipboard from '../components/CopyToClipboard.vue';
+
 	const { getBingoCard } = useBingo();
 
 	const bingoCard = getBingoCard();
@@ -48,6 +50,10 @@
 	<div>
 		<div class="header">
 			<span>Plain Text</span>
+			<CopyToClipboard
+				:text="plaintext"
+				alignment="right"
+			/>
 		</div>
 		<textarea
 			:value="plaintext"
@@ -79,5 +85,8 @@
 		justify-content: start;
 		gap: 5px;
 		margin-bottom: 0.6em;
+	}
+	.header div:last-child {
+		margin-left: auto;
 	}
 </style>
