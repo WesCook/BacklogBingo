@@ -5,7 +5,7 @@
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
 
-	import BingoMarkdownInfo from '../components/BingoMarkdownInfo.vue';
+	import BingoOutputMarkdownInfo from '../components/BingoOutputMarkdownInfo.vue';
 
 	const props = defineProps({
 		winState: {
@@ -130,25 +130,27 @@
 </script>
 
 <template>
-	<div class="header">
-		<span>Markdown Table</span>
-		<BingoMarkdownInfo />
-		<span
-			ref="status"
-			class="status"
-		>Copied!</span>
-		<button
-			class="copy-btn"
-			@click="copy"
-		>
-			📋&#xFE0E; &nbsp;Copy
-		</button>
+	<div>
+		<div class="header">
+			<span>Markdown Table</span>
+			<BingoOutputMarkdownInfo />
+			<span
+				ref="status"
+				class="status"
+			>Copied!</span>
+			<button
+				class="copy-btn"
+				@click="copy"
+			>
+				📋&#xFE0E; &nbsp;Copy
+			</button>
+		</div>
+		<textarea
+			:value="markdown"
+			class="textarea"
+			readonly
+		></textarea>
 	</div>
-	<textarea
-		:value="markdown"
-		class="textarea"
-		readonly
-	></textarea>
 </template>
 
 <style scoped>

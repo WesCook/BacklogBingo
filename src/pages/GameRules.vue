@@ -55,7 +55,7 @@
 	</nav>
 
 	<p v-if="!isBingoCardSet">
-		Now to choose how you want to play!  Unless otherwise noted, these settings can be changed later.
+		Now to choose how you want to play!  These settings can be changed later, except for grid size and allow similar.
 	</p>
 
 	<h2>Game Mode</h2>

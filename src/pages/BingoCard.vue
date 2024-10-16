@@ -5,7 +5,7 @@
 	import { useBingo } from '../composables/bingo.js';
 
 	import BingoSheet from '../components/BingoSheet.vue';
-	import BingoMarkdown from '../components/BingoMarkdown.vue';
+	import BingoOutputContainer from '../components/BingoOutputContainer.vue';
 	import { Fireworks } from '@fireworks-js/vue';
 
 	const { getGameRules } = useGameRules();
@@ -89,7 +89,7 @@
 		Skip Animation
 	</button>
 
-	<BingoMarkdown
+	<BingoOutputContainer
 		v-if="!doBingoAnimation"
 		:win-state="winState"
 	/>
