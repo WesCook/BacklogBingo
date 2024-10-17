@@ -1,47 +1,33 @@
 <script setup>
 	import { ref, watch } from 'vue';
 
-	import { useBingo } from '../composables/bingo.js';
+	import { useCardOutput } from '../composables/card-output.js';
 
 	import CopyToClipboard from '../components/CopyToClipboard.vue';
 
-	const { getBingoCard } = useBingo();
+	const { getBingoCardOutput } = useCardOutput();
 
-	const bingoCard = getBingoCard();
-
+	// Populate output with initial data and watch for changes
 	const output = ref();
+	output.value = generateOutput(getBingoCardOutput());
 
-	output.value = generateOutput(bingoCard.categories);
-
-	watch(bingoCard.categories, categories => {
+	watch(getBingoCardOutput, categories => {
 		output.value = generateOutput(categories);
 	});
 
 	function generateOutput(categories) {
-		const complete = [];
-		const incomplete = [];
+		const complete = categories
+			.filter(cat => cat.starType !== 'free' && cat.isSatisfied) // Filter out free star tile from checklist
+			.map(cat => `${cat.category}: ${cat.entry}`); // List everything else from completed categories
 
-		categories.forEach(category => {
-			if (category.entry) {
-				complete.push(`${category.cat}: ${category.entry}`);
-			} else {
-				incomplete.push(category.cat);
-			}
-		});
+		const incomplete = categories
+			.filter(cat => !cat.isSatisfied)
+			.map(cat => cat.category);
 
-		const list = [];
-		if (complete.length > 0) {
-			list.push('Complete:');
-			list.push(...complete);
-			list.push('');
-		}
-		if (incomplete.length > 0) {
-			list.push('Incomplete:');
-			list.push(...incomplete);
-			list.push('');
-		}
-
-		return list.join('\n');
+		return [
+			...complete.length > 0 ? ['Complete:', ...complete, ''] : [],
+			...incomplete.length > 0 ? ['Incomplete:', ...incomplete, ''] : [],
+		].join('\n');
 	}
 </script>
 
@@ -49,11 +35,13 @@
 	<div>
 		<div class="header">
 			<span>A plain text list, separated by completion state.</span>
+
 			<CopyToClipboard
 				:text="output"
 				alignment="right"
 			/>
 		</div>
+
 		<textarea
 			:value="output"
 			class="textarea"

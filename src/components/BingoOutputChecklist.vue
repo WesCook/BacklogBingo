@@ -1,19 +1,17 @@
 <script setup>
 	import { ref, watch } from 'vue';
 
-	import { useBingo } from '../composables/bingo.js';
+	import { useCardOutput } from '../composables/card-output.js';
 
 	import CopyToClipboard from '../components/CopyToClipboard.vue';
 
-	const { getBingoCard } = useBingo();
+	const { getBingoCardOutput } = useCardOutput();
 
-	const bingoCard = getBingoCard();
-
+	// Populate output with initial data and watch for changes
 	const output = ref();
+	output.value = generateOutput(getBingoCardOutput());
 
-	output.value = generateOutput(bingoCard.categories);
-
-	watch(bingoCard.categories, categories => {
+	watch(getBingoCardOutput, categories => {
 		output.value = generateOutput(categories);
 	});
 
@@ -21,10 +19,9 @@
 		return [
 			'| | **Category** | **Entry** |',
 			':-|:-|:-|',
-			...categories.map(
-				({ cat, entry }) => `| ${entry ? '✅' : '⬜'} | ${cat} | ${entry || ''} |`
-			),
-			''
+			...categories
+				.filter(cat => cat.starType !== 'free') // Filter out free star tile from checklist
+				.map(cat => `| ${(cat.isSatisfied) ? '✅' : '⬜'} | ${cat.category} | ${cat.entry} |`) // List everything else with optional checkmark
 		].join('\n');
 	}
 </script>
@@ -33,11 +30,13 @@
 	<div>
 		<div class="header">
 			<span>A checklist in Markdown, well-suited for sharing blackout cards.</span>
+
 			<CopyToClipboard
 				:text="output"
 				alignment="right"
 			/>
 		</div>
+
 		<textarea
 			:value="output"
 			class="textarea"

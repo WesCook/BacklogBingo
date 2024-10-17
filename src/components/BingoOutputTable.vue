@@ -3,7 +3,7 @@
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
-	import { useBingo } from '../composables/bingo.js';
+	import { useCardOutput } from '../composables/card-output.js';
 
 	import CopyToClipboard from '../components/CopyToClipboard.vue';
 
@@ -16,43 +16,34 @@
 
 	const { getGameRules, calculateGameMode } = useGameRules();
 	const { getRowLength, shouldShrinkGrid } = useCategories();
-	const { getBingoCard, getStarTile } = useBingo();
+	const { getBingoCardOutput } = useCardOutput();
 
 	const gamerules = getGameRules();
-	const bingoCard = getBingoCard();
 	const gamemode = calculateGameMode(shouldShrinkGrid());
-
-	const output = ref();
 	const gridSize = gamerules.gridSize;
 	const rowLength = getRowLength(gridSize);
 
-	// Update markdown initially and on change
-	output.value = generateOutput(bingoCard.categories, rowLength);
+	// Populate output with initial data and watch for changes
+	const output = ref();
+	output.value = generateOutput(getBingoCardOutput(), rowLength);
 
-	watch(bingoCard.categories, categories => {
+	watch(getBingoCardOutput, categories => {
 		output.value = generateOutput(categories, rowLength);
 	});
 
+	// Also watch for win state - necessary for reading value on initial page load
 	watch(props, () => {
-		output.value = generateOutput(bingoCard.categories, rowLength);
+		output.value = generateOutput(getBingoCardOutput(), rowLength);
 	});
 
 	function generateOutput(categories, rowLength) {
 		let table = '';
 		let index = 0;
 		const centerCol = Math.floor(rowLength / 2);
-		const starUUID = getStarTile();
 
 		// Get category numbers
-		let currentCategories;
-		let totalCategories;
-		if (gamerules.star !== 'free') {
-			currentCategories = bingoCard.categories.filter(cat => cat.entry).length;
-			totalCategories = bingoCard.categories.length;
-		} else {
-			currentCategories = bingoCard.categories.filter(cat => cat.entry && cat.uuid !== starUUID).length;
-			totalCategories = bingoCard.categories.length - 1;
-		}
+		const currentCategories = categories.filter(cat => (cat.isSatisfied && cat.starType !== 'free')).length;
+		const totalCategories = categories.filter(cat => cat.starType !== 'free').length;
 
 		// Generate table header
 		let header = '|';
@@ -79,29 +70,21 @@
 		// Generate table rows
 		while (index < categories.length) {
 			const row = categories.slice(index, index + rowLength);
-			const rowCells = row.map(item => {
+			const rowCells = row.map(cat => {
 				let cellContent = '';
-				let catName = item.cat;
-
-				// Star tiles
-				if (gamerules.star === 'free' && item.uuid === starUUID) { // Free
-					return '| ★ ';
-				}
-				if (item.uuid === starUUID && gamerules.star === 'wildcard') { // Wildcard
-					catName = '★ Wildcard';
-				}
 
 				// Category
-				if (item.entry) {
-					cellContent += `~~${catName}~~`;
+				if (cat.entry) {
+					cellContent += `~~${cat.category}~~`;
 				} else {
-					cellContent += catName;
+					cellContent += cat.category;
 				}
 
-				// Entry
-				if (item.entry || (item.entry && gamerules.star === 'wildcard' && item.uuid === starUUID)) {
-					cellContent += ` <br> **✅ ${item.entry}**`;
+				// Entry (exclude free stars)
+				if (cat.isSatisfied && !(cat.isStarTile && gamerules.star === 'free')) {
+					cellContent += ` <br> **✅ ${cat.entry}**`;
 				}
+
 				return `| ${cellContent} `;
 			}).join('') + '|';
 
@@ -121,11 +104,13 @@
 	<div>
 		<div class="header">
 			<span>A table in Markdown, for easy sharing of your bingo card across various social media sites.</span>
+
 			<CopyToClipboard
 				:text="output"
 				alignment="right"
 			/>
 		</div>
+
 		<textarea
 			:value="output"
 			class="textarea"
