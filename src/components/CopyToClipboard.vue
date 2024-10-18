@@ -30,10 +30,12 @@
 </script>
 
 <template>
-	<div class="wrapper">
+	<div
+		class="wrapper"
+		:data-align="props.alignment"
+	>
 		<button
 			class="copy-btn"
-			:style="{ order: props.alignment === 'left' ? 0 : 1 }"
 			@click="copy"
 		>
 			📋&#xFE0E; &nbsp;Copy
@@ -50,6 +52,9 @@
 		display: inline-flex;
 		gap: 10px;
 	}
+	.wrapper[data-align="right"] {
+		flex-direction: row-reverse;
+	}
 
 	.copy-btn {
 		all: unset;
@@ -60,6 +65,7 @@
 
 	.status {
 		display: flex;
+		justify-content: center;
 		align-items: center;
 		animation-name: fadeOut;
 		animation-duration: 3.5s;
@@ -69,6 +75,13 @@
 		visibility: hidden;
 		opacity: 0;
 	}
+
+	@media (width < 600px) {
+		.wrapper {
+			flex-direction: column !important;
+		}
+	}
+
 	@keyframes fadeOut {
 		0% {
 			visibility: hidden;

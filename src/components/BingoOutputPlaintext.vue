@@ -39,6 +39,7 @@
 			<CopyToClipboard
 				:text="output"
 				alignment="right"
+				style="margin-left: auto;"
 			/>
 		</div>
 
@@ -49,31 +50,3 @@
 		></textarea>
 	</div>
 </template>
-
-<style scoped>
-	.textarea {
-		display: block;
-		width: 100%;
-		min-width: 100%;
-		max-width: 100%;
-		height: 140px;
-		min-height: 100px;
-		max-height: 600px;
-		padding: 10px;
-		font-family: monospace;
-		font-size: 0.9em;
-		transition: none;
-		margin-bottom: 10px;
-	}
-
-	.header {
-		display: flex;
-		align-items: center;
-		justify-content: start;
-		gap: 5px;
-		margin-bottom: 0.6em;
-	}
-	.header div:last-child {
-		margin-left: auto;
-	}
-</style>
