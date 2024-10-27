@@ -49,7 +49,7 @@
 		}
 
 		loadedJSON.value = json;
-		document.getElementById('confirm')?.scrollIntoView({ behavior: 'smooth' });
+		setTimeout(() => document.getElementById('confirm')?.scrollIntoView({ behavior: 'smooth' }), 0); // Delayed to allow element to be created
 	}
 
 	function confirmList() {
@@ -140,10 +140,28 @@
 		id="confirm"
 		class="confirmation-panel"
 	>
-		<p>Awesome!  You've selected <strong>{{ loadedJSON.name }}</strong>.  It has {{ loadedJSON.categories.length }} categories available.</p>
+		<h2>Selected List</h2>
+		<div class="details-box">
+			<button
+				class="close-button"
+				@click="loadedJSON = null;"
+			>
+				✖
+			</button>
+			<h3>{{ loadedJSON.name }}</h3>
+			<span>Total Categories: {{ loadedJSON.categories.length }}</span>
+			<button
+				class="preview-button"
+				@click="modalActive = true;"
+			>
+				Preview
+			</button>
+			<blockquote v-if="loadedJSON.description">
+				{{ loadedJSON.description }}
+			</blockquote>
+		</div>
 		<p>When you're ready, click <em>Confirm List</em> to move to the next step and configure your game rules.</p>
 		<nav class="btn-bar">
-			<button @click="modalActive = true;">Preview Categories</button>
 			<button @click="confirmList">Confirm List</button>
 		</nav>
 	</section>
@@ -189,11 +207,16 @@
 
 	.confirmation-panel {
 		margin-top: 2em;
+
+		h2 {
+			text-align: center;
+			margin-bottom: 10px;
+		}
 	}
 
 	.btn-bar {
 		display: flex;
-		justify-content: space-between;
+		justify-content: end;
 		margin-top: 2em;
 	}
 
@@ -234,6 +257,39 @@
 	.card-file {
 		grid-area: card-file;
 		background-color: var(--tone3);
+	}
+
+	/* Details box */
+	.details-box {
+		background-color: var(--background-shaded);
+		padding: 1em;
+
+		h3 {
+			margin-bottom: 4px;
+		}
+
+		.preview-button {
+			margin-left: 0.5em;
+			padding: 4px;
+		}
+
+		.close-button {
+			float: right;
+			margin-left: 0.4em;
+			margin-bottom: 0.4em;
+		}
+
+		blockquote {
+			font-style: italic;
+			margin-top: 0.7em;
+
+			&::before {
+				content: "“";
+			}
+			&::after {
+				content: "”";
+			}
+		}
 	}
 
 	/* Categories listed in modal preview */

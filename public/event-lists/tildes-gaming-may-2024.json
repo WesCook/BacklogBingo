@@ -1,6 +1,7 @@
 {
 	"version": 1,
 	"name": "Tildes Backlog Burner - May 2024",
+	"description": "The first major category overhaul.",
 	"categories": [
 		{ "name": "Has less than NUMBER[2,20] achievements", "group": "Achievements" },
 		{ "name": "Has more than NUMBER[50,100] achievements", "group": "Achievements" },

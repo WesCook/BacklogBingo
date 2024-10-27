@@ -1,6 +1,7 @@
 {
     "version": 1,
     "name": "Tildes Backlog Burner - Nov 2024 Flux",
+    "description": "A tweaked and updated version of the May 2024 category list.  Now known as Flux.",
     "categories": [
         { "name": "Nominated for CHOOSE[a GDC Award|a Steam award|The Game Awards|any award]" },
         { "name": "Has CHOOSE[a female|a non-human|a robot] antagonist", "group": "Characters" },

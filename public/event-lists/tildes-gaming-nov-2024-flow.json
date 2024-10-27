@@ -1,6 +1,7 @@
 {
     "version": 1,
     "name": "Tildes Backlog Burner - Nov 2024 Flow",
+    "description": "A conceptually abstract list of ideas to guide you.  Let your imagination flow.",
     "categories": [
         { "name": "Absence" },
         { "name": "Abundance" },
