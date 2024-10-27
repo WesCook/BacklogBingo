@@ -265,7 +265,8 @@
 		padding: 1em;
 
 		h3 {
-			margin-bottom: 4px;
+			margin-top: 0;
+			margin-bottom: 6px;
 		}
 
 		.preview-button {
@@ -281,7 +282,7 @@
 
 		blockquote {
 			font-style: italic;
-			margin-top: 0.7em;
+			margin-top: 0.8em;
 
 			&::before {
 				content: "“";
