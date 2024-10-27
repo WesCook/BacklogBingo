@@ -80,7 +80,7 @@
 	>
 		<div class="card-event">
 			<h3>Prebuilt Category Lists</h3>
-			<p>Actively-running events</p>
+			<h4>Actively-running events</h4>
 			<ul class="list">
 				<CategoryListEvent
 					title="Tildes Backlog Burner - Nov 2024 Flow"
@@ -97,7 +97,7 @@
 					@lock-download="lockDownload"
 				/>
 			</ul>
-			<p>Older events</p>
+			<h4>Older events</h4>
 			<ul class="list">
 				<CategoryListEvent
 					title="Tildes Backlog Burner - May 2024"
@@ -200,6 +200,7 @@
 		gap: 1em;
 		margin-top: 1.2em;
 		padding: 0;
+
 		& > div {
 			padding: 25px;
 		}
@@ -218,6 +219,14 @@
 		display: flex;
 		justify-content: end;
 		margin-top: 2em;
+	}
+
+	/* Category List Headers */
+	h4 {
+		font-weight: normal;
+	}
+	.list + h4 {
+		margin-top: 1.6em;
 	}
 
 	/* Remove styling for semantic elements */
