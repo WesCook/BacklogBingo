@@ -83,6 +83,20 @@
 			<p>Bingo category lists from online events.</p>
 			<ul class="list">
 				<CategoryListEvent
+					title="Tildes Backlog Burner - Nov 2024 Flow"
+					file="tildes-gaming-nov-2024-flow.json"
+					:selected-name="loadedJSON?.name"
+					@load-file="loadFile"
+					@lock-download="lockDownload"
+				/>
+				<CategoryListEvent
+					title="Tildes Backlog Burner - Nov 2024 Flux"
+					file="tildes-gaming-nov-2024-flux.json"
+					:selected-name="loadedJSON?.name"
+					@load-file="loadFile"
+					@lock-download="lockDownload"
+				/>
+				<CategoryListEvent
 					title="Tildes Backlog Burner - May 2024"
 					file="tildes-gaming-may-2024.json"
 					:selected-name="loadedJSON?.name"
