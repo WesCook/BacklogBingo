@@ -19,7 +19,7 @@ export function useCardOutput() {
 		// Iterate over each category in the bingo card
 		for (const { cat, entry, uuid } of bingoCard.categories) {
 			let catNew = cat;
-			let entryNew = entry;
+			let entryNew = (entry === undefined) ? '' : entry;
 			const isStarTile = (uuid === starUUID && gamerules.star !== 'disabled');
 			const isSatisfied = (!!entry || (isStarTile && gamerules.star === 'free'));
 			let starType = '';
