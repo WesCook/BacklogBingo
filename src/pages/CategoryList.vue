@@ -80,7 +80,7 @@
 	>
 		<div class="card-event">
 			<h3>Prebuilt Category Lists</h3>
-			<p>Bingo category lists from online events.</p>
+			<p>Actively-running events</p>
 			<ul class="list">
 				<CategoryListEvent
 					title="Tildes Backlog Burner - Nov 2024 Flow"
@@ -96,6 +96,9 @@
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
+			</ul>
+			<p>Older events</p>
+			<ul class="list">
 				<CategoryListEvent
 					title="Tildes Backlog Burner - May 2024"
 					file="tildes-gaming-may-2024.json"
