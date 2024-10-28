@@ -71,7 +71,8 @@
 		<template v-else>
 			<!-- Wildcard Star -->
 			<template v-if="star === 'wildcard'">
-				<span>Wildcard<br>(anything goes!)</span>
+				<span>Wildcard</span>
+				<span class="wildcard-info">(anything goes!)</span>
 				<span class="star-wildcard">★</span>
 			</template>
 
@@ -169,6 +170,12 @@
 	}
 	.dupe .star-wildcard {
 		font-size: 1.8em;
+	}
+
+	@media (width < 670px) {
+		.wildcard-info {
+			display: none;
+		}
 	}
 
 	/* Duplicate message */
