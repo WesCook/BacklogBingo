@@ -83,14 +83,14 @@
 			<h4>Actively-running events</h4>
 			<ul class="list">
 				<CategoryListEvent
-					title="Tildes Backlog Burner - Nov 2024 Flow"
+					title="Backlog Burner: Nov 2024 Flow"
 					file="tildes-gaming-nov-2024-flow.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
 				<CategoryListEvent
-					title="Tildes Backlog Burner - Nov 2024 Flux"
+					title="Backlog Burner: Nov 2024 Flux"
 					file="tildes-gaming-nov-2024-flux.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
@@ -100,14 +100,14 @@
 			<h4>Older events</h4>
 			<ul class="list">
 				<CategoryListEvent
-					title="Tildes Backlog Burner - May 2024"
+					title="Backlog Burner: May 2024"
 					file="tildes-gaming-may-2024.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
 				<CategoryListEvent
-					title="Tildes Backlog Burner - Nov 2023"
+					title="Backlog Burner: Nov 2023"
 					file="tildes-gaming-nov-2023.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
