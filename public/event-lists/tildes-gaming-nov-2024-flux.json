@@ -67,7 +67,7 @@
         { "name": "Single-word title", "group": "Title" },
         { "name": "Has CHOOSE[a number|punctuation|“Super”|the letter ‘Q’|the letter ‘X'] in the title", "group": "Title" },
         { "name": "You chose it based on title alone", "group": "Title" },
-        { "name": "Has a CHOOSE[calm|cartoony|cozy|dark|experimental|fast-paced|feel-good|futuristic|historical|humorous|logical|lonely|mature|minimalistic|modern|moody|philosophical|realistic|satirical|spooky|surreal|unsettling|whimsical] vibe" },
+        { "name": "Has a CHOOSE[calm|cartoony|cozy|dark|experimental|fast-paced|feel-good|futuristic|historical|humorous|literary|logical|lonely|minimalistic|modern|moody|philosophical|realistic|satirical|spooky|surreal|unsettling|whimsical] vibe" },
         { "name": "Owned for more than NUMBER[2,5] years" },
         { "name": "A modded game" },
         { "name": "A romhack or total conversion mod" },
