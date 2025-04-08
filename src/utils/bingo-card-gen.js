@@ -58,10 +58,11 @@ function chooseCategories(categories) {
 		return [];
 	}
 
+	console.groupCollapsed('Scanning categories...');
 	while (finalList.length < categoryNumber && (workingPool.length > 0 || discardPool.length > 0)) {
 		if (workingPool.length === 0) {
 			// When working pool is exhausted, reset group tracking and return discarded categories to working pool.  Categories should still be shuffled from before (and reshuffling here might indefinitely delay the loop).
-			console.warn(`Working pool exhausted.  Returning ${discardPool.length} discarded categories.`);
+			console.log(`%cWorking pool exhausted.  Returning ${discardPool.length} discarded categories.`, 'color: orange;');
 			workingPool = discardPool;
 			discardPool = [];
 			usedGroups.clear();
@@ -73,13 +74,14 @@ function chooseCategories(categories) {
 			finalList.push(cat);
 			if (cat.group) {
 				usedGroups.add(cat.group);
-				//console.log(`Selected category '${cat.cat}' from group ID ${cat.group}.`);
+				console.log(`Selected category '${cat.cat}' from group ID ${cat.group}.`);
 			}
 		} else {
 			discardPool.push(cat);
-			//console.log(`Discarded category '${cat.cat}' from group ID ${cat.group} (already used).`);
+			console.log(`Discarded category '${cat.cat}' from group ID ${cat.group} (already used).`);
 		}
 	}
+	console.groupEnd();
 
 	return finalList;
 }
