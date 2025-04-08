@@ -1,16 +1,23 @@
-import eslint from '@eslint/js';
+import js from '@eslint/js';
 import vue from 'eslint-plugin-vue';
+import globals from "globals";
 
 export default [
-	// ESLint recommended
-	eslint.configs.recommended,
+	// ESLint recommended JS rules
+	js.configs.recommended,
 
-	// Vue recommended
+	// Vue recommended rules
 	...vue.configs['flat/recommended'],
 
 	// Custom rules
 	{
 		files: ['src/**/*.{vue,js}'],
+		languageOptions: {
+			// Support for browser environment variables (window, localStorage, etc)
+			globals: {
+				...globals.browser
+			}
+		},
 		rules: {
 			// Technical errors
 			'prefer-const': 'warn',
@@ -39,9 +46,9 @@ export default [
 			}],
 			'vue/html-self-closing': ['error', {
 				html: {
-					normal: "never",
-					void: "never",
-					component: "always"
+					normal: 'never',
+					void: 'never',
+					component: 'always'
 				}
 			}],
 
