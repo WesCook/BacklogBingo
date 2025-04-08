@@ -1,8 +1,9 @@
+import { defineConfig } from "eslint/config";
 import js from '@eslint/js';
 import vue from 'eslint-plugin-vue';
 import globals from "globals";
 
-export default [
+export default defineConfig([
 	// ESLint recommended JS rules
 	js.configs.recommended,
 
@@ -57,4 +58,4 @@ export default [
 			'vue/no-setup-props-reactivity-loss': 'warn'
 		}
 	}
-]
+]);
