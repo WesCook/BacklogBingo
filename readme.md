@@ -35,6 +35,6 @@ npm run dev
 
 This repo is configured with GitHub Actions to automatically build and deploy the `/dist` output.  You can generate this folder locally for testing by running `npm run build`, and then `npm run preview` to serve it.
 
-If you wish to fork this repo and also deploy to Github Pages, the config file `/.github/workflows/deploy.yml` will help you configure your own GitHub Actions.  Other deployment targets such as Netlify are described [in the Vite documentation](https://vitejs.dev/guide/static-deploy).
+If you wish to fork this repo and also deploy to Github Pages, the config file `/.github/workflows/deploy.yml` will help you configure your own GitHub Actions.  Other deployment targets such as Netlify are described [in the Vite documentation](https://vite.dev/guide/static-deploy).
 
 If changing the repository name, you will need to update the base path in `vite.config.js`.  If targeting a regular domain name without a subdirectory, `base` should be set to `/` or simply deleted.

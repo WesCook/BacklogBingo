@@ -65,13 +65,10 @@
 	</nav>
 
 	<p>
-		Welcome to Backlog Bingo!  This web app lets you generate a bingo card, either from a prebuilt category list or from your own provided JSON.
-		<em>
-			<a
-				href="https://github.com/WesCook/BacklogBingo/blob/main/public/event-lists/tildes-gaming-may-2024.json"
-				target="_blank"
-			>Example Format</a>
-		</em>
+		Welcome to Backlog Bingo!  This web app lets you generate a bingo card, either from a prebuilt category list or from your own <a
+			href="https://github.com/WesCook/BacklogBingo/wiki/Category-List"
+			target="_blank"
+		>provided JSON</a>.
 	</p>
 
 	<fieldset
@@ -80,7 +77,7 @@
 	>
 		<div class="card-event">
 			<h3>Prebuilt Category Lists</h3>
-			<h4>Actively-running events</h4>
+			<p>Participate in an ongoing event!</p>
 			<ul class="list">
 				<CategoryListEvent
 					title="Backlog Burner: Nov 2024 Flow"
@@ -92,23 +89,6 @@
 				<CategoryListEvent
 					title="Backlog Burner: Nov 2024 Flux"
 					file="tildes-gaming-nov-2024-flux.json"
-					:selected-name="loadedJSON?.name"
-					@load-file="loadFile"
-					@lock-download="lockDownload"
-				/>
-			</ul>
-			<h4>Older events</h4>
-			<ul class="list">
-				<CategoryListEvent
-					title="Backlog Burner: May 2024"
-					file="tildes-gaming-may-2024.json"
-					:selected-name="loadedJSON?.name"
-					@load-file="loadFile"
-					@lock-download="lockDownload"
-				/>
-				<CategoryListEvent
-					title="Backlog Burner: Nov 2023"
-					file="tildes-gaming-nov-2023.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
@@ -193,7 +173,7 @@
 	/* Layout */
 	.card-wrapper {
 		display: grid;
-		grid-template-columns: 2fr 1.4fr;
+		grid-template-columns: 2fr 1.5fr;
 		grid-template-areas:
 			"card-event card-url"
 			"card-event card-file";
