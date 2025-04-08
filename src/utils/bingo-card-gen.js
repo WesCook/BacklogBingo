@@ -31,64 +31,55 @@ export function generateBingoCard(name, categories) {
 	});
 
 	// Create card
-	const bingoCard = {
+	setBingoCard({
 		name: name,
 		categories: chosenCategories
-	};
-	setBingoCard(bingoCard);
+	});
 
 	localStorage.removeItem('categoryList');
 	return true;
 }
 
-// Returns array of categories based on required grid size
-// Tries to respect allowSimilar.  Will fall back when more entries are required.
 function chooseCategories(categories) {
-	// Get gamerules
 	const gamerules = getGameRules();
 	const allowSimilar = gamerules.allowSimilar;
 	const categoryNumber = getCategoryNumber(gamerules.gridSize);
 
-	// Store pools of categories for sorting
-	const catPoolPrimary = shuffleArray(categories); // Holds all categories initially
-	const catPoolSecondary = []; // Fallback pool used when allowSimilar is false.  Reused groups are sent here.
-	const catFinalList = []; // The final list of saved bingo categories
-	const usedGroups = []; // Array of strings of category groups already chosen from primary pool
+	let workingPool = shuffleArray(categories); // Holds a shuffled version of all initial categories
+	let discardPool = []; // Fallback pool used when allowSimilar is false.  Categories with reused groups are sent here.
+	const finalList = []; // The final list of saved bingo categories
+	const usedGroups = new Set(); // Set of category groups already used by working pool
 
-	// Fill bingo list from primary pool
-	for (const cat of catPoolPrimary) {
-		if (allowSimilar || !cat.group) {
-			catFinalList.push(cat);
+	console.log(`Choosing ${categoryNumber} categories from ${categories.length} total.  ${(allowSimilar) ? 'Allowing similar groups' : 'No similar groups allowed'}.`);
+
+	// If we somehow don't have enough categories, return early and don't loop through them
+	if (categories.length < categoryNumber) {
+		setError(`Not enough categories provided (${categories.length}/${categoryNumber}).`);
+		return [];
+	}
+
+	while (finalList.length < categoryNumber && (workingPool.length > 0 || discardPool.length > 0)) {
+		if (workingPool.length === 0) {
+			// When working pool is exhausted, reset group tracking and return discarded categories to working pool.  Categories should still be shuffled from before (and reshuffling here might indefinitely delay the loop).
+			console.warn(`Working pool exhausted.  Returning ${discardPool.length} discarded categories.`);
+			workingPool = discardPool;
+			discardPool = [];
+			usedGroups.clear();
+		}
+
+		const cat = workingPool.shift();
+
+		if (allowSimilar || !cat.group || !usedGroups.has(cat.group)) {
+			finalList.push(cat);
+			if (cat.group) {
+				usedGroups.add(cat.group);
+				//console.log(`Selected category '${cat.cat}' from group ID ${cat.group}.`);
+			}
 		} else {
-			if (cat.group && !usedGroups.includes(cat.group)) {
-				// Allow Similar is false, and group hasn't been used yet
-				catFinalList.push(cat);
-				usedGroups.push(cat.group);
-			}
-			else {
-				// Cat group already used
-				catPoolSecondary.push(cat);
-			}
-		}
-
-		// List was filled with enough categories, so we're done
-		if (catFinalList.length >= categoryNumber) {
-			break;
+			discardPool.push(cat);
+			//console.log(`Discarded category '${cat.cat}' from group ID ${cat.group} (already used).`);
 		}
 	}
 
-	// If we don't have enough from primary pool, fill the rest from secondary
-	// These should still be roughly randomized from before
-	while (catFinalList.length < categoryNumber && catPoolSecondary.length > 0) {
-		console.warn('Not enough unique categories, filling from secondary pool');
-		catFinalList.push(catPoolSecondary.shift());
-	}
-
-	// If we still don't have enough categories, we have problems.  But this shouldn't happen.
-	if (catFinalList.length < categoryNumber) {
-		setError(`A card could not be generated.  There were not enough categories provided (${catFinalList.length}/${categoryNumber}).`);
-		return;
-	}
-
-	return catFinalList;
+	return finalList;
 }
