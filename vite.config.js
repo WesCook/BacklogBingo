@@ -8,7 +8,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 export default defineConfig({
 	plugins: [ vue() ],
 	base: (isProduction) ? deployPath : '/',
-	outDir: 'dist',
+	build: {
+		outDir: 'dist',
+		sourcemap: true
+	},
 	define: {
 		// Remove Options API during build for ~3KB smaller bundles
 		// https://vuejs.org/api/compile-time-flags#VUE_OPTIONS_API
