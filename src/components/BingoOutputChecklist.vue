@@ -7,6 +7,9 @@
 
 	const { getBingoCardOutput } = useCardOutput();
 
+	// Escape pipes in Markdown as they'll break table cells
+	const md = str => str.replaceAll('|', '\\|');
+
 	// Populate output with initial data and watch for changes
 	const output = ref();
 	output.value = generateOutput(getBingoCardOutput());
@@ -21,7 +24,7 @@
 			':-|:-|:-|',
 			...categories
 				.filter(cat => cat.starType !== 'free') // Filter out free star tile from checklist
-				.map(cat => `| ${(cat.isSatisfied) ? '✅' : '⬜'} | ${cat.category} | ${cat.entry} |`) // List everything else with optional checkmark
+				.map(cat => `| ${(cat.isSatisfied) ? '✅' : '⬜'} | ${md(cat.category)} | ${md(cat.entry)} |`) // List everything else with optional checkmark
 		].join('\n');
 	}
 </script>

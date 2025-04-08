@@ -23,6 +23,9 @@
 	const gridSize = gamerules.gridSize;
 	const rowLength = getRowLength(gridSize);
 
+	// Escape pipes in Markdown as they'll break table cells
+	const md = str => str.replaceAll('|', '\\|');
+
 	// Populate output with initial data and watch for changes
 	const output = ref();
 	output.value = generateOutput(getBingoCardOutput(), rowLength);
@@ -75,14 +78,14 @@
 
 				// Category
 				if (cat.entry) {
-					cellContent += `~~${cat.category}~~`;
+					cellContent += `~~${md(cat.category)}~~`;
 				} else {
-					cellContent += cat.category;
+					cellContent += md(cat.category);
 				}
 
 				// Entry (exclude free stars)
 				if (cat.isSatisfied && !(cat.isStarTile && gamerules.star === 'free')) {
-					cellContent += ` <br> **✅ ${cat.entry}**`;
+					cellContent += ` <br> **✅ ${md(cat.entry)}**`;
 				}
 
 				return `| ${cellContent} `;
