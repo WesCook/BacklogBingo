@@ -66,10 +66,11 @@
 	<nav class="nav-bar">
 		<h1>Bingo Card</h1>
 		<RouterLink
+			v-if="!doBingoAnimation"
 			to="/gamerules"
 			class="button"
 		>
-			Edit Rules
+			⚙&#xFE0E; Settings
 		</RouterLink>
 	</nav>
 
