@@ -2,7 +2,7 @@ import { useGameRules } from '../composables/gamerules.js';
 import { useCategories } from '../composables/categories.js';
 import { useBingo } from '../composables/bingo.js';
 import { useErrors } from '../composables/errors.js';
-import { shuffleArray } from '../utils/math-utils.js';
+import { getHashFromString, createSeededRandom, shuffleArray } from '../utils/math-utils.js';
 import { parseDynamicCategory } from '../utils/json-parse.js';
 
 const { getGameRules } = useGameRules();
@@ -12,7 +12,13 @@ const { setError } = useErrors();
 
 // Generate and save the bingo card.  Returns true on success.
 export function generateBingoCard(name, categories) {
-	const chosenCategories = chooseCategories(categories);
+	// Generate random sequence for use in category selection, using deterministic seed if provided
+	const gamerules = getGameRules();
+	const hash = getHashFromString(gamerules.seed);
+	const rng = (gamerules.seed) ? createSeededRandom(hash) : Math.random;
+
+	// Choose categories
+	const chosenCategories = chooseCategories(categories, rng);
 	if (!chosenCategories) {
 		return false;
 	}
@@ -20,7 +26,7 @@ export function generateBingoCard(name, categories) {
 	// Evaluate dynamic categories
 	for (const cat of chosenCategories) {
 		if (cat.dynamic) {
-			cat.cat = parseDynamicCategory(cat.cat);
+			cat.cat = parseDynamicCategory(cat.cat, rng);
 		}
 	}
 
@@ -40,12 +46,12 @@ export function generateBingoCard(name, categories) {
 	return true;
 }
 
-function chooseCategories(categories) {
+function chooseCategories(categories, rng) {
 	const gamerules = getGameRules();
 	const allowSimilar = gamerules.allowSimilar;
 	const categoryNumber = getCategoryNumber(gamerules.gridSize);
 
-	let workingPool = shuffleArray(categories); // Holds a shuffled version of all initial categories
+	let workingPool = shuffleArray(categories, rng); // Holds a shuffled version of all initial categories
 	let discardPool = []; // Fallback pool used when allowSimilar is false.  Categories with reused groups are sent here.
 	const finalList = []; // The final list of saved bingo categories
 	const usedGroups = new Set(); // Set of category groups already used by working pool

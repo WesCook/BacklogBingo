@@ -1,0 +1,32 @@
+{
+	"version": 1,
+	"name": "Random Numbers",
+	"description": "For testing seed determinism",
+	"categories": [
+		{ "name": "Number 01 generated NUMBER[1,20]" },
+		{ "name": "Number 02 generated NUMBER[1,20]" },
+		{ "name": "Number 03 generated NUMBER[1,20]" },
+		{ "name": "Number 04 generated NUMBER[1,20]" },
+		{ "name": "Number 05 generated NUMBER[1,20]" },
+		{ "name": "Number 06 generated NUMBER[1,20]" },
+		{ "name": "Number 07 generated NUMBER[1,20]" },
+		{ "name": "Number 08 generated NUMBER[1,20]" },
+		{ "name": "Number 09 generated NUMBER[1,20]" },
+		{ "name": "Number 10 generated NUMBER[1,20]" },
+		{ "name": "Number 11 generated NUMBER[1,20]" },
+		{ "name": "Number 12 generated NUMBER[1,20]" },
+		{ "name": "Number 13 generated NUMBER[1,20]" },
+		{ "name": "Number 14 generated NUMBER[1,20]" },
+		{ "name": "Number 15 generated NUMBER[1,20]" },
+		{ "name": "Number 16 generated NUMBER[1,20]" },
+		{ "name": "Number 17 generated NUMBER[1,20]" },
+		{ "name": "Number 18 generated NUMBER[1,20]" },
+		{ "name": "Number 19 generated NUMBER[1,20]" },
+		{ "name": "Number 20 generated NUMBER[1,20]" },
+		{ "name": "Number 21 generated NUMBER[1,20]" },
+		{ "name": "Number 22 generated NUMBER[1,20]" },
+		{ "name": "Number 23 generated NUMBER[1,20]" },
+		{ "name": "Number 24 generated NUMBER[1,20]" },
+		{ "name": "Number 25 generated NUMBER[1,20]" }
+	]
+}

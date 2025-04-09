@@ -18,7 +18,7 @@
 				type="radio"
 				name="gamemode-radio"
 				value="standard"
-				@change="resetGameRules('standard', isBingoCardSet.value, shouldShrinkGrid());"
+				@change="resetGameRules('standard', isBingoCardSet, shouldShrinkGrid());"
 			>
 			<h3>Standard</h3>
 			<p>The main way to play.  Complete a row, column, or diagonal to win.  Each entry only counts for one category.</p>
@@ -29,7 +29,7 @@
 				type="radio"
 				name="gamemode-radio"
 				value="golf"
-				@change="resetGameRules('golf', isBingoCardSet.value, shouldShrinkGrid());"
+				@change="resetGameRules('golf', isBingoCardSet, shouldShrinkGrid());"
 			>
 			<h3>Golf</h3>
 			<p>Focus on strategy, and try to finish a whole board with as few unique entries as possible.</p>

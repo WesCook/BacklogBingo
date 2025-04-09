@@ -13,12 +13,12 @@
 
 	const elements = ref([]);
 	onMounted(() => {
-		elements.value = parseDynamicCategory(props.name);
+		elements.value = buildElements(props.name);
 	});
 
 	// Take dynamic category string and splits it into an array of elements
 	// These are then looped through and built in the template
-	function parseDynamicCategory(text) {
+	function buildElements(text) {
 		const elements = [];
 		let lastIndex = 0; // Current position in text
 		const regex = /\b(NUMBER|CHOOSE)\[([^\]]+)\]/g;

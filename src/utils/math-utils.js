@@ -1,8 +1,7 @@
 // Shuffle an array
-// Optionally supports numeric seed, such as for syncing card data with others
-export function shuffleArray(arr, seed = null) {
+// Optionally supports custom prng for seeded sequences
+export function shuffleArray(arr, rng = Math.random) {
 	const shuffled = [...arr];
-	const rng = (seed) ? createSeededRandom(seed) : Math.random;
 
 	// Durstenfeld shuffle adapted from https://stackoverflow.com/a/12646864
 	for (let i = shuffled.length - 1; i > 0; i--) {
@@ -15,7 +14,7 @@ export function shuffleArray(arr, seed = null) {
 
 // Returns a PRNG function (SplitMix32) that produces a deterministic sequence of values from 0 to 1 from a numeric seed
 // https://github.com/bryc/code/blob/master/jshash/PRNGs.md#splitmix32
-function createSeededRandom(seed) {
+export function createSeededRandom(seed) {
 	return () => {
 		seed |= 0; // Force seed to be a 32-bit integer
 		seed = (seed + 0x9e3779b9) | 0; // Add the constant (the golden ratio in hex) to the seed to improve randomness and distribution

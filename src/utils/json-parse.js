@@ -55,10 +55,12 @@ export function detectDynamicCategory(catName) {
 	return regex.test(catName);
 }
 
-// Parses dynamic tags in text, validates them, and returns a new string.  Supports:
+// Parses dynamic tags in text, validates them, and returns a new string
+// Optionally supports custom prng for seeded sequences
+// Dynamic Tags supported:
 // - NUMBER[1,5] - Chooses a random integer from min to max values
 // - CHOOSE[term1|term2|term3...] - Chooses a term/phrase separated by pipes
-export function parseDynamicCategory(catName) {
+export function parseDynamicCategory(catName, rng = Math.random) {
 	return catName.replaceAll(/(NUMBER|CHOOSE)\[([^\]]+)\]/g, (match, type, values) => {
 		if (type === 'NUMBER') {
 			// Cast to number and destructure
@@ -75,7 +77,7 @@ export function parseDynamicCategory(catName) {
 				setError(`A dynamic category contains a non-integer ${match} in the following line:\n\n${catName}\n\nOnly integers are supported.`);
 			}
 
-			return getRandomNumber(min, max);
+			return chooseRandomNumber(rng, min, max);
 		} else if (type === 'CHOOSE') {
 			const terms = values.split('|');
 
@@ -84,16 +86,16 @@ export function parseDynamicCategory(catName) {
 				setError(`A dynamic category contains too few values ${match} in the following line:\n\n${catName}\n\nExpected format: CHOOSE[term1|term2|term3...] with at least two terms.`);
 			}
 
-			return chooseRandomWord(terms);
+			return chooseRandomWord(rng, terms);
 		}
 	});
 }
 
-function getRandomNumber(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
+function chooseRandomNumber(rng, min, max) {
+	return Math.floor(rng() * (max - min + 1)) + min;
 }
 
-function chooseRandomWord(terms) {
-	const index = Math.floor(Math.random() * terms.length);
+function chooseRandomWord(rng, terms) {
+	const index = Math.floor(rng() * terms.length);
 	return terms[index];
 }

@@ -9,17 +9,19 @@ const gamerules = reactive({});
 const defaultGameModes = {
 	'standard': {
 		winCondition: 'row-col-diag',
-		gridSize: 'medium',
+		star: 'wildcard',
 		allowDuplicates: false,
+		gridSize: 'medium',
 		allowSimilar: false,
-		star: 'wildcard'
+		seed: ''
 	},
 	'golf': {
 		winCondition: 'blackout',
-		gridSize: 'medium',
+		star: 'free',
 		allowDuplicates: true,
+		gridSize: 'medium',
 		allowSimilar: false,
-		star: 'free'
+		seed: ''
 	}
 };
 
@@ -35,6 +37,7 @@ function transformLocked(gamerulesTemp) {
 	// Retain locked settings because they shouldn't change after a card has been generated
 	gamerulesTransform.gridSize = gamerules.gridSize;
 	gamerulesTransform.allowSimilar = gamerules.allowSimilar;
+	gamerulesTransform.seed = gamerules.seed;
 
 	return gamerulesTransform;
 }

@@ -1,6 +1,4 @@
 <script setup>
-	import { ref} from 'vue';
-
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
@@ -18,7 +16,6 @@
 
 	// Save default grid size for later comparison (post-transform)
 	const gamerules = getGameRules();
-	const defaultGridSize = ref(gamerules.gridSize);
 
 	// Store grid size for conditional logic if configuring from a category list
 	let maxGridSize;
@@ -45,47 +42,6 @@
 					<option value="blackout">Blackout (every tile)</option>
 				</select>
 				<p>The required pattern for completing a bingo.</p>
-			</li>
-			<li>
-				<h3>Grid Size</h3>
-				<select
-					id="gridSize"
-					:value="gamerules.gridSize"
-					:disabled="isBingoCardSet"
-					@change="setGameRule($event.target.id, $event.target.value)"
-				>
-					<option
-						v-if="isBingoCardSet || (isCategoryListSet && maxGridSize >= 3)"
-						value="small"
-					>
-						Small (3x3)
-					</option>
-					<option
-						v-if="isBingoCardSet || (isCategoryListSet && maxGridSize >= 5)"
-						value="medium"
-					>
-						Medium (5x5)
-					</option>
-					<option
-						v-if="isBingoCardSet || (isCategoryListSet && maxGridSize >= 7)"
-						value="large"
-					>
-						Large (7x7)
-					</option>
-				</select>
-				<p>How large of a bingo grid to generate.</p>
-				<p
-					v-if="isBingoCardSet"
-					class="notice"
-				>
-					This setting cannot be changed as your card has already been generated.
-				</p>
-				<p
-					v-else-if="gamerules.gridSize !== defaultGridSize"
-					class="notice"
-				>
-					This setting cannot be changed once your card is generated.
-				</p>
 			</li>
 			<li>
 				<h3>Star Tile</h3>
@@ -116,6 +72,40 @@
 				</label>
 				<p>Allow the same entry to be used in multiple categories.  This enables playing by golf rules, where you try to optimize overlapping categories.</p>
 			</li>
+		</ul>
+		<p class="notice">
+			The following settings cannot be changed <span v-if="isBingoCardSet">as your card has already been generated</span><span v-else>once your card is generated</span>.
+		</p>
+		<ul>
+			<li>
+				<h3>Grid Size</h3>
+				<select
+					id="gridSize"
+					:value="gamerules.gridSize"
+					:disabled="isBingoCardSet"
+					@change="setGameRule($event.target.id, $event.target.value)"
+				>
+					<option
+						v-if="isBingoCardSet || (isCategoryListSet && maxGridSize >= 3)"
+						value="small"
+					>
+						Small (3x3)
+					</option>
+					<option
+						v-if="isBingoCardSet || (isCategoryListSet && maxGridSize >= 5)"
+						value="medium"
+					>
+						Medium (5x5)
+					</option>
+					<option
+						v-if="isBingoCardSet || (isCategoryListSet && maxGridSize >= 7)"
+						value="large"
+					>
+						Large (7x7)
+					</option>
+				</select>
+				<p>How large of a bingo grid to generate.</p>
+			</li>
 			<li>
 				<h3>Allow Similar</h3>
 				<label>
@@ -129,18 +119,17 @@
 					<span>Allow similar</span>
 				</label>
 				<p>The generator will try to prevent similar categories from being chosen together unless this is enabled.</p>
-				<p
-					v-if="isBingoCardSet"
-					class="notice"
+			</li>
+			<li>
+				<h3>Seed</h3>
+				<input
+					id="seed"
+					type="text"
+					:value="gamerules.seed"
+					:disabled="isBingoCardSet"
+					@change="setGameRule($event.target.id, $event.target.value)"
 				>
-					This setting cannot be changed as your card has already been generated.
-				</p>
-				<p
-					v-else-if="gamerules.allowSimilar"
-					class="notice"
-				>
-					This setting cannot be changed once your card is generated.
-				</p>
+				<p>Bias the generator with a text-based seed, allowing you to play the same bingo card as others.  Your categories and Allow Similar settings must also match theirs.</p>
 			</li>
 		</ul>
 	</fieldset>
@@ -166,11 +155,10 @@
 			display: grid;
 			grid-template-areas:
 				"title input"
-				"desc desc"
-				"notice notice";
+				"desc input";
 			grid-template-columns: 2.5fr 200px;
 			align-items: center;
-			row-gap: 5px;
+			gap: 5px;
 		}
 
 		/* Column view on mobile */
@@ -183,21 +171,39 @@
 				grid-template-areas:
 					"title"
 					"desc"
-					"input"
-					"notice";
-				row-gap: 8px;
+					"input";
+				gap: 8px;
 				grid-template-columns: 1fr;
 			}
 		}
 
 		/* Inputs */
 		select,
-		label {
+		label,
+		input[type="text"] {
 			grid-area: input;
 			background-color: var(--background-shaded);
 			border: 1px solid var(--border-color);
 			font-size: 0.9rem;
-			padding: 8px;
+			padding: 8px 12px;
+			width: 100%;
+		}
+
+		/* Bold ticked checkbox labels for extra visibility */
+		input[type="checkbox"]:checked + span {
+			font-weight: bold;
+		}
+
+		/* Fade rule when disabled */
+		li:has(:is(input,select):disabled) {
+			opacity: 70%;
+		}
+
+		/* Fade out further when disabled, and ensure consistency in controls across browsers */
+		&:disabled,
+		&:disabled select,
+		&:disabled label {
+			opacity: 70%;
 		}
 
 		/* Text content */
@@ -213,26 +219,9 @@
 		}
 
 		.notice {
-			grid-area: notice;
-			color: #e59400;
+			color: color-mix(in srgb, var(--foreground-color), var(--background-color) 25%);
 			font-weight: bold;
-		}
-
-		/* Bold ticked checkbox labels for extra visibility */
-		input[type='checkbox']:checked + span {
-			font-weight: bold;
-		}
-
-		/* Fade rule when disabled */
-		li:has(:is(input,select):disabled) {
-			opacity: 70%;
-		}
-
-		/* Fade out further when disabled, and ensure consistency in controls across browsers */
-		&:disabled,
-		&:disabled select,
-		&:disabled label {
-			opacity: 70%;
+			margin: 2.5em 0 1em 0;
 		}
 	}
 </style>
