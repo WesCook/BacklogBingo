@@ -2,7 +2,7 @@ import { useGameRules } from '../composables/gamerules.js';
 import { useCategories } from '../composables/categories.js';
 import { useBingo } from '../composables/bingo.js';
 import { useErrors } from '../composables/errors.js';
-import { shuffleArray } from '../utils/object-utils.js';
+import { shuffleArray } from '../utils/math-utils.js';
 import { parseDynamicCategory } from '../utils/json-parse.js';
 
 const { getGameRules } = useGameRules();
@@ -72,9 +72,9 @@ function chooseCategories(categories) {
 
 		if (allowSimilar || !cat.group || !usedGroups.has(cat.group)) {
 			finalList.push(cat);
+			console.log(`Selected category '${cat.cat}'${(cat.group) ? ` from group ID ${cat.group}` : ''}.`);
 			if (cat.group) {
 				usedGroups.add(cat.group);
-				console.log(`Selected category '${cat.cat}' from group ID ${cat.group}.`);
 			}
 		} else {
 			discardPool.push(cat);

@@ -4,7 +4,7 @@
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
-	import { shuffleArray } from '../utils/object-utils.js';
+	import { shuffleArray } from '../utils/math-utils.js';
 
 	import BingoTile from '../components/BingoTile.vue';
 
