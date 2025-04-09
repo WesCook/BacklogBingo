@@ -9,41 +9,22 @@ input, button, textarea, select {
 }
 
 /* Colors */
-@media (prefers-color-scheme: light) {
-	:root {
-		--foreground-color: #1e1e1e;
-		--background-color: white;
-		--background-shaded: #f7f7f7;
-		--background-section: #fdfdfd;
-		--border-color: #ddd;
-		--tone1: #BBDEFB;
-		--tone2: #f2cdff;
-		--tone3: #fff5b2;
-		--tone4: #c4ffb2;
-		--link-default: #3535ff;
-		--link-hover: #8888ff;
-		--link-active: #9e9eff;
-		--dropshadow: rgba(50, 50, 50, 0.5);
-		--bingo-win: #fff5b2;
-	}
-}
-@media (prefers-color-scheme: dark) {
-	:root {
-		--foreground-color: #f5f5f5;
-		--background-color: #1e1e1e;
-		--background-shaded: #131212;
-		--background-section: #1e1d1d;
-		--border-color: #3b3737;
-		--tone1: #074070;
-		--tone2: #5c007c;
-		--tone3: #756600;
-		--tone4: #1b7500;
-		--link-default: #9e9eff;
-		--link-hover: #8888ff;
-		--link-active: #7777ff;
-		--dropshadow: rgba(130, 130, 130, 0.5);
-		--bingo-win: #7f7113;
-	}
+:root {
+	color-scheme: light dark;
+	--foreground-color: light-dark(#1e1e1e, #f5f5f5);
+	--background-color: light-dark(white, #1e1e1e);
+	--background-shaded: light-dark(#f7f7f7, #131212);
+	--background-section: light-dark(#fdfdfd, #1e1d1d);
+	--border-color: light-dark(#ddd, #3b3737);
+	--tone1: light-dark(#BBDEFB, #074070);
+	--tone2: light-dark(#f2cdff, #5c007c);
+	--tone3: light-dark(#fff5b2, #756600);
+	--tone4: light-dark(#c4ffb2, #1b7500);
+	--link-default: light-dark(#3535ff, #9e9eff);
+	--link-hover: light-dark(#8888ff, #8888ff);
+	--link-active: light-dark(#9e9eff, #7777ff);
+	--dropshadow: light-dark(rgba(50, 50, 50, 0.5), rgba(130, 130, 130, 0.5));
+	--bingo-win: light-dark(#fff5b2, #7f7113);
 }
 
 /* Main body */
