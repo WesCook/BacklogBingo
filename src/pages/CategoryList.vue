@@ -81,14 +81,21 @@
 			<ul class="list">
 				<CategoryListEvent
 					title="Backlog Burner: Nov 2024 Flow"
-					file="tildes-gaming-nov-2024-flow.json"
+					file="tildes-gaming-2024-nov-flow.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
 				<CategoryListEvent
 					title="Backlog Burner: Nov 2024 Flux"
-					file="tildes-gaming-nov-2024-flux.json"
+					file="tildes-gaming-2024-nov-flux.json"
+					:selected-name="loadedJSON?.name"
+					@load-file="loadFile"
+					@lock-download="lockDownload"
+				/>
+				<CategoryListEvent
+					title="Backlog Burner: Free"
+					file="tildes-gaming-alphabet.json"
 					:selected-name="loadedJSON?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
