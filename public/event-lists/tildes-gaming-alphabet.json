@@ -2,6 +2,9 @@
 	"version": 1,
 	"name": "Tildes Backlog Burner - Free",
 	"description": "Conquering your backlog, from A to Z.",
+	"gamerules": {
+		"star": "disabled"
+	},
 	"categories": [
 		{ "name": "A" },
 		{ "name": "B" },

@@ -9,8 +9,8 @@
 	import GameRulesCustom from '../components/GameRulesCustom.vue';
 	import StartOver from '../components/StartOver.vue';
 
-	const { areGamerulesSet, setGameRule, resetGameRules, calculateGameMode } = useGameRules();
-	const { shouldShrinkGrid } = useCategories();
+	const { areGamerulesSet, resetGameRules, setGameRule, calculateGameMode } = useGameRules();
+	const { getCategoryList, shouldShrinkGrid } = useCategories();
 	const { isBingoCardSet } = useBingo();
 
 	// When category list limit is too low, the default grid size must be small.
@@ -21,6 +21,15 @@
 	if (!areGamerulesSet.value) {
 		console.log('No gamerules found.  Defaulting to standard.');
 		resetGameRules('standard', false, shouldShrink);
+
+		// Parse category list for gamerule overrides, and apply them
+		const categoryRules = getCategoryList().gamerules;
+		if (categoryRules) {
+			for (const rule of Object.keys(categoryRules)) {
+				console.log(`Setting game rule '${rule}' to '${categoryRules[rule]}'.`);
+				setGameRule(rule, categoryRules[rule]);
+			}
+		}
 	}
 
 	// Shrink grid if category limit is too low.  Needs to run when changing category lists.
