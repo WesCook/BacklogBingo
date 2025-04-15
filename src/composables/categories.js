@@ -38,6 +38,7 @@ export function useCategories() {
 	}
 
 	function setCategoryList(categoryListNew) {
+		Object.keys(categoryList).forEach(key => delete categoryList[key]);
 		Object.assign(categoryList, categoryListNew);
 		localStorage.setItem('categoryList', JSON.stringify(categoryList));
 	}

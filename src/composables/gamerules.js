@@ -104,6 +104,12 @@ export function useGameRules() {
 		saveToBrowser();
 	}
 
+	// Clear game rules from memory and browser
+	function clearGameRules() {
+		Object.keys(gamerules).forEach(key => delete gamerules[key]);
+		localStorage.removeItem('gamerules');
+	}
+
 	// Find gamemode by comparing current gamerules against (transformed) defaults
 	// Calculating instead of storing gamemode allows us to change the default later
 	// without creating conflicts.
@@ -126,6 +132,7 @@ export function useGameRules() {
 		getGameRules,
 		setGameRule,
 		resetGameRules,
+		clearGameRules,
 		calculateGameMode
 	};
 }

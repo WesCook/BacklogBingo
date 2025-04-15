@@ -11,7 +11,7 @@
 
 	const modalActive = ref();
 
-	function doRestart() {
+	function doReset() {
 		clearBingoCard(); // Overwrite bingo card in memory so navigation guard doesn't kick us out
 		localStorage.clear(); // Clear all local data
 		router.push('/list').then(() => { // Update URL and reload, clearing all memory
@@ -32,7 +32,7 @@
 	<teleport to="body">
 		<UIModal
 			v-if="modalActive"
-			title="Confirm Restart"
+			title="Confirm Reset"
 			:show-close="false"
 			class="modal"
 			@close="modalActive = false"
@@ -42,9 +42,9 @@
 				<button @click="modalActive = false">Cancel</button>
 				<button
 					autofocus
-					@click="doRestart"
+					@click="doReset"
 				>
-					Restart
+					Reset
 				</button>
 			</div>
 		</UIModal>

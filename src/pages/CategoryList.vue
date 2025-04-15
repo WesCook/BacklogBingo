@@ -3,6 +3,7 @@
 	import { useRouter } from 'vue-router';
 	import { useErrors } from '../composables/errors.js';
 
+	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { validateJSON, detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
 
@@ -13,6 +14,7 @@
 	import UIModal from '../components/UIModal.vue';
 
 	const router = useRouter();
+	const { clearGameRules } = useGameRules();
 	const { getCategoryList, setCategoryList, isCategoryListSet } = useCategories();
 	const { clearError, getError } = useErrors();
 
@@ -26,9 +28,10 @@
 	const loadedJSON = ref();
 	const modalActive = ref();
 
-	// If we're returning from another page, load the stored category list
+	// If we're returning from another page, load the stored category list and clear any set game rules
 	if (isCategoryListSet.value) {
 		loadedJSON.value = getCategoryList();
+		clearGameRules();
 	}
 
 	function loadFile(json) {
