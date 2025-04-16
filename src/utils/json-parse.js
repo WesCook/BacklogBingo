@@ -1,22 +1,12 @@
 import { useErrors } from '../composables/errors.js';
 
+import Ajv from 'ajv';
+import categorySchema from '../schemas/category-list.json';
+
 const { setError } = useErrors();
 
-// Define schema for category lists
-const categorySchema = {
-	version: { type: Number, required: true },
-	name: { type: String, required: true },
-	description: { type: String },
-	gamerules: {
-		winCondition: ['row-col', 'row-col-diag', 'blackout'],
-		star: ['wildcard', 'free', 'disabled'],
-		allowDuplicates: { type: Boolean },
-		gridSize: ['small', 'medium', 'large'],
-		allowSimilar: { type: Boolean },
-		seed: { type: String }
-	},
-	categories: { type: Array, required: true }
-};
+const ajv = new Ajv({ allErrors: true });
+const validateCategoryList = ajv.compile(categorySchema);
 
 // Parses provided URL for json, local or remote
 // Reports network and JSON parsing errors.  Returns json on success, false on error.
@@ -43,128 +33,54 @@ export async function downloadJSON(url) {
 	}
 }
 
-// Additional validation for JSON file or regular object
+// Validate JSON against schema validator
 // Returns true for valid, false for invalid
 export function validateJSON(json) {
-	// Validate json against schema, checking for missing fields, extra fields, or type errors
-	if (!validateSchema(json, categorySchema)) {
-		return false;
+	const valid = validateCategoryList(json);
+
+	if (!valid) {
+		setError('The JSON contained the following errors:\n' + formatErrors(validateCategoryList.errors));
 	}
 
-	// Verify there are at least 9 categories (for the smallest size bingo card)
-	if (json.categories.length < 9) {
-		setError('This JSON is valid, but there are too few categories.  Please include at least nine categories.');
-		return false;
-	}
-
-	return true;
+	return valid;
 }
 
-// Accepts schema definition and json object to validate against
-function validateSchema(obj, schema) {
-	const preamble = 'There was an error parsing the file.';
+// Make errors a little more human-friendly
+function formatErrors(errors) {
+	return errors.map(err => {
+		// Convert from `/foo/bar/0/baz` to `foo.bar[0].baz`
+		const path = err.instancePath
+			.replace(/\//g, '.') // slash to dot
+			.replace(/^\./, '') // remove leading dot
+			.replace(/\.(\d+)(\.|$)/g, '[$1]$2'); // turn `.0.` into `[0].`
 
-	// Report any unknown keys in JSON
-	const unknownKeys = Object.keys(obj).filter(key => !(key in schema));
-	if (unknownKeys.length > 0) {
-		setError(`${preamble} Unknown key(s) found: ${unknownKeys.join(', ')}.`);
-		return false;
-	}
+		const context = path || 'Category list';
 
-	// Loop through each property in the schema
-	for (const key in schema) {
-		const rule = schema[key]; // The relevant validation rule for this key/property
-		const isRequired = rule.required === true; // If the rule requires the property to be present in the object
-		const type = inferSchemaType(rule); // The expected type as defined by the schema
-		const value = obj[key]; // The value stored in the property
-
-		// Check for required keys
-		if (isRequired && !(key in obj)) {
-			setError(`${preamble} Missing required key: "${key}".`);
-			return false;
-		}
-
-		// Skip validation if optional property and not present
-		if (!(key in obj))
-			continue;
-
-		// Checking that values are acceptable for selected type
-		switch (type) {
-			// Rule is parsed as array with enum values
+		switch (err.keyword) {
+			case 'required':
+				return `- ${context} is missing required property '${err.params.missingProperty}'`;
+			case 'type':
+				return `- ${context} should be a ${err.params.type}`;
+			case 'additionalProperties':
+				return `- ${context} has an unexpected property '${err.params.additionalProperty}'`;
 			case 'enum':
-				if (!rule.includes(value)) {
-					setError(`${preamble} Invalid value for "${key}": "${value}". Expected one of: ${rule.join(', ')}.`);
-					return false;
-				}
-				break;
-
-			// Rule is parsed as nested object, which requires recursive validation
-			case 'object':
-				if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-					setError(`${preamble} Expected "${key}" to be an object.`);
-					return false;
-				}
-				if (!validateSchema(value, rule)) {
-					return false; // Nested schema handles its own errors
-				}
-				break;
-
-			// Rule is parsed as array literal (eg. category list)
-			case 'array':
-				if (!Array.isArray(value)) {
-					setError(`${preamble} Expected "${key}" to be an array.`);
-					return false;
-				}
-				break;
-
-			// Rule is parsed as primitive type
-			case 'string':
-			case 'number':
-			case 'boolean':
-				if (typeof value !== type) {
-					setError(`${preamble} Expected "${key}" to be of type "${type}".`);
-					return false;
-				}
-				break;
-
+				return `- ${context} must be one of: ${err.params.allowedValues.join(', ')}`;
+			case 'minItems':
+				return `- ${context} should have at least ${err.params.limit} items`;
+			case 'maxItems':
+				return `- ${context} should have no more than ${err.params.limit} items`;
+			case 'minLength':
+				return `- ${context} should be at least ${err.params.limit} characters long`;
+			case 'maxLength':
+				return `- ${context} should be no more than ${err.params.limit} characters long`;
+			case 'pattern':
+				return `- ${context} does not match the required pattern`;
+			case 'format':
+				return `- ${context} must be a valid ${err.params.format}`;
 			default:
-				setError(`${preamble} Unknown type for "${key}".`);
-				return false;
+				return `- ${context} ${err.message}`;
 		}
-	}
-
-	return true;
-}
-
-// Returns specific type from schema so the validator knows what to expect
-// The schema allows a few different formats (eg. arrays might be an enum or user-created list), so this function helps simplify that
-// Remember that this reads the schema's rule, and not the value from the JSON
-function inferSchemaType(rule) {
-	const typeMap = {
-		String: 'string',
-		Number: 'number',
-		Boolean: 'boolean',
-		Object: 'object',
-		Array: 'array'
-	};
-
-	// Enum: rule is an array of values
-	if (Array.isArray(rule)) {
-		return 'enum';
-	}
-
-	if (typeof rule === 'object' && rule !== null) {
-		// Rule explicitly provides a constructor function (eg. String)
-		if (typeof rule.type === 'function' && typeMap[rule.type.name]) {
-			return typeMap[rule.type.name];
-		}
-
-		// No explicit type: treat as nested object schema
-		return 'object';
-	}
-
-	// Anything else is malformed
-	throw new Error('Invalid schema rule');
+	}).join('\n');
 }
 
 // Detects if string contains dynamic category for additional parsing
