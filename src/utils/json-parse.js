@@ -15,7 +15,7 @@ const categorySchema = {
 		allowSimilar: { type: Boolean },
 		seed: { type: String }
 	},
-	categories: { type: Array }
+	categories: { type: Array, required: true }
 };
 
 // Parses provided URL for json, local or remote
