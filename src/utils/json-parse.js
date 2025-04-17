@@ -47,38 +47,38 @@ export function validateJSON(json) {
 
 // Make errors a little more human-friendly
 function formatErrors(errors) {
-	return errors.map(err => {
+	return errors.map(error => {
 		// Convert from `/foo/bar/0/baz` to `foo.bar[0].baz`
-		const path = err.instancePath
+		const path = error.instancePath
 			.replace(/\//g, '.') // slash to dot
 			.replace(/^\./, '') // remove leading dot
 			.replace(/\.(\d+)(\.|$)/g, '[$1]$2'); // turn `.0.` into `[0].`
 
 		const context = path || 'Category list';
 
-		switch (err.keyword) {
+		switch (error.keyword) {
 			case 'required':
-				return `- ${context} is missing required property '${err.params.missingProperty}'`;
+				return `- ${context} is missing required property '${error.params.missingProperty}'`;
 			case 'type':
-				return `- ${context} should be a ${err.params.type}`;
+				return `- ${context} should be a ${error.params.type}`;
 			case 'additionalProperties':
-				return `- ${context} has an unexpected property '${err.params.additionalProperty}'`;
+				return `- ${context} has an unexpected property '${error.params.additionalProperty}'`;
 			case 'enum':
-				return `- ${context} must be one of: ${err.params.allowedValues.join(', ')}`;
+				return `- ${context} must be one of: ${error.params.allowedValues.join(', ')}`;
 			case 'minItems':
-				return `- ${context} should have at least ${err.params.limit} items`;
+				return `- ${context} should have at least ${error.params.limit} items`;
 			case 'maxItems':
-				return `- ${context} should have no more than ${err.params.limit} items`;
+				return `- ${context} should have no more than ${error.params.limit} items`;
 			case 'minLength':
-				return `- ${context} should be at least ${err.params.limit} characters long`;
+				return `- ${context} should be at least ${error.params.limit} characters long`;
 			case 'maxLength':
-				return `- ${context} should be no more than ${err.params.limit} characters long`;
+				return `- ${context} should be no more than ${error.params.limit} characters long`;
 			case 'pattern':
 				return `- ${context} does not match the required pattern`;
 			case 'format':
-				return `- ${context} must be a valid ${err.params.format}`;
+				return `- ${context} must be a valid ${error.params.format}`;
 			default:
-				return `- ${context} ${err.message}`;
+				return `- ${context} ${error.message}`;
 		}
 	}).join('\n');
 }
@@ -95,20 +95,21 @@ export function detectDynamicCategory(catName) {
 // - NUMBER[1,5] - Chooses a random integer from min to max values
 // - CHOOSE[term1|term2|term3...] - Chooses a term/phrase separated by pipes
 export function parseDynamicCategory(catName, rng = Math.random) {
-	return catName.replaceAll(/(NUMBER|CHOOSE)\[([^\]]+)\]/g, (match, type, values) => {
+	const errors = [];
+	const result = catName.replaceAll(/(NUMBER|CHOOSE)\[([^\]]+)\]/g, (match, type, values) => {
 		if (type === 'NUMBER') {
 			// Cast to number and destructure
 			const [min, max] = values.split(',').map(Number);
 
 			// Error checking
 			if (values.split(',').length > 2) {
-				setError(`A dynamic category contains too many values ${match} in the following line:\n\n${catName}\n\nExpected format: NUMBER[min,max]`);
+				errors.push(`- A dynamic category contains too many values in the following line:\n'${catName}'\nExpected format: NUMBER[min,max]`);
 			}
 			if (isNaN(min) || isNaN(max) || min >= max) {
-				setError(`A dynamic category contains an invalid range ${match} in the following line:\n\n${catName}\n\nExpected format: NUMBER[min,max]`);
+				errors.push(`- A dynamic category contains an invalid range ${match} in the following line:\n'${catName}'\nExpected format: NUMBER[min,max]`);
 			}
 			if (!Number.isInteger(min) || !Number.isInteger(max)) {
-				setError(`A dynamic category contains a non-integer ${match} in the following line:\n\n${catName}\n\nOnly integers are supported.`);
+				errors.push(`- A dynamic category contains a non-integer in the following line:\n'${catName}'\nOnly integers are supported.`);
 			}
 
 			return chooseRandomNumber(rng, min, max);
@@ -117,12 +118,13 @@ export function parseDynamicCategory(catName, rng = Math.random) {
 
 			// Error checking
 			if (terms.length < 2) {
-				setError(`A dynamic category contains too few values ${match} in the following line:\n\n${catName}\n\nExpected format: CHOOSE[term1|term2|term3...] with at least two terms.`);
+				errors.push(`- A dynamic category contains too few values in the following line:\n'${catName}'\nExpected format: CHOOSE[term1|term2|term3...] with at least two terms.`);
 			}
 
 			return chooseRandomWord(rng, terms);
 		}
 	});
+	return { result, errors };
 }
 
 function chooseRandomNumber(rng, min, max) {

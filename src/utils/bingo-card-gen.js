@@ -26,7 +26,7 @@ export function generateBingoCard(name, categories) {
 	// Evaluate dynamic categories
 	for (const cat of chosenCategories) {
 		if (cat.dynamic) {
-			cat.cat = parseDynamicCategory(cat.cat, rng);
+			cat.cat = parseDynamicCategory(cat.cat, rng).result;
 		}
 	}
 

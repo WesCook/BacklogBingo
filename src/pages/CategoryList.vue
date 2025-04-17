@@ -16,7 +16,7 @@
 	const router = useRouter();
 	const { clearGameRules } = useGameRules();
 	const { getCategoryList, setCategoryList, isCategoryListSet } = useCategories();
-	const { clearError, getError } = useErrors();
+	const { clearError, setError } = useErrors();
 
 	// Locking fieldset to disable all buttons when network request is active
 	// Set true to lock, false to unlock
@@ -41,14 +41,19 @@
 		clearError();
 
 		// Detect and parse dynamic categories to report any errors early
+		const allErrors = [];
 		for (const cat of json.categories) {
 			if (detectDynamicCategory(cat.name)) {
 				cat.dynamic = true;
-				parseDynamicCategory(cat.name); // Throws error if invalid, so bail out
-				if (getError().value) {
-					return;
+				const { errors } = parseDynamicCategory(cat.name);
+				if (errors.length) {
+					allErrors.push(...errors);
 				}
 			}
+		}
+		if (allErrors.length) {
+			setError(allErrors.join('\n\n'));
+			return;
 		}
 
 		loadedJSON.value = json;
