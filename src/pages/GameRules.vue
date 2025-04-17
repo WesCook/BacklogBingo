@@ -8,6 +8,7 @@
 	import GameRulesMode from '../components/GameRulesMode.vue';
 	import GameRulesCustom from '../components/GameRulesCustom.vue';
 	import StartOver from '../components/StartOver.vue';
+	import ExportData from '../components/ExportData.vue';
 
 	const { areGamerulesSet, resetGameRules, setGameRule, calculateGameMode } = useGameRules();
 	const { getCategoryList, shouldShrinkGrid } = useCategories();
@@ -47,6 +48,7 @@
 	<nav class="nav-bar">
 		<h1>Configure Game Rules</h1>
 		<StartOver />
+		<ExportData v-if="isBingoCardSet" />
 		<RouterLink
 			v-if="isBingoCardSet"
 			to="/bingo"
