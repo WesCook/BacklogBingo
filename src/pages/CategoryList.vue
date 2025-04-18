@@ -11,8 +11,7 @@
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
 	import CategoryListFile from '../components/CategoryListFile.vue';
 	import CategoryListURL from '../components/CategoryListURL.vue';
-	import DynamicCategory from '../components/DynamicCategory.vue';
-	import UIModal from '../components/UIModal.vue';
+	import CategoryListPreview from '../components/CategoryListPreview.vue';
 
 	const router = useRouter();
 	const { clearGameRules, setGameRule, resetGameRules } = useGameRules();
@@ -29,7 +28,6 @@
 
 	const jsonData = ref();
 	const jsonType = ref();
-	const modalActive = ref();
 
 	// If we're returning from another page, load the stored category list and clear any set game rules
 	if (isCategoryListSet.value) {
@@ -79,54 +77,50 @@
 		setTimeout(() => document.getElementById('confirm')?.scrollIntoView({ behavior: 'smooth' }), 0);
 	}
 
-	// Commit action after loading JSON
+	// Update categories and move to next page (game rules)
 	function confirmList() {
 		clearError();
 
 		if (jsonType.value === 'category-list') {
-			// Update categories and move to next page (game rules)
 			setCategoryList(jsonData.value);
 			router.push('/gamerules');
-		} else if (jsonType.value === 'bingo-import') {
-			// Update bingo card categories
-			setBingoCard({
-				name: jsonData.value.name,
-				categories: jsonData.value.categories,
-			});
-
-			// Update gamerules - Start with standard, then apply overrides
-			// This way, adding new game rules won't invalidate the schema
-			resetGameRules('standard', false, shouldShrinkGrid());
-			Object.entries(jsonData.value.gamerules).forEach(([rule, value]) => {
-				setGameRule(rule, value);
-			});
-
-			// Play bingo!
-			router.push('/bingo');
 		}
 	}
 
-	// Computed properties
-	const isBingoImport = computed(() => jsonType.value === 'bingo-import');
-	const isCategoryList = computed(() => jsonType.value === 'category-list');
+	// Update bingo card and load bingo page
+	function confirmImport() {
+		clearError();
 
-	const exportDate = computed(() => isBingoImport.value
-		? new Date(jsonData.value.exported).toLocaleDateString()
-		: '');
+		// Update bingo card categories
+		setBingoCard({
+			name: jsonData.value.name,
+			categories: jsonData.value.categories,
+		});
 
-	const totalCategories = computed(() => jsonData.value?.categories?.length ?? 0);
+		// Update gamerules - Start with standard, then apply overrides
+		// This way, adding new game rules won't invalidate the schema
+		resetGameRules('standard', false, shouldShrinkGrid());
+		Object.entries(jsonData.value.gamerules).forEach(([rule, value]) => {
+			setGameRule(rule, value);
+		});
 
-	const importedProgress = computed(() => {
-		if (!isBingoImport.value) {
-			return null;
+		// Play bingo!
+		router.push('/bingo');
+	}
+
+	// Confirm button
+	const confirmButtonLabel = computed(() =>
+		jsonType.value === 'bingo-import' ? 'Import Card' : 'Confirm List'
+	);
+
+	function submitConfirm() {
+		if (jsonType.value === 'bingo-import') {
+			confirmImport();
+		} else {
+			confirmList();
 		}
+	}
 
-		const completed = jsonData.value.categories.filter(cat => cat.entry).length;
-		const isFreeStar = jsonData.value.gamerules?.star === 'free';
-		const total = (isFreeStar) ? totalCategories.value - 1 : totalCategories.value;
-
-		return `${completed}/${total} complete`;
-	});
 </script>
 
 <template>
@@ -192,69 +186,19 @@
 		</div>
 	</fieldset>
 
-	<section
+	<CategoryListPreview
 		v-if="jsonData"
-		id="confirm"
-		class="confirmation-panel"
-	>
-		<h2>{{ isBingoImport ? 'Imported Bingo Card' : 'Selected List' }}</h2>
-		<div class="details-box">
-			<button
-				class="close-button"
-				@click="jsonData = null; jsonType = ''; modalActive = false;"
-			>
-				✖
-			</button>
-			<h3>{{ jsonData.name }}</h3>
-			<p v-if="isBingoImport">
-				Export Date: {{ exportDate }}
-			</p>
-			<span v-if="isCategoryList">Total Categories: {{ totalCategories }}</span>
-			<span v-else>Imported Categories ({{ importedProgress }})</span>
-			<button
-				class="preview-button"
-				@click="modalActive = true;"
-			>
-				Preview
-			</button>
-			<blockquote v-if="jsonData.description">
-				{{ jsonData.description }}
-			</blockquote>
-		</div>
-		<p v-if="isCategoryList">
-			When you're ready, click <em>Confirm List</em> to move to the next step and configure your game rules.
-		</p>
-		<nav class="btn-bar">
-			<button @click="confirmList">{{ jsonType === 'bingo-import' ? 'Import Card' : 'Confirm List' }}</button>
-		</nav>
-	</section>
+		:json-data="jsonData"
+		:json-type="jsonType"
+		@clear-data="() => { jsonData = null; jsonType = ''; }"
+	/>
 
-	<teleport to="body">
-		<UIModal
-			v-if="modalActive"
-			:title="jsonData.name"
-			:show-close="true"
-			@close="modalActive = false"
-		>
-			<ol class="preview-list">
-				<li
-					v-for="category in jsonData.categories"
-					:key="category"
-				>
-					<span v-if="jsonType === 'bingo-import'">
-						{{ category.entry ? `✅ ${category.cat} (${category.entry})` : category.cat }}
-					</span>
-					<template v-else>
-						<DynamicCategory
-							v-if="category.dynamic"
-							:name="category.name"
-						/>
-						<span v-else>{{ category.name }}</span>
-					</template>
-				</li>
-			</ol>
-		</UIModal>
-	</teleport>
+	<nav
+		v-if="jsonData"
+		class="btn-bar"
+	>
+		<button @click="submitConfirm">{{ confirmButtonLabel }}</button>
+	</nav>
 </template>
 
 <style scoped>
@@ -271,15 +215,6 @@
 
 		& > div {
 			padding: 25px;
-		}
-	}
-
-	.confirmation-panel {
-		margin-top: 2em;
-
-		h2 {
-			text-align: center;
-			margin-bottom: 10px;
 		}
 	}
 
@@ -334,50 +269,5 @@
 	.card-file {
 		grid-area: card-file;
 		background-color: var(--tone3);
-	}
-
-	/* Details box */
-	.details-box {
-		background-color: var(--background-shaded);
-		padding: 1em;
-
-		h3 {
-			margin-top: 0;
-			margin-bottom: 6px;
-		}
-
-		.preview-button {
-			margin-left: 0.5em;
-			padding: 4px;
-		}
-
-		.close-button {
-			float: right;
-			margin-left: 0.4em;
-			margin-bottom: 0.4em;
-		}
-
-		blockquote {
-			font-style: italic;
-			margin-top: 0.8em;
-
-			&::before {
-				content: "“";
-			}
-			&::after {
-				content: "”";
-			}
-		}
-	}
-
-	/* Categories listed in modal preview */
-	.preview-list {
-		list-style: decimal;
-		padding-left: 50px;
-		margin: 2px;
-
-		li {
-			margin-bottom: 4px;
-		}
 	}
 </style>
