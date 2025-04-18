@@ -5,6 +5,7 @@
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
+	import { useBingo } from '../composables/bingo.js';
 	import { validateJSON, detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
 
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
@@ -14,8 +15,9 @@
 	import UIModal from '../components/UIModal.vue';
 
 	const router = useRouter();
-	const { clearGameRules } = useGameRules();
-	const { getCategoryList, setCategoryList, isCategoryListSet } = useCategories();
+	const { clearGameRules, setGameRule, resetGameRules } = useGameRules();
+	const { getCategoryList, setCategoryList, isCategoryListSet, shouldShrinkGrid } = useCategories();
+	const { setBingoCard } = useBingo();
 	const { clearError, setError } = useErrors();
 
 	// Locking fieldset to disable all buttons when network request is active
@@ -25,45 +27,83 @@
 		fieldset.value.disabled = locking;
 	}
 
-	const loadedJSON = ref();
+	const jsonData = ref();
+	const jsonType = ref();
 	const modalActive = ref();
 
 	// If we're returning from another page, load the stored category list and clear any set game rules
 	if (isCategoryListSet.value) {
-		loadedJSON.value = getCategoryList();
+		jsonData.value = getCategoryList();
 		clearGameRules();
 	}
 
+	// Loading categories list or imported card
 	function loadFile(json) {
-		if (!validateJSON(json)) {
+		// First, figure out the type
+		if (Object.hasOwn(json, 'exported')) { // Has key "exported", must be Bingo Import
+			jsonType.value = 'bingo-import';
+		} else {
+			jsonType.value = 'category-list';
+		}
+
+		// Then validate against appropriate schema
+		const valid = validateJSON(json, jsonType.value);
+		if (!valid) {
+			jsonType.value = '';
 			return;
 		}
-		clearError();
 
-		// Detect and parse dynamic categories to report any errors early
-		const allErrors = [];
-		for (const cat of json.categories) {
-			if (detectDynamicCategory(cat.name)) {
-				cat.dynamic = true;
-				const { errors } = parseDynamicCategory(cat.name);
-				if (errors.length) {
-					allErrors.push(...errors);
+		// Separately validate dynamic categories
+		if (jsonType.value === 'category-list') {
+			const allErrors = [];
+			for (const cat of json.categories) {
+				if (detectDynamicCategory(cat.name)) {
+					cat.dynamic = true;
+					const { errors } = parseDynamicCategory(cat.name);
+					if (errors.length) {
+						allErrors.push(...errors);
+					}
 				}
 			}
-		}
-		if (allErrors.length) {
-			setError(allErrors.join('\n\n'));
-			return;
+			if (allErrors.length) {
+				setError(allErrors.join('\n\n'));
+				return;
+			}
 		}
 
-		loadedJSON.value = json;
-		setTimeout(() => document.getElementById('confirm')?.scrollIntoView({ behavior: 'smooth' }), 0); // Delayed to allow element to be created
+		// Data looks good, so let's clear any old errors
+		clearError();
+
+		// Update data and scroll down (small delay to allow element to be created)
+		jsonData.value = json;
+		setTimeout(() => document.getElementById('confirm')?.scrollIntoView({ behavior: 'smooth' }), 0);
 	}
 
+	// Commit action after loading JSON
 	function confirmList() {
 		clearError();
-		setCategoryList(loadedJSON.value);
-		router.push('/gamerules');
+
+		if (jsonType.value === 'category-list') {
+			// Update categories and move to next page (game rules)
+			setCategoryList(jsonData.value);
+			router.push('/gamerules');
+		} else if (jsonType.value === 'bingo-import') {
+			// Update bingo card categories
+			setBingoCard({
+				name: jsonData.value.name,
+				categories: jsonData.value.categories,
+			});
+
+			// Update gamerules - Start with standard, then apply overrides
+			// This way, adding new game rules won't invalidate the schema
+			resetGameRules('standard', false, shouldShrinkGrid());
+			Object.entries(jsonData.value.gamerules).forEach(([rule, value]) => {
+				setGameRule(rule, value);
+			});
+
+			// Play bingo!
+			router.push('/bingo');
+		}
 	}
 </script>
 
@@ -90,21 +130,21 @@
 				<CategoryListEvent
 					title="Backlog Burner: Nov 2024 Flow"
 					file="tildes-gaming-2024-nov-flow.json"
-					:selected-name="loadedJSON?.name"
+					:selected-name="jsonData?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
 				<CategoryListEvent
 					title="Backlog Burner: Nov 2024 Flux"
 					file="tildes-gaming-2024-nov-flux.json"
-					:selected-name="loadedJSON?.name"
+					:selected-name="jsonData?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
 				<CategoryListEvent
 					title="Backlog Burner: Free"
 					file="tildes-gaming-alphabet.json"
-					:selected-name="loadedJSON?.name"
+					:selected-name="jsonData?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
 				/>
@@ -131,53 +171,67 @@
 	</fieldset>
 
 	<section
-		v-if="loadedJSON"
+		v-if="jsonData"
 		id="confirm"
 		class="confirmation-panel"
 	>
-		<h2>Selected List</h2>
+		<h2>{{ jsonType === 'bingo-import' ? 'Imported Bingo Card' : 'Selected List' }}</h2>
 		<div class="details-box">
 			<button
 				class="close-button"
-				@click="loadedJSON = null;"
+				@click="jsonData = null; jsonType = ''; modalActive = false;"
 			>
 				✖
 			</button>
-			<h3>{{ loadedJSON.name }}</h3>
-			<span>Total Categories: {{ loadedJSON.categories.length }}</span>
+			<h3>{{ jsonData.name }}</h3>
+			<p v-if="jsonType === 'bingo-import'">
+				Export Date: {{ new Date(jsonData.exported).toLocaleDateString() }}
+			</p>
+			<span v-if="jsonType === 'category-list'">Total Categories: {{ jsonData.categories.length }}</span>
+			<span v-else>
+				Imported Categories
+				({{ jsonData.categories.filter(category => category.entry).length }}/{{ jsonData.gamerules?.star === 'free' ? jsonData.categories.length - 1 : jsonData.categories.length }} complete)
+			</span>
 			<button
 				class="preview-button"
 				@click="modalActive = true;"
 			>
 				Preview
 			</button>
-			<blockquote v-if="loadedJSON.description">
-				{{ loadedJSON.description }}
+			<blockquote v-if="jsonData.description">
+				{{ jsonData.description }}
 			</blockquote>
 		</div>
-		<p>When you're ready, click <em>Confirm List</em> to move to the next step and configure your game rules.</p>
+		<p v-if="jsonType === 'category-list'">
+			When you're ready, click <em>Confirm List</em> to move to the next step and configure your game rules.
+		</p>
 		<nav class="btn-bar">
-			<button @click="confirmList">Confirm List</button>
+			<button @click="confirmList">{{ jsonType === 'bingo-import' ? 'Import Card' : 'Confirm List' }}</button>
 		</nav>
 	</section>
 
 	<teleport to="body">
 		<UIModal
 			v-if="modalActive"
-			:title="loadedJSON.name"
+			:title="jsonData.name"
 			:show-close="true"
 			@close="modalActive = false"
 		>
 			<ol class="preview-list">
 				<li
-					v-for="category in loadedJSON.categories"
+					v-for="category in jsonData.categories"
 					:key="category"
 				>
-					<DynamicCategory
-						v-if="category.dynamic"
-						:name="category.name"
-					/>
-					<span v-else>{{ category.name }}</span>
+					<span v-if="jsonType === 'bingo-import'">
+						{{ category.entry ? `✅ ${category.cat} (${category.entry})` : category.cat }}
+					</span>
+					<template v-else>
+						<DynamicCategory
+							v-if="category.dynamic"
+							:name="category.name"
+						/>
+						<span v-else>{{ category.name }}</span>
+					</template>
 				</li>
 			</ol>
 		</UIModal>

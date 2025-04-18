@@ -2,11 +2,13 @@ import { useErrors } from '../composables/errors.js';
 
 import Ajv from 'ajv';
 import categorySchema from '../schemas/category-list.json';
+import bingoImportSchema from '../schemas/bingo-import.json';
 
 const { setError } = useErrors();
 
 const ajv = new Ajv({ allErrors: true });
 const validateCategoryList = ajv.compile(categorySchema);
+const validateBingoImport = ajv.compile(bingoImportSchema);
 
 // Parses provided URL for json, local or remote
 // Reports network and JSON parsing errors.  Returns json on success, false on error.
@@ -33,13 +35,22 @@ export async function downloadJSON(url) {
 	}
 }
 
-// Validate JSON against schema validator
+// Validate JSON against appropriate schema validator
 // Returns true for valid, false for invalid
-export function validateJSON(json) {
-	const valid = validateCategoryList(json);
+export function validateJSON(json, type) {
+	let valid = false;
+	let errors = [];
+
+	if (type === 'bingo-import') {
+		valid = validateBingoImport(json);
+		errors = validateBingoImport.errors;
+	} else if (type === 'category-list') {
+		valid = validateCategoryList(json);
+		errors = validateCategoryList.errors;
+	}
 
 	if (!valid) {
-		setError('The JSON contained the following errors:\n' + formatErrors(validateCategoryList.errors));
+		setError('The JSON contained the following errors:\n' + formatErrors(errors));
 	}
 
 	return valid;
