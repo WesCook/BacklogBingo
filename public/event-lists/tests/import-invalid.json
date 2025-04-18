@@ -1,0 +1,115 @@
+{
+	"name": "Import Invalid",
+	"categories": [
+		{
+			"uuid": "96e99f16-3317-480b-965c-4a9b63b7b233",
+			"cat": "Owned for more than 4 years",
+			"entry": "Hello"
+		},
+		{
+			"uuid": "f2367579-efbe-4175-bb3e-b5ad453735f7",
+			"cat": "Considered a hidden gem",
+			"entry": "World"
+		},
+		{
+			"uuid": "ae6bd4c8-e571-4e3c-816b-0bd78b28cf2d",
+			"cat": "Has a review score above 91",
+			"entry": ""
+		},
+		{
+			"cat": "Released in the year you joined Tildes"
+		},
+		{
+			"uuid": "a4267075-b099-4641-8943-e60bc5fc88ac",
+			"cat": "Has both combat and puzzles"
+		},
+		{
+			"uuid": "d5ba42fc-09dc-40cd-b0b7-ecff91ffaa30",
+			"cat": "Music/rhythm-focused"
+		},
+		{
+			"uuid": "835b3645-13b0-46f7-a6e9-0807e7e96ea9",
+			"cat": "From a studio you haven't heard of before"
+		},
+		{
+			"uuid": "d28a8944-5f75-441e-a11d-d749a0c96e93",
+			"cat": "You have to tinker to get it running"
+		},
+		{
+			"uuid": "f16725a4-7d9b-4264-86ae-ce8c8072c4c2",
+			"cat": "It’s already installed"
+		},
+		{
+			"uuid": "50621a19-4192-4e8e-9aba-0957b8c220c0",
+			"cat": "Single-word title"
+		},
+		{
+			"uuid": "e8668cb0-d94f-4a98-b22d-115a76ae8994",
+			"cat": "Has a score system"
+		},
+		{
+			"uuid": "4502403e-8c93-45ef-904f-f76d0e491326",
+			"cat": "From a different culture or country"
+		},
+		{
+			"uuid": "c137b096-1a14-4002-90ff-0a3a7a1002b6",
+			"cat": "Is open-source"
+		},
+		{
+			"uuid": "547c6b8c-4f95-4496-b526-5e02a243442d",
+			"cat": "Is beatable without killing any enemies"
+		},
+		{
+			"uuid": "c7ebb6bb-4396-4ae9-9ce4-17b02f4a28c3",
+			"cat": "You're giving it a second chance"
+		},
+		{
+			"uuid": "de480057-ec03-4bc9-b723-8c57da7d9e4a",
+			"cat": "Uses procedural generation"
+		},
+		{
+			"uuid": "5a5b884a-1c2a-438d-bac9-dc68d5755652",
+			"cat": "Has a lives system"
+		},
+		{
+			"uuid": "b321f615-bb12-4bdb-b4d9-d7ce1031fbab",
+			"cat": "Has great reviews, but not your usual type"
+		},
+		{
+			"uuid": "bbd64664-14b7-4799-a608-fafc07791538",
+			"cat": "Has permadeath"
+		},
+		{
+			"uuid": "ba6562f8-48fc-406c-8c29-c7426834700d",
+			"cat": "Has romanceable characters"
+		},
+		{
+			"uuid": "12d4a46a-29e4-409f-a884-e29bfc2abae8",
+			"cat": "Has a literary vibe"
+		},
+		{
+			"uuid": "8a11463e-3a7f-4904-b5cb-66a49a5b3d4a",
+			"cat": "From a series you have played"
+		},
+		{
+			"uuid": "7cae25ef-15f4-4fdc-b698-625f7142cc33",
+			"cat": "From now-defunct dev studio"
+		},
+		{
+			"uuid": "9e6d62fb-42f0-41e2-896d-ec503e5d6d8c",
+			"cat": "From a genre you don’t normally play"
+		},
+		{
+			"uuid": "594a55e5-75ea-47dd-b209-49a3c0f39008",
+			"cat": "Set underwater"
+		}
+	],
+	"gamerules": {
+		"star": "free",
+		"allowDuplicates": true,
+		"allowSimilar": false,
+		"seed": false
+	},
+	"version": 1,
+	"exported": 1744866954118
+}
