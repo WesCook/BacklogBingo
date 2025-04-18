@@ -1,8 +1,8 @@
 <script setup>
 	import { ref, computed } from 'vue';
 	import { useRouter } from 'vue-router';
-	import { useErrors } from '../composables/errors.js';
 
+	import { useErrors } from '../composables/errors.js';
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';

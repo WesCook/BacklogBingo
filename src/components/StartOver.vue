@@ -2,21 +2,33 @@
 	import { ref } from 'vue';
 
 	import { useRouter } from 'vue-router';
+	import { useErrors } from '../composables/errors.js';
+	import { useGameRules } from '../composables/gamerules.js';
+	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
 
 	import UIModal from '../components/UIModal.vue';
 
 	const router = useRouter();
+	const { clearError } = useErrors();
+	const { clearGameRules } = useGameRules();
+	const { clearCategoryList } = useCategories();
 	const { clearBingoCard } = useBingo();
 
 	const modalActive = ref();
 
 	function doReset() {
-		clearBingoCard(); // Overwrite bingo card in memory so navigation guard doesn't kick us out
-		localStorage.clear(); // Clear all local data
-		router.push('/list').then(() => { // Update URL and reload, clearing all memory
-			location.reload();
-		});
+		// Clear data in composables
+		clearBingoCard();
+		clearError();
+		clearCategoryList();
+		clearGameRules();
+
+		// Clear storage data
+		localStorage.clear();
+
+		// Go to category list (home)
+		router.replace('/list');
 	}
 </script>
 

@@ -43,6 +43,11 @@ export function useCategories() {
 		localStorage.setItem('categoryList', JSON.stringify(categoryList));
 	}
 
+	function clearCategoryList() {
+		Object.keys(categoryList).forEach(key => delete categoryList[key]);
+		localStorage.removeItem('categoryList');
+	}
+
 	// Calculate max grid size from category number, rounded down to nearest accepted size
 	function getMaxGridSize(catNum) {
 		const acceptedSizes = [3, 5, 7];
@@ -111,6 +116,7 @@ export function useCategories() {
 		getCategoryListGroups,
 		getCategoryListCatNumber,
 		setCategoryList,
+		clearCategoryList,
 		getMaxGridSize,
 		getGridLabel,
 		getCategoryNumber,
