@@ -1,5 +1,5 @@
 <script setup>
-	import { ref } from 'vue';
+	import { ref, computed } from 'vue';
 	import { useRouter } from 'vue-router';
 	import { useErrors } from '../composables/errors.js';
 
@@ -105,6 +105,28 @@
 			router.push('/bingo');
 		}
 	}
+
+	// Computed properties
+	const isBingoImport = computed(() => jsonType.value === 'bingo-import');
+	const isCategoryList = computed(() => jsonType.value === 'category-list');
+
+	const exportDate = computed(() => isBingoImport.value
+		? new Date(jsonData.value.exported).toLocaleDateString()
+		: '');
+
+	const totalCategories = computed(() => jsonData.value?.categories?.length ?? 0);
+
+	const importedProgress = computed(() => {
+		if (!isBingoImport.value) {
+			return null;
+		}
+
+		const completed = jsonData.value.categories.filter(cat => cat.entry).length;
+		const isFreeStar = jsonData.value.gamerules?.star === 'free';
+		const total = (isFreeStar) ? totalCategories.value - 1 : totalCategories.value;
+
+		return `${completed}/${total} complete`;
+	});
 </script>
 
 <template>
@@ -175,7 +197,7 @@
 		id="confirm"
 		class="confirmation-panel"
 	>
-		<h2>{{ jsonType === 'bingo-import' ? 'Imported Bingo Card' : 'Selected List' }}</h2>
+		<h2>{{ isBingoImport ? 'Imported Bingo Card' : 'Selected List' }}</h2>
 		<div class="details-box">
 			<button
 				class="close-button"
@@ -184,14 +206,11 @@
 				✖
 			</button>
 			<h3>{{ jsonData.name }}</h3>
-			<p v-if="jsonType === 'bingo-import'">
-				Export Date: {{ new Date(jsonData.exported).toLocaleDateString() }}
+			<p v-if="isBingoImport">
+				Export Date: {{ exportDate }}
 			</p>
-			<span v-if="jsonType === 'category-list'">Total Categories: {{ jsonData.categories.length }}</span>
-			<span v-else>
-				Imported Categories
-				({{ jsonData.categories.filter(category => category.entry).length }}/{{ jsonData.gamerules?.star === 'free' ? jsonData.categories.length - 1 : jsonData.categories.length }} complete)
-			</span>
+			<span v-if="isCategoryList">Total Categories: {{ totalCategories }}</span>
+			<span v-else>Imported Categories ({{ importedProgress }})</span>
 			<button
 				class="preview-button"
 				@click="modalActive = true;"
@@ -202,7 +221,7 @@
 				{{ jsonData.description }}
 			</blockquote>
 		</div>
-		<p v-if="jsonType === 'category-list'">
+		<p v-if="isCategoryList">
 			When you're ready, click <em>Confirm List</em> to move to the next step and configure your game rules.
 		</p>
 		<nav class="btn-bar">
