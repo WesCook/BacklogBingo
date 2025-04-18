@@ -29,20 +29,17 @@
 	const jsonData = ref();
 	const jsonType = ref();
 
-	// If we're returning from another page, load the stored category list and clear any set game rules
+	// If we're returning from another page, load the stored json and clear any set game rules
 	if (isCategoryListSet.value) {
-		jsonData.value = getCategoryList();
+		const json = getCategoryList();
+		jsonData.value = json;
+		jsonType.value = determineType(json);
 		clearGameRules();
 	}
 
 	// Loading categories list or imported card
 	function loadFile(json) {
-		// First, figure out the type
-		if (Object.hasOwn(json, 'exported')) { // Has key "exported", must be Bingo Import
-			jsonType.value = 'bingo-import';
-		} else {
-			jsonType.value = 'category-list';
-		}
+		jsonType.value = determineType(json);
 
 		// Then validate against appropriate schema
 		const valid = validateJSON(json, jsonType.value);
@@ -75,6 +72,15 @@
 		// Update data and scroll down (small delay to allow element to be created)
 		jsonData.value = json;
 		setTimeout(() => document.getElementById('confirm')?.scrollIntoView({ behavior: 'smooth' }), 0);
+	}
+
+	// Determine if we're dealing with a category list or export from JSON
+	function determineType(json) {
+		if (Object.hasOwn(json, 'exported')) { // Has key "exported", must be Bingo Import
+			return 'bingo-import';
+		} else {
+			return 'category-list';
+		}
 	}
 
 	// Update categories and move to next page (game rules)
