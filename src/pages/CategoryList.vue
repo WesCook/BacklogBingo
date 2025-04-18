@@ -1,5 +1,5 @@
 <script setup>
-	import { ref, computed } from 'vue';
+	import { ref, computed, toRaw } from 'vue';
 	import { useRouter } from 'vue-router';
 
 	import { useErrors } from '../composables/errors.js';
@@ -31,7 +31,7 @@
 
 	// If we're returning from another page, load the stored json and clear any set game rules
 	if (isCategoryListSet.value) {
-		const json = getCategoryList();
+		const json = structuredClone(toRaw(getCategoryList())); // Do not want reactive variable, since jsonData is just for local staging
 		jsonData.value = json;
 		jsonType.value = determineType(json);
 		clearGameRules();
@@ -86,11 +86,8 @@
 	// Update categories and move to next page (game rules)
 	function confirmList() {
 		clearError();
-
-		if (jsonType.value === 'category-list') {
-			setCategoryList(jsonData.value);
-			router.push('/gamerules');
-		}
+		setCategoryList(jsonData.value);
+		router.push('/gamerules');
 	}
 
 	// Update bingo card and load bingo page
