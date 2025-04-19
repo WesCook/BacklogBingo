@@ -78,10 +78,6 @@
 				{{ jsonData.description }}
 			</blockquote>
 		</div>
-
-		<p v-if="isCategoryList">
-			When you're ready, click <em>Confirm List</em> to move to the next step and configure your game rules.
-		</p>
 	</section>
 
 	<teleport to="body">
@@ -115,7 +111,7 @@
 <style scoped>
 	/* Confirmation panel */
 	.confirmation-panel {
-		margin-top: 2em;
+		margin: 2em 0 1em 0;
 
 		h2 {
 			text-align: center;

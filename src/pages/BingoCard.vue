@@ -69,7 +69,7 @@
 		<RouterLink
 			v-if="!doBingoAnimation"
 			to="/gamerules"
-			class="button"
+			class="btn"
 		>
 			<IconCog /> Settings
 		</RouterLink>
@@ -106,7 +106,7 @@
 </template>
 
 <style scoped>
-	.button > svg {
+	.btn > svg {
 		vertical-align: text-top;
 	}
 

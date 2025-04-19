@@ -198,7 +198,7 @@
 
 	<nav
 		v-if="jsonData"
-		class="btn-bar"
+		class="nav-bar"
 	>
 		<button @click="submitConfirm">{{ confirmButtonLabel }}</button>
 	</nav>
@@ -219,12 +219,6 @@
 		& > div {
 			padding: 25px;
 		}
-	}
-
-	.btn-bar {
-		display: flex;
-		justify-content: end;
-		margin-top: 2em;
 	}
 
 	/* Category List Headers */

@@ -47,20 +47,20 @@
 
 <template>
 	<nav class="nav-bar">
-		<h1>Configure Game Rules</h1>
+		<h1>Game Rules</h1>
 		<StartOver />
 		<ExportData v-if="isBingoCardSet" />
 		<RouterLink
 			v-if="isBingoCardSet"
 			to="/bingo"
-			class="button"
+			class="btn"
 		>
 			<IconLeftArrow /> Back to Card
 		</RouterLink>
 		<RouterLink
 			v-else
 			to="/list"
-			class="button"
+			class="btn"
 		>
 			<IconLeftArrow /> Go Back
 		</RouterLink>
@@ -79,12 +79,14 @@
 	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
 
 	<template v-if="!isBingoCardSet">
-		<p>When you're ready, click <em>Confirm Game Rules</em> to move to the next step and refine your categories.</p>
+		<nav class="nav-bar">
+			<p class="left">
+				When you're ready, click <em>Confirm Game Rules</em> to move to the next step and refine your categories.
+			</p>
 
-		<nav class="btn-bar">
 			<RouterLink
 				to="/refine"
-				class="button"
+				class="btn"
 			>
 				Confirm Game Rules
 			</RouterLink>
@@ -101,13 +103,7 @@
 		margin-bottom: 1.5em;
 	}
 
-	.btn-bar {
-		margin-top: 1.5em;
-		display: flex;
-		justify-content: end;
-	}
-
-	.button > svg {
+	.btn > svg {
 		vertical-align: text-bottom;
 	}
 </style>

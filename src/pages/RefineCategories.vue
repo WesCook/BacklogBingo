@@ -230,7 +230,7 @@
 		<StartOver />
 		<RouterLink
 			to="/gamerules"
-			class="button"
+			class="btn"
 		>
 			<IconLeftArrow /> Go Back
 		</RouterLink>
@@ -283,8 +283,13 @@
 	<p>Your card will be saved locally, and no information is stored online.  To avoid data loss, <em>please do not delete your browser data</em>.</p>
 
 	<!-- Navigation Buttons -->
-	<nav class="btn-bar">
-		<button @click="generateCard(true)">Skip this step</button>
+	<nav class="nav-bar">
+		<button
+			class="left"
+			@click="generateCard(true)"
+		>
+			Skip this step
+		</button>
 		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
 		<button
 			:disabled="buttonsDisabled"
@@ -296,17 +301,7 @@
 </template>
 
 <style scoped>
-	.btn-bar {
-		display: flex;
-		justify-content: end;
-		gap: 10px;
-		margin: 1.5em 0;
-	}
-	.btn-bar button:first-child {
-		margin-right: auto;
-	}
-
-	.button > svg {
+	.btn > svg {
 		vertical-align: text-bottom;
 	}
 
@@ -314,6 +309,11 @@
 		display: flex;
 		gap: 1em;
 		margin-top: 2em;
+	}
+	@media (width < 400px) {
+		.groups-toggle {
+			flex-direction: column;
+		}
 	}
 
 	.groups-list {
@@ -354,8 +354,9 @@
 	}
 
 	.required-tally {
-		align-self: center;
 		font-size: 0.8em;
 		color: color-mix(in srgb, var(--foreground-color) 61%, var(--background-color));
+		margin-top: auto;
+		margin-bottom: auto;
 	}
 </style>
