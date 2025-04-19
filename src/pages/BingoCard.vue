@@ -68,7 +68,7 @@
 		<h1>Bingo Card</h1>
 		<RouterLink
 			v-if="!doBingoAnimation"
-			to="/gamerules"
+			to="/settings"
 			class="btn"
 		>
 			<IconCog /> Settings

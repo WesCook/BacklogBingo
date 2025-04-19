@@ -9,7 +9,7 @@ const { isBingoCardSet } = useBingo();
 const { setError, clearError } = useErrors();
 
 import CategoryList from './pages/CategoryList.vue';
-import GameRules from './pages/GameRules.vue';
+import GameSettings from './pages/GameSettings.vue';
 import RefineCategories from './pages/RefineCategories.vue';
 import BingoCard from './pages/BingoCard.vue';
 import NotFound from './pages/NotFound.vue';
@@ -23,7 +23,7 @@ const routes = [
 			if (isBingoCardSet.value) {
 				return '/bingo';
 			} else if (isCategoryListSet.value) {
-				return '/gamerules';
+				return '/settings';
 			} else {
 				return '/list';
 			}
@@ -43,10 +43,10 @@ const routes = [
 		}
 	},
 	{
-		path: '/gamerules',
-		component: GameRules,
+		path: '/settings',
+		component: GameSettings,
 		meta: {
-			title: 'Game Rules - Backlog Bingo'
+			title: 'Game Settings - Backlog Bingo'
 		},
 		beforeEnter: () => {
 			if (!isCategoryListSet.value && !isBingoCardSet.value) {
@@ -84,7 +84,7 @@ const routes = [
 				if (!isCategoryListSet.value) {
 					return '/list';
 				} else {
-					return '/gamerules';
+					return '/settings';
 				}
 			}
 		}

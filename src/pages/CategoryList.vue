@@ -83,11 +83,11 @@
 		}
 	}
 
-	// Update categories and move to next page (game rules)
+	// Update categories and move to next page (settings)
 	function confirmList() {
 		clearError();
 		setCategoryList(jsonData.value);
-		router.push('/gamerules');
+		router.push('/settings');
 	}
 
 	// Update bingo card and load bingo page

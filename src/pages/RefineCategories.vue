@@ -229,7 +229,7 @@
 		<h1>Refine Categories</h1>
 		<StartOver />
 		<RouterLink
-			to="/gamerules"
+			to="/settings"
 			class="btn"
 		>
 			<IconLeftArrow /> Go Back

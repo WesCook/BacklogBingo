@@ -47,7 +47,7 @@
 
 <template>
 	<nav class="nav-bar">
-		<h1>Game Rules</h1>
+		<h1>Settings</h1>
 		<StartOver />
 		<ExportData v-if="isBingoCardSet" />
 		<RouterLink
@@ -81,14 +81,14 @@
 	<template v-if="!isBingoCardSet">
 		<nav class="nav-bar">
 			<p class="left">
-				When you're ready, click <em>Confirm Game Rules</em> to move to the next step and refine your categories.
+				When you're ready, click <em>Confirm Settings</em> to move to the next step and refine your categories.
 			</p>
 
 			<RouterLink
 				to="/refine"
 				class="btn"
 			>
-				Confirm Game Rules
+				Confirm Settings
 			</RouterLink>
 		</nav>
 	</template>
