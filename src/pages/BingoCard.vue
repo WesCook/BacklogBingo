@@ -106,10 +106,6 @@
 </template>
 
 <style scoped>
-	.btn > svg {
-		vertical-align: text-top;
-	}
-
 	.skip-btn {
 		display: flex;
   		margin: 0 auto 1em auto;

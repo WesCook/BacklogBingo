@@ -162,3 +162,12 @@ input[type="checkbox"] {
 		}
 	}
 }
+
+/* Buttons with SVG icons */
+:is(button, .btn):has(> .icon) {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center; /* Vertical align on one line */
+	justify-content: center; /* Horizontal align on two */
+	gap: 5px;
+}

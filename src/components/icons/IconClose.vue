@@ -14,6 +14,7 @@
 		:width="size"
 		:height="size"
 		fill="var(--foreground-color)"
+		class="icon"
 	>
 		<path
 			fill-rule="evenodd"

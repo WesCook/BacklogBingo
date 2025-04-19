@@ -76,10 +76,6 @@
 </template>
 
 <style scoped>
-	.btn > svg {
-		vertical-align: text-top;
-	}
-
 	.modal {
 		padding: 0.2em 1.5em;
 

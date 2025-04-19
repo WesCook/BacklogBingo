@@ -301,10 +301,6 @@
 </template>
 
 <style scoped>
-	.btn > svg {
-		vertical-align: text-bottom;
-	}
-
 	.groups-toggle {
 		display: flex;
 		gap: 1em;

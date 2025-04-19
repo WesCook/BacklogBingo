@@ -79,10 +79,6 @@
 		background-color: color-mix(in srgb, var(--background-shaded) 60%, #5f0000);
 	}
 
-	.btn > svg {
-		vertical-align: text-top;
-	}
-
 	.modal {
 		padding: 0.2em 1.5em;
 

@@ -102,8 +102,4 @@
 	.gamerules-header + fieldset {
 		margin-bottom: 1.5em;
 	}
-
-	.btn > svg {
-		vertical-align: text-bottom;
-	}
 </style>

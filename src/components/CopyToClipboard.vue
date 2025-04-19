@@ -60,12 +60,10 @@
 
 	.copy-btn {
 		all: unset;
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
 		padding: 5px;
-		white-space: nowrap;
-	}
-
-	.copy-btn > svg {
-		vertical-align: text-top;
 	}
 
 	.status {
