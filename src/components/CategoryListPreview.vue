@@ -3,6 +3,7 @@
 
 	import DynamicCategory from '../components/DynamicCategory.vue';
 	import UIModal from '../components/UIModal.vue';
+	import IconClose from '../components/icons/IconClose.vue';
 
 	const props = defineProps({
 		jsonData: {
@@ -54,7 +55,7 @@
 				class="close-button"
 				@click="modalActive = false; emit('clear-data');"
 			>
-				✖
+				<IconClose size="12" />
 			</button>
 
 			<h3>{{ jsonData.name }}</h3>
@@ -139,6 +140,7 @@
 
 		.close-button {
 			float: right;
+			line-height: 0;
 			margin-left: 0.4em;
 			margin-bottom: 0.4em;
 		}

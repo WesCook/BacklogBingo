@@ -4,6 +4,7 @@
 	import { useGameRules } from '../composables/gamerules.js';
 
 	import UIModal from '../components/UIModal.vue';
+	import IconDownload from '../components/icons/IconDownload.vue';
 	import { exportToFile } from '../utils/file-export.js';
 
 	const modalActive = ref();
@@ -36,7 +37,7 @@
 		title="Export bingo card"
 		@click="modalActive = true"
 	>
-		🡇&#xFE0E; Export
+		<IconDownload /> Export
 	</button>
 
 	<teleport to="body">
@@ -47,7 +48,13 @@
 			class="modal"
 			@close="modalActive = false"
 		>
+			<IconDownload
+				size="50px"
+				class="modal-icon"
+			/>
+
 			<p>Export your current bingo card to JSON.  This will be saved as a file, and may be imported from the starting Category List page using <em>From File</em> or <em>From URL</em>.</p>
+
 			<div class="buttons">
 				<button @click="modalActive = false">Cancel</button>
 				<button
@@ -69,12 +76,17 @@
 </template>
 
 <style scoped>
-	.btn {
-		font-variant-emoji: text;
+	.btn > svg {
+		vertical-align: text-top;
 	}
 
 	.modal {
 		padding: 0.2em 1.5em;
+
+		.modal-icon {
+			display: block;
+			margin: 0 auto;
+		}
 
 		.buttons {
 			display: flex;

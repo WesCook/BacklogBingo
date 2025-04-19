@@ -1,4 +1,6 @@
 <script setup>
+	import IconStar from './icons/IconStar.vue';
+
 	const props = defineProps({
 		data: {
 			type: Object,
@@ -62,18 +64,16 @@
 		:data-uuid="data.uuid"
 	>
 		<!-- Free star -->
-		<span
+		<IconStar
 			v-if="star === 'free'"
 			class="star-free"
-		>
-			★
-		</span>
+		/>
 		<template v-else>
 			<!-- Wildcard Star -->
 			<template v-if="star === 'wildcard'">
 				<span>Wildcard</span>
 				<span class="wildcard-info">(anything goes!)</span>
-				<span class="star-wildcard">★</span>
+				<IconStar class="star-wildcard" />
 			</template>
 
 			<!-- Category -->
@@ -152,21 +152,23 @@
 		}
 	}
 
-	/* Star tile */
-	label:has(> span[class^=star-]) {
+	/* Star centering */
+	label:has(> svg.star-free) {
 		place-content: center;
-		position: relative;
+		flex-wrap: wrap;
 	}
-	span[class^=star-] {
-		font-variant-emoji: text;
+	label > svg.star-wildcard {
+		margin: 0 auto;
 	}
+
+	/* Star sizes */
 	.star-free {
 		font-size: clamp(3em, 9vw, 6em);
 	}
 	.star-wildcard {
 		font-size: clamp(2em, 5vw, 4em);
 		line-height: 1;
-		opacity: 80%;
+		opacity: 70%;
 	}
 	.dupe .star-wildcard {
 		font-size: 1.8em;

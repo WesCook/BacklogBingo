@@ -9,6 +9,7 @@
 	import GameRulesCustom from '../components/GameRulesCustom.vue';
 	import StartOver from '../components/StartOver.vue';
 	import ExportData from '../components/ExportData.vue';
+	import IconLeftArrow from '../components/icons/IconLeftArrow.vue';
 
 	const { areGamerulesSet, resetGameRules, setGameRule, calculateGameMode } = useGameRules();
 	const { getCategoryList, shouldShrinkGrid } = useCategories();
@@ -54,14 +55,14 @@
 			to="/bingo"
 			class="button"
 		>
-			Back to Card
+			<IconLeftArrow /> Back to Card
 		</RouterLink>
 		<RouterLink
 			v-else
 			to="/list"
 			class="button"
 		>
-			← Go Back
+			<IconLeftArrow /> Go Back
 		</RouterLink>
 	</nav>
 
@@ -104,5 +105,9 @@
 		margin-top: 1.5em;
 		display: flex;
 		justify-content: end;
+	}
+
+	.button > svg {
+		vertical-align: text-bottom;
 	}
 </style>

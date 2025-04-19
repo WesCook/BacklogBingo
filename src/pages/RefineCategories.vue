@@ -11,6 +11,7 @@
 	import RefineCategoriesGroup from '../components/RefineCategoriesGroup.vue';
 	import RefineCategoriesItem from '../components/RefineCategoriesItem.vue';
 	import StartOver from '../components/StartOver.vue';
+	import IconLeftArrow from '../components/icons/IconLeftArrow.vue';
 
 	const router = useRouter();
 	const { getGameRules } = useGameRules();
@@ -231,7 +232,7 @@
 			to="/gamerules"
 			class="button"
 		>
-			← Go Back
+			<IconLeftArrow /> Go Back
 		</RouterLink>
 	</nav>
 
@@ -303,6 +304,10 @@
 	}
 	.btn-bar button:first-child {
 		margin-right: auto;
+	}
+
+	.button > svg {
+		vertical-align: text-bottom;
 	}
 
 	.groups-toggle {

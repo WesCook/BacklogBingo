@@ -6,6 +6,7 @@
 
 	import BingoSheet from '../components/BingoSheet.vue';
 	import BingoOutputContainer from '../components/BingoOutputContainer.vue';
+	import IconCog from '../components/icons/IconCog.vue';
 	import { Fireworks } from '@fireworks-js/vue';
 
 	const { getGameRules } = useGameRules();
@@ -70,7 +71,7 @@
 			to="/gamerules"
 			class="button"
 		>
-			⚙&#xFE0E; Settings
+			<IconCog /> Settings
 		</RouterLink>
 	</nav>
 
@@ -80,6 +81,7 @@
 	<p v-else>
 		That's a spiffy looking bingo card!  To win, you must finish {{ winConditionMessage }}.  You can use Ctrl + Arrow keys to navigate.
 	</p>
+
 	<BingoSheet @win-update="winUpdate" />
 
 	<button
@@ -104,6 +106,10 @@
 </template>
 
 <style scoped>
+	.button > svg {
+		vertical-align: text-top;
+	}
+
 	.skip-btn {
 		display: flex;
   		margin: 0 auto 1em auto;

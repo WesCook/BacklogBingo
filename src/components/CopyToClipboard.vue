@@ -1,6 +1,8 @@
 <script setup>
 	import { ref } from 'vue';
 
+	import IconClipboard from '../components/icons/IconClipboard.vue';
+
 	const props = defineProps({
 		// The text to be copied
 		text: {
@@ -38,7 +40,7 @@
 			class="copy-btn"
 			@click="copy"
 		>
-			📋&#xFE0E; &nbsp;Copy
+			<IconClipboard /> Copy
 		</button>
 		<span
 			ref="status"
@@ -59,8 +61,11 @@
 	.copy-btn {
 		all: unset;
 		padding: 5px;
-		font-variant-emoji: text;
 		white-space: nowrap;
+	}
+
+	.copy-btn > svg {
+		vertical-align: text-top;
 	}
 
 	.status {

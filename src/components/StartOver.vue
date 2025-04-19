@@ -8,6 +8,7 @@
 	import { useBingo } from '../composables/bingo.js';
 
 	import UIModal from '../components/UIModal.vue';
+	import IconTrash from '../components/icons/IconTrash.vue';
 
 	const router = useRouter();
 	const { clearError } = useErrors();
@@ -38,7 +39,7 @@
 		title="Delete all data and start again"
 		@click="modalActive = true"
 	>
-		🗑&#xFE0E; Reset
+		<IconTrash /> Reset
 	</button>
 
 	<teleport to="body">
@@ -49,7 +50,13 @@
 			class="modal"
 			@close="modalActive = false"
 		>
+			<IconTrash
+				size="50px"
+				class="modal-icon"
+			/>
+
 			<p>Are you sure you want to delete all local data and start again?  This cannot be undone.</p>
+
 			<div class="buttons">
 				<button @click="modalActive = false">Cancel</button>
 				<button
@@ -67,14 +74,22 @@
 	.btn {
 		border-color: #5f0000;
 		background-color: color-mix(in srgb, var(--background-shaded) 80%, #5f0000);
-		font-variant-emoji: text;
 	}
 	.btn:hover {
 		background-color: color-mix(in srgb, var(--background-shaded) 60%, #5f0000);
 	}
 
+	.btn > svg {
+		vertical-align: text-top;
+	}
+
 	.modal {
 		padding: 0.2em 1.5em;
+
+		.modal-icon {
+			display: block;
+			margin: 0 auto;
+		}
 
 		.buttons {
 			display: flex;
