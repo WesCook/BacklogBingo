@@ -3,10 +3,6 @@
 	// License: CC Attribution
 	// Modifications: Optimized, integrated into component
 
-	import { inject } from 'vue';
-
-	const isDark = inject('isDark');
-
 	const props = defineProps({
 		size: {
 			type: [Number, String],
@@ -21,7 +17,7 @@
 		viewBox="0 0 20 20"
 		:width="size"
 		:height="size"
-		:fill="isDark ? 'white' : 'black'"
+		fill="var(--foreground-color)"
 	>
 		<path d="m15.6 2-1.2 3H5.6L4.4 2C3.6 2 3 2.6 3 3.4v15.2c0 .8.6 1.4 1.4 1.4h11.2c.8 0 1.4-.6 1.4-1.4V3.4c0-.8-.6-1.4-1.4-1.4zm-2 2 .9-2h-2.2l-.7-2H8.4l-.7 2H5.5l.9 2h7.2z" />
 	</svg>

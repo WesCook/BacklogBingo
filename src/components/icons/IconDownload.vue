@@ -1,8 +1,4 @@
 <script setup>
-	import { inject } from 'vue';
-
-	const isDark = inject('isDark');
-
 	const props = defineProps({
 		size: {
 			type: [Number, String],
@@ -17,7 +13,7 @@
 		viewBox="0 0 492 492"
 		:width="size"
 		:height="size"
-		:fill="isDark ? 'white' : 'black'"
+		fill="var(--foreground-color)"
 	>
 		<path
 			d="m359 221-16-16a27 27 0 0 0-38 0l-20 20V46c-1-15-13-25-27-25h-23c-15 0-27 10-27 25v181l-22-22a27 27 0 0 0-38 0l-16 16c-5 5-7 12-7 19s2 14 7 19l95 95c5 6 12 9 19 9s14-3 19-9l94-94a27 27 0 0 0 0-39z"

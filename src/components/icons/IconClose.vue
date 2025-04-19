@@ -1,8 +1,4 @@
 <script setup>
-	import { inject } from 'vue';
-
-	const isDark = inject('isDark');
-
 	const props = defineProps({
 		size: {
 			type: [Number, String],
@@ -17,7 +13,7 @@
 		viewBox="0 -.5 21 21"
 		:width="size"
 		:height="size"
-		:fill="isDark ? 'white' : 'black'"
+		fill="var(--foreground-color)"
 	>
 		<path
 			fill-rule="evenodd"
