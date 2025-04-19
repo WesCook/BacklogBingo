@@ -37,7 +37,7 @@ const routes = [
 		},
 		beforeEnter: () => {
 			if (isBingoCardSet.value) {
-				setError('You cannot access that page once a bingo card has been generated.  You have been redirected.');
+				setError('You cannot access the Category List page once a bingo card has been generated.  You have been redirected.');
 				return '/bingo';
 			}
 		}
@@ -46,11 +46,11 @@ const routes = [
 		path: '/settings',
 		component: GameSettings,
 		meta: {
-			title: 'Game Settings - Backlog Bingo'
+			title: 'Settings - Backlog Bingo'
 		},
 		beforeEnter: () => {
 			if (!isCategoryListSet.value && !isBingoCardSet.value) {
-				setError('You cannot access that page without first defining a category list or bingo card.  You have been redirected to do so now.');
+				setError('You cannot access the Settings page without first setting a category list or bingo card.  You have been redirected to do so now.');
 				return '/list';
 			}
 		}
@@ -63,11 +63,11 @@ const routes = [
 		},
 		beforeEnter: () => {
 			if (!isCategoryListSet.value) {
-				setError('You cannot access that page without first defining a category list.  You have been redirected to do so now.');
+				setError('You cannot access the Refine Categories page without first setting a category list.  You have been redirected to do so now.');
 				return '/list';
 			}
 			if (isBingoCardSet.value) {
-				setError('You cannot access that page once a bingo card has been generated.  You have been redirected.');
+				setError('You cannot access the Refine Categories page once a bingo card has been generated.  You have been redirected.');
 				return '/bingo';
 			}
 		}
@@ -80,7 +80,7 @@ const routes = [
 		},
 		beforeEnter: () => {
 			if (!isBingoCardSet.value) {
-				setError('You cannot access that page without first generating a bingo card.  You have been redirected to do so now.');
+				setError('You cannot access the Bingo Card page without first generating a bingo card.  You have been redirected to do so now.');
 				if (!isCategoryListSet.value) {
 					return '/list';
 				} else {
