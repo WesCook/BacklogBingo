@@ -97,7 +97,7 @@
 
 	.modal-header {
 		text-align: center;
-		margin: 1em;
+		margin: 1em 1em 0.7em 1em;
 	}
 
 	.close-button:focus {

@@ -80,8 +80,7 @@
 		padding: 0.2em 1.5em;
 
 		.modal-icon {
-			display: block;
-			margin: 0 auto;
+			margin: 0 auto 2em auto;
 		}
 
 		.buttons {
