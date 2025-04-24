@@ -61,6 +61,9 @@
 			column-gap: 15px;
 			row-gap: 5px;
 		}
+		label:hover {
+			cursor: pointer;
+		}
 
 		/* Inputs */
 		input[type="radio"] {
@@ -68,6 +71,9 @@
 			height: 30px;
 			width: 30px;
 			justify-self: center;
+		}
+		input[type="radio"] {
+			cursor: pointer;
 		}
 
 		/* Text content */
