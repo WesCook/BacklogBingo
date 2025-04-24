@@ -5,8 +5,8 @@
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
 
-	import GameRulesMode from '../components/GameRulesMode.vue';
-	import GameRulesCustom from '../components/GameRulesCustom.vue';
+	import SettingsMode from '../components/SettingsMode.vue';
+	import SettingsRules from '../components/SettingsRules.vue';
 	import StartOver from '../components/StartOver.vue';
 	import ExportData from '../components/ExportData.vue';
 	import IconLeftArrow from '../components/icons/IconLeftArrow.vue';
@@ -71,12 +71,12 @@
 	</p>
 
 	<h2>Game Mode</h2>
-	<GameRulesMode v-model="gamemodeRadio" />
+	<SettingsMode v-model="gamemodeRadio" />
 
 	<h2 class="gamerules-header">
 		Game Rules
 	</h2>
-	<GameRulesCustom :is-custom="(gamemodeRadio === 'custom')" />
+	<SettingsRules :is-custom="(gamemodeRadio === 'custom')" />
 
 	<template v-if="!isBingoCardSet">
 		<nav class="nav-bar">
