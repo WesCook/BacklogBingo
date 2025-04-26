@@ -332,7 +332,7 @@
 	}
 
 	.categories-list {
-		margin: 0.5em 0 2em 0;
+		margin: 0.5em 0 1.2em 0;
 		min-height: 200px;
 		list-style: none;
 		padding: 15px;
