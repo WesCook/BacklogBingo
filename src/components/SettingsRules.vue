@@ -177,6 +177,11 @@
 			}
 		}
 
+		/* Natural vertical centering of checkbox */
+		label:has(input[type="checkbox"]) {
+			display: flex;
+		}
+
 		/* Inputs */
 		select,
 		label,
@@ -187,6 +192,10 @@
 			font-size: 0.9rem;
 			padding: 8px 12px;
 			width: 100%;
+		}
+
+		#seed {
+			font-family: monospace;
 		}
 
 		/* Bold ticked checkbox labels for extra visibility */
