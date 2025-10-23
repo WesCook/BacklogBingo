@@ -239,12 +239,12 @@
 	<p>Now you can fine-tune the categories your bingo card will pick from.  Please uncheck any categories that you don't believe are possible for you to complete.</p>
 
 	<!-- Group Toggles -->
-	<div
-		v-if="groupMap.size"
-		class="groups-toggle"
-	>
+	<div class="groups-toggle">
 		<strong>Quick Toggle</strong>
-		<ul class="groups-list">
+		<ul
+			v-if="groupMap.size"
+			class="groups-list"
+		>
 			<RefineCategoriesGroup
 				v-for="[uuid, group] of groupMap"
 				:key="uuid"
