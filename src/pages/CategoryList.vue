@@ -147,8 +147,8 @@
 			<p>Participate in an ongoing event!</p>
 			<ul class="list">
 				<CategoryListEvent
-					title="Backlog Burner: Flow"
-					file="tildes-gaming-2025-may-flow.json"
+					title="Backlog Burner: Form"
+					file="tildes-gaming-2025-nov-form.json"
 					:selected-name="jsonData?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
@@ -161,8 +161,15 @@
 					@lock-download="lockDownload"
 				/>
 				<CategoryListEvent
-					title="Backlog Burner: Form"
-					file="tildes-gaming-2025-nov-form.json"
+					title="Backlog Burner: Flow"
+					file="tildes-gaming-2025-may-flow.json"
+					:selected-name="jsonData?.name"
+					@load-file="loadFile"
+					@lock-download="lockDownload"
+				/>
+				<CategoryListEvent
+					title="Backlog Burner: Free"
+					file="tildes-gaming-alphabet.json"
 					:selected-name="jsonData?.name"
 					@load-file="loadFile"
 					@lock-download="lockDownload"
