@@ -1,6 +1,4 @@
 <script setup>
-	import { downloadJSON } from '../utils/json-parse.js';
-
 	const props = defineProps({
 		title: {
 			type: String,
@@ -10,46 +8,56 @@
 			type: String,
 			default: ''
 		},
-		selectedName: {
+		icon: {
+			type: Object,
+			required: true
+		},
+		// CSS color or custom property
+		color: {
 			type: String,
-			default: ''
+			default: 'black'
 		}
 	});
-	const emit = defineEmits(['load-file', 'lock-download']);
-
-	async function processEvent(filename) {
-		emit('lock-download', true);
-		const path = `./event-lists/${filename}`;
-		const json = await downloadJSON(path);
-		if (json) {
-			emit('load-file', json);
-		}
-		emit('lock-download', false);
-	}
 </script>
 
 <template>
 	<li
-		class="li"
-		:class="{ highlight: selectedName === title }"
+		class="category-list"
+		:style="{ '--custom-color': color }"
 	>
-		<button @click="processEvent(file)">Select</button>
-		<span>{{ title }}</span>
+		<h2>{{ title }}</h2>
+		<div class="icon">
+			<component
+				:is="icon"
+				size="120"
+			/>
+		</div>
+		<!-- TODO: Reimplement functionality -->
+		<button>Preview</button>
+		<button>Select</button>
+		<p>Description goes here</p>
 	</li>
 </template>
 
 <style scoped>
-	.li {
-		margin-bottom: 0.5em;
-	}
-	.li span {
-		margin-left: 0.4em;
-	}
-	.highlight button {
-		border: 1px solid grey;
-	}
-	.highlight span {
-		font-style: italic;
-		color: color-mix(in srgb, var(--foreground-color) 85%, var(--background-color));
+	.category-list {
+		padding: 0.8em;
+		text-align: center;
+		background-color: color-mix(in srgb, var(--background-color) 40%, var(--custom-color));
+		transition: background-color 100ms ease;
+
+		&:hover,
+		&:focus-within {
+			background-color: color-mix(in srgb, var(--background-color) 10%, var(--custom-color));
+		}
+
+		.icon {
+			margin: 0 auto;
+			margin-bottom: 0.8em;
+		}
+
+		button {
+			margin: 4px;
+		}
 	}
 </style>

@@ -5,18 +5,16 @@
 
 	const { setError } = useErrors();
 
-	const emit = defineEmits(['load-file', 'lock-download']);
+	const emit = defineEmits(['load-file']);
 
 	const urlInput = ref('');
 
 	async function processDownload() {
 		const url = urlInput.value;
-		emit('lock-download', true);
 
 		// Empty check
 		if (!url) {
 			setError('No URL provided.', false);
-			emit('lock-download', false);
 			return false;
 		}
 
@@ -25,7 +23,6 @@
 			new URL(url);
 		} catch {
 			setError('The URL does not appear to be valid.');
-			emit('lock-download', false);
 			return false;
 		}
 
@@ -34,7 +31,6 @@
 		if (json) {
 			emit('load-file', json);
 		}
-		emit('lock-download', false);
 	}
 </script>
 

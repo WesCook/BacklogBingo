@@ -9,22 +9,18 @@
 	import { validateJSON, detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
 
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
-	import CategoryListFile from '../components/CategoryListFile.vue';
-	import CategoryListURL from '../components/CategoryListURL.vue';
 	import CategoryListPreview from '../components/CategoryListPreview.vue';
+	import ImportData from '../components/ImportData.vue';
+	import IconPuzzle from '../components/icons/IconPuzzle.vue';
+	import IconClipboardItems from '../components/icons/IconClipboardItems.vue';
+	import IconWater from '../components/icons/IconWater.vue';
+	import IconAbcBlocks from '../components/icons/IconAbcBlocks.vue';
 
 	const router = useRouter();
 	const { clearGameRules, setGameRule, resetGameRules } = useGameRules();
 	const { getCategoryList, setCategoryList, isCategoryListSet, shouldShrinkGrid } = useCategories();
 	const { setBingoCard } = useBingo();
 	const { clearError, setError } = useErrors();
-
-	// Locking fieldset to disable all buttons when network request is active
-	// Set true to lock, false to unlock
-	const fieldset = ref(); // Template ref
-	function lockDownload(locking) {
-		fieldset.value.disabled = locking;
-	}
 
 	const jsonData = ref();
 	const jsonType = ref();
@@ -68,10 +64,6 @@
 
 		// Data looks good, so let's clear any old errors
 		clearError();
-
-		// Update data and scroll down (small delay to allow element to be created)
-		jsonData.value = json;
-		setTimeout(() => document.getElementById('confirm')?.scrollIntoView({ behavior: 'smooth' }), 0);
 	}
 
 	// Determine if we're dealing with a category list or export from JSON
@@ -129,72 +121,41 @@
 <template>
 	<nav class="nav-bar">
 		<h1>Backlog Bingo</h1>
+		<ImportData />
 	</nav>
 
-	<p>
-		Welcome to Backlog Bingo!  This web app lets you generate a bingo card, either from a prebuilt category list or from your own <a
-			href="https://github.com/WesCook/BacklogBingo/wiki/Category-List"
-			target="_blank"
-		>provided JSON</a>.
-	</p>
+	<p>Let's get started!  Which style of bingo card suits you best?</p>
 
-	<fieldset
-		ref="fieldset"
-		class="card-wrapper"
-	>
-		<div class="card-event">
-			<h3>Prebuilt Category Lists</h3>
-			<p>Participate in an ongoing event!</p>
-			<ul class="list">
-				<CategoryListEvent
-					title="Backlog Burner: Form"
-					file="tildes-gaming-2025-nov-form.json"
-					:selected-name="jsonData?.name"
-					@load-file="loadFile"
-					@lock-download="lockDownload"
-				/>
-				<CategoryListEvent
-					title="Backlog Burner: Flux"
-					file="tildes-gaming-2025-may-flux.json"
-					:selected-name="jsonData?.name"
-					@load-file="loadFile"
-					@lock-download="lockDownload"
-				/>
-				<CategoryListEvent
-					title="Backlog Burner: Flow"
-					file="tildes-gaming-2025-may-flow.json"
-					:selected-name="jsonData?.name"
-					@load-file="loadFile"
-					@lock-download="lockDownload"
-				/>
-				<CategoryListEvent
-					title="Backlog Burner: Free"
-					file="tildes-gaming-alphabet.json"
-					:selected-name="jsonData?.name"
-					@load-file="loadFile"
-					@lock-download="lockDownload"
-				/>
-			</ul>
-		</div>
-
-		<div class="card-url">
-			<h3>From URL</h3>
-			<p>You may download from a URL online.</p>
-			<CategoryListURL
-				@load-file="loadFile"
-				@lock-download="lockDownload"
-			/>
-		</div>
-
-		<div class="card-file">
-			<h3>From File</h3>
-			<p>Or select a file from your PC.</p>
-			<CategoryListFile
-				@load-file="loadFile"
-				@lock-download="lockDownload"
-			/>
-		</div>
-	</fieldset>
+	<ul class="category-lists">
+		<CategoryListEvent
+			title="Flux"
+			file="tildes-gaming-2025-may-flux.json"
+			:icon="IconClipboardItems"
+			color="var(--tone4)"
+			@load-file="loadFile"
+		/>
+		<CategoryListEvent
+			title="Flow"
+			file="tildes-gaming-2025-may-flow.json"
+			:icon="IconWater"
+			color="var(--tone1)"
+			@load-file="loadFile"
+		/>
+		<CategoryListEvent
+			title="Form"
+			file="tildes-gaming-2025-nov-form.json"
+			:icon="IconPuzzle"
+			color="var(--tone2)"
+			@load-file="loadFile"
+		/>
+		<CategoryListEvent
+			title="Free"
+			file="tildes-gaming-alphabet.json"
+			:icon="IconAbcBlocks"
+			color="var(--tone3)"
+			@load-file="loadFile"
+		/>
+	</ul>
 
 	<CategoryListPreview
 		v-if="jsonData"
@@ -212,66 +173,22 @@
 </template>
 
 <style scoped>
-	/* Layout */
-	.card-wrapper {
+	.category-lists {
 		display: grid;
-		grid-template-columns: 2fr 1.5fr;
-		grid-template-areas:
-			"card-event card-url"
-			"card-event card-file";
-		gap: 1em;
-		margin-top: 1.2em;
-		padding: 0;
+		grid-template-columns: repeat(4, 1fr);
+		margin-top: 1rem;
+		padding: 1.5em;
+		gap: 1.5em;
+		background-color: var(--background-shaded);
+		border: 1px solid var(--border-color);
+		list-style: none; /* Remove native list styling */
 
-		& > div {
-			padding: 25px;
+		/* Mobile responsiveness */
+		@media (max-width: 800px) {
+			grid-template-columns: repeat(2, 1fr);
 		}
-	}
-
-	/* Category List Headers */
-	h4 {
-		font-weight: normal;
-	}
-	.list + h4 {
-		margin-top: 1.6em;
-	}
-
-	/* Remove styling for semantic elements */
-	.list {
-		list-style: none;
-		padding-left: 0;
-	}
-	.card-wrapper {
-		border: none;
-		transition: opacity 0.2s ease;
-	}
-	/* Indicate when buttons are inactive */
-	.card-wrapper[disabled] {
-		opacity: 70%;
-	}
-
-	/* Column view on mobile */
-	@media (max-width: 750px) {
-		.card-wrapper {
+		@media (max-width: 520px) {
 			grid-template-columns: 1fr;
-			grid-template-areas:
-				"card-event"
-				"card-url"
-				"card-file";
 		}
-	}
-
-	/* Individual options */
-	.card-event {
-		grid-area: card-event;
-		background-color: var(--tone1);
-	}
-	.card-url {
-		grid-area: card-url;
-		background-color: var(--tone2);
-	}
-	.card-file {
-		grid-area: card-file;
-		background-color: var(--tone3);
 	}
 </style>
