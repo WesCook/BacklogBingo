@@ -1,13 +1,11 @@
 <script setup>
 	const props = defineProps({
-		title: {
-			type: String,
-			default: 'No Title'
+		// Valid category list json
+		json: {
+			type: Object,
+			required: true
 		},
-		file: {
-			type: String,
-			default: ''
-		},
+		// SVG icon component
 		icon: {
 			type: Object,
 			required: true
@@ -25,17 +23,19 @@
 		class="category-list"
 		:style="{ '--custom-color': color }"
 	>
-		<h2>{{ title }}</h2>
+		<h2>{{ json.name }}</h2>
+
 		<div class="icon">
 			<component
 				:is="icon"
 				size="120"
 			/>
 		</div>
-		<!-- TODO: Reimplement functionality -->
+
 		<button>Preview</button>
 		<button>Select</button>
-		<p>Description goes here</p>
+
+		<p>{{ json.description }}</p>
 	</li>
 </template>
 

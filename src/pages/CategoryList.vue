@@ -11,10 +11,16 @@
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
 	import CategoryListPreview from '../components/CategoryListPreview.vue';
 	import ImportData from '../components/ImportData.vue';
+
 	import IconPuzzle from '../components/icons/IconPuzzle.vue';
 	import IconClipboardItems from '../components/icons/IconClipboardItems.vue';
 	import IconWater from '../components/icons/IconWater.vue';
 	import IconAbcBlocks from '../components/icons/IconAbcBlocks.vue';
+
+	import listFlux from '../event-lists/flux.json';
+	import listFlow from '../event-lists/flow.json';
+	import listForm from '../event-lists/form.json';
+	import listFree from '../event-lists/free.json';
 
 	const router = useRouter();
 	const { clearGameRules, setGameRule, resetGameRules } = useGameRules();
@@ -128,29 +134,25 @@
 
 	<ul class="category-lists">
 		<CategoryListEvent
-			title="Flux"
-			file="tildes-gaming-2025-may-flux.json"
+			:json="listFlux"
 			:icon="IconClipboardItems"
 			color="var(--tone4)"
 			@load-file="loadFile"
 		/>
 		<CategoryListEvent
-			title="Flow"
-			file="tildes-gaming-2025-may-flow.json"
+			:json="listFlow"
 			:icon="IconWater"
 			color="var(--tone1)"
 			@load-file="loadFile"
 		/>
 		<CategoryListEvent
-			title="Form"
-			file="tildes-gaming-2025-nov-form.json"
+			:json="listForm"
 			:icon="IconPuzzle"
 			color="var(--tone2)"
 			@load-file="loadFile"
 		/>
 		<CategoryListEvent
-			title="Free"
-			file="tildes-gaming-alphabet.json"
+			:json="listFree"
 			:icon="IconAbcBlocks"
 			color="var(--tone3)"
 			@load-file="loadFile"
