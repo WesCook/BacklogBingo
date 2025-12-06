@@ -1,15 +1,8 @@
 <script setup>
-	import { ref, computed, toRaw } from 'vue';
-	import { useRouter } from 'vue-router';
-
 	import { useErrors } from '../composables/errors.js';
-	import { useGameRules } from '../composables/gamerules.js';
-	import { useCategories } from '../composables/categories.js';
-	import { useBingo } from '../composables/bingo.js';
 	import { validateJSON, detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
 
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
-	import CategoryListPreview from '../components/CategoryListPreview.vue';
 	import ImportData from '../components/ImportData.vue';
 
 	import IconPuzzle from '../components/icons/IconPuzzle.vue';
@@ -17,111 +10,46 @@
 	import IconWater from '../components/icons/IconWater.vue';
 	import IconAbcBlocks from '../components/icons/IconAbcBlocks.vue';
 
-	import listFlux from '../event-lists/flux.json';
-	import listFlow from '../event-lists/flow.json';
-	import listForm from '../event-lists/form.json';
-	import listFree from '../event-lists/free.json';
+	import listFluxJson from '../event-lists/flux.json';
+	import listFlowJson from '../event-lists/flow.json';
+	import listFormJson from '../event-lists/form.json';
+	import listFreeJson from '../event-lists/free.json';
 
-	const router = useRouter();
-	const { clearGameRules, setGameRule, resetGameRules } = useGameRules();
-	const { getCategoryList, setCategoryList, isCategoryListSet, shouldShrinkGrid } = useCategories();
-	const { setBingoCard } = useBingo();
-	const { clearError, setError } = useErrors();
+	const { setError } = useErrors();
 
-	const jsonData = ref();
-	const jsonType = ref();
+	// Check for parsing errors, and tag any dynamic categories
+	const listFlux = validateCategoryList(listFluxJson);
+	const listFlow = validateCategoryList(listFlowJson);
+	const listForm = validateCategoryList(listFormJson);
+	const listFree = validateCategoryList(listFreeJson);
 
-	// If we're returning from another page, load the stored json and clear any set game rules
-	if (isCategoryListSet.value) {
-		const json = structuredClone(toRaw(getCategoryList())); // Do not want reactive variable, since jsonData is just for local staging
-		jsonData.value = json;
-		jsonType.value = determineType(json);
-		clearGameRules();
-	}
+	// Parse, validate, and tag category lists with dynamic categories where needed
+	// Returns clone with modifications (cat.dynamic = true)
+	function validateCategoryList(jsonIn) {
+		const json = structuredClone(jsonIn);
 
-	// Loading categories list or imported card
-	function loadFile(json) {
-		jsonType.value = determineType(json);
+		// Validate schema
+		const valid = validateJSON(json, 'category-list');
+		if (!valid) return;
 
-		// Then validate against appropriate schema
-		const valid = validateJSON(json, jsonType.value);
-		if (!valid) {
-			jsonType.value = '';
+		// Separately validate and tag dynamic categories
+		const errors = [];
+		for (const cat of json.categories) {
+			if (detectDynamicCategory(cat.name)) {
+				cat.dynamic = true;
+				const { errors } = parseDynamicCategory(cat.name);
+				if (errors.length) {
+					errors.push(...errors);
+				}
+			}
+		}
+		if (errors.length) {
+			setError(errors.join('\n\n'));
 			return;
 		}
 
-		// Separately validate dynamic categories
-		if (jsonType.value === 'category-list') {
-			const allErrors = [];
-			for (const cat of json.categories) {
-				if (detectDynamicCategory(cat.name)) {
-					cat.dynamic = true;
-					const { errors } = parseDynamicCategory(cat.name);
-					if (errors.length) {
-						allErrors.push(...errors);
-					}
-				}
-			}
-			if (allErrors.length) {
-				setError(allErrors.join('\n\n'));
-				return;
-			}
-		}
-
-		// Data looks good, so let's clear any old errors
-		clearError();
+		return json;
 	}
-
-	// Determine if we're dealing with a category list or export from JSON
-	function determineType(json) {
-		if (Object.hasOwn(json, 'exported')) { // Has key "exported", must be Bingo Import
-			return 'bingo-import';
-		} else {
-			return 'category-list';
-		}
-	}
-
-	// Update categories and move to next page (settings)
-	function confirmList() {
-		clearError();
-		setCategoryList(jsonData.value);
-		router.push('/settings');
-	}
-
-	// Update bingo card and load bingo page
-	function confirmImport() {
-		clearError();
-
-		// Update bingo card categories
-		setBingoCard({
-			name: jsonData.value.name,
-			categories: jsonData.value.categories,
-		});
-
-		// Update gamerules - Start with standard, then apply overrides
-		// This way, adding new game rules won't invalidate the schema
-		resetGameRules('standard', false, shouldShrinkGrid());
-		Object.entries(jsonData.value.gamerules).forEach(([rule, value]) => {
-			setGameRule(rule, value);
-		});
-
-		// Play bingo!
-		router.push('/bingo');
-	}
-
-	// Confirm button
-	const confirmButtonLabel = computed(() =>
-		jsonType.value === 'bingo-import' ? 'Import Card' : 'Confirm List'
-	);
-
-	function submitConfirm() {
-		if (jsonType.value === 'bingo-import') {
-			confirmImport();
-		} else {
-			confirmList();
-		}
-	}
-
 </script>
 
 <template>
@@ -137,41 +65,23 @@
 			:json="listFlux"
 			:icon="IconClipboardItems"
 			color="var(--tone4)"
-			@load-file="loadFile"
 		/>
 		<CategoryListEvent
 			:json="listFlow"
 			:icon="IconWater"
 			color="var(--tone1)"
-			@load-file="loadFile"
 		/>
 		<CategoryListEvent
 			:json="listForm"
 			:icon="IconPuzzle"
 			color="var(--tone2)"
-			@load-file="loadFile"
 		/>
 		<CategoryListEvent
 			:json="listFree"
 			:icon="IconAbcBlocks"
 			color="var(--tone3)"
-			@load-file="loadFile"
 		/>
 	</ul>
-
-	<CategoryListPreview
-		v-if="jsonData"
-		:json-data="jsonData"
-		:json-type="jsonType"
-		@clear-data="() => { jsonData = null; jsonType = ''; }"
-	/>
-
-	<nav
-		v-if="jsonData"
-		class="nav-bar"
-	>
-		<button @click="submitConfirm">{{ confirmButtonLabel }}</button>
-	</nav>
 </template>
 
 <style scoped>

@@ -1,4 +1,17 @@
 <script setup>
+	import { useRouter } from 'vue-router';
+
+	import { useErrors } from '../composables/errors.js';
+	import { useGameRules } from '../composables/gamerules.js';
+	import { useCategories } from '../composables/categories.js';
+
+	import CategoryListPreview from '../components/CategoryListPreview.vue';
+
+	const router = useRouter();
+	const { clearGameRules } = useGameRules();
+	const { setCategoryList } = useCategories();
+	const { clearError } = useErrors();
+
 	const props = defineProps({
 		// Valid category list json
 		json: {
@@ -16,6 +29,14 @@
 			default: 'black'
 		}
 	});
+
+	// Update categories and move to next page (settings)
+	function selectList() {
+		clearError();
+		clearGameRules(); // Necessary as lists can change default rules, so swapping lists may create unexpected states
+		setCategoryList(props.json);
+		router.push('/settings');
+	}
 </script>
 
 <template>
@@ -25,15 +46,19 @@
 	>
 		<h2>{{ json.name }}</h2>
 
-		<div class="icon">
-			<component
-				:is="icon"
-				size="120"
-			/>
-		</div>
+		<component
+			:is="icon"
+			size="120"
+			class="icon"
+		/>
 
-		<button>Preview</button>
-		<button>Select</button>
+		<CategoryListPreview
+			:json="json"
+		/>
+
+		<button @click="selectList">
+			Select
+		</button>
 
 		<p>{{ json.description }}</p>
 	</li>
