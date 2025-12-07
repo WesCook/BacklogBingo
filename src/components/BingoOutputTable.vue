@@ -3,6 +3,7 @@
 
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
+	import { useBingo } from '../composables/bingo.js';
 	import { useCardOutput } from '../composables/card-output.js';
 
 	import CopyToClipboard from '../components/CopyToClipboard.vue';
@@ -16,6 +17,7 @@
 
 	const { getGameRules, calculateGameMode } = useGameRules();
 	const { getRowLength, shouldShrinkGrid } = useCategories();
+	const { getBingoCard } = useBingo();
 	const { getBingoCardOutput } = useCardOutput();
 
 	const gamerules = getGameRules();
@@ -30,6 +32,7 @@
 	const output = ref();
 	output.value = generateOutput(getBingoCardOutput(), rowLength);
 
+	// Respond to changes to the bingo card data
 	watch(getBingoCardOutput, categories => {
 		output.value = generateOutput(categories, rowLength);
 	});
@@ -51,12 +54,18 @@
 		// Generate table header
 		let header = '|';
 		for (let i = 0; i < rowLength; i++) {
+			// Category list name
 			if (i === centerCol - 1) {
-				header += ` Mode: ${capitalizeFirstLetter(gamemode)} |`;
+				header += ` ${getBingoCard().name} |`;
+			// Game mode
 			} else if (i === centerCol) {
-				header += (props.winState) ? ' Winning Bingo! |' : ' Bingo! |';
+				header += ` ${capitalizeFirstLetter(gamemode)} bingo |`;
+			// Completion state
 			} else if (i === centerCol + 1) {
-				header += ` Finished ${currentCategories}/${totalCategories} |`;
+				if (props.winState) {
+					header += ' ✅';
+				}
+				header += ` ${currentCategories}/${totalCategories} |`;
 			} else {
 				header += ' |';
 			}
