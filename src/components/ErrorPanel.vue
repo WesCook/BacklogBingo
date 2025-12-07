@@ -1,6 +1,8 @@
 <script setup>
 	import { useErrors } from '../composables/errors.js';
 
+	import IconClose from '../components/icons/IconClose.vue';
+
 	const { getError, clearError } = useErrors();
 	const error = getError();
 
@@ -15,7 +17,7 @@
 			class="close"
 			@click="close"
 		>
-			✖
+			<IconClose style="--foreground-color: black;" />
 		</button>
 		<p>An error was found with the following message:</p>
 		<p class="error-message">
@@ -27,8 +29,12 @@
 <style scoped>
 	.error-panel {
 		margin-top: 2em;
+		padding: 0.5em 1em;
+		border: 1px solid #b00020;
+		border-radius: 6px;
 		font-size: 1.1em;
-		border: 1px solid orange;
+		color: #b00020;
+		background: #ffeaea;
 	}
 
 	.error-panel p {

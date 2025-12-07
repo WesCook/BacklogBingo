@@ -1,55 +1,23 @@
 <script setup>
-	import { useErrors } from '../composables/errors.js';
-	import { validateJSON, detectDynamicCategory, parseDynamicCategory } from '../utils/json-parse.js';
-
 	import CategoryListEvent from '../components/CategoryListEvent.vue';
 	import ImportData from '../components/ImportData.vue';
+	import { markDynamicCategories } from '../utils/file-import.js';
 
-	import IconPuzzle from '../components/icons/IconPuzzle.vue';
 	import IconClipboardItems from '../components/icons/IconClipboardItems.vue';
 	import IconWater from '../components/icons/IconWater.vue';
+	import IconPuzzle from '../components/icons/IconPuzzle.vue';
 	import IconAbcBlocks from '../components/icons/IconAbcBlocks.vue';
 
-	import listFluxJson from '../event-lists/flux.json';
-	import listFlowJson from '../event-lists/flow.json';
-	import listFormJson from '../event-lists/form.json';
-	import listFreeJson from '../event-lists/free.json';
+	import listFlux from '../event-lists/flux.json';
+	import listFlow from '../event-lists/flow.json';
+	import listForm from '../event-lists/form.json';
+	import listFree from '../event-lists/free.json';
 
-	const { setError } = useErrors();
-
-	// Check for parsing errors, and tag any dynamic categories
-	const listFlux = validateCategoryList(listFluxJson);
-	const listFlow = validateCategoryList(listFlowJson);
-	const listForm = validateCategoryList(listFormJson);
-	const listFree = validateCategoryList(listFreeJson);
-
-	// Parse, validate, and tag category lists with dynamic categories where needed
-	// Returns clone with modifications (cat.dynamic = true)
-	function validateCategoryList(jsonIn) {
-		const json = structuredClone(jsonIn);
-
-		// Validate schema
-		const valid = validateJSON(json, 'category-list');
-		if (!valid) return;
-
-		// Separately validate and tag dynamic categories
-		const errors = [];
-		for (const cat of json.categories) {
-			if (detectDynamicCategory(cat.name)) {
-				cat.dynamic = true;
-				const { errors } = parseDynamicCategory(cat.name);
-				if (errors.length) {
-					errors.push(...errors);
-				}
-			}
-		}
-		if (errors.length) {
-			setError(errors.join('\n\n'));
-			return;
-		}
-
-		return json;
-	}
+	// Mark any dynamic categories for future use
+	const listFluxMarked = markDynamicCategories(listFlux);
+	const listFlowMarked = markDynamicCategories(listFlow);
+	const listFormMarked = markDynamicCategories(listForm);
+	const listFreeMarked = markDynamicCategories(listFree);
 </script>
 
 <template>
@@ -62,22 +30,22 @@
 
 	<ul class="category-lists">
 		<CategoryListEvent
-			:json="listFlux"
+			:json="listFluxMarked"
 			:icon="IconClipboardItems"
 			color="var(--tone4)"
 		/>
 		<CategoryListEvent
-			:json="listFlow"
+			:json="listFlowMarked"
 			:icon="IconWater"
 			color="var(--tone1)"
 		/>
 		<CategoryListEvent
-			:json="listForm"
+			:json="listFormMarked"
 			:icon="IconPuzzle"
 			color="var(--tone2)"
 		/>
 		<CategoryListEvent
-			:json="listFree"
+			:json="listFreeMarked"
 			:icon="IconAbcBlocks"
 			color="var(--tone3)"
 		/>

@@ -48,7 +48,6 @@ export function useCardOutput() {
 		return readonly(card);
 	}
 
-
 	return {
 		getBingoCardOutput
 	};

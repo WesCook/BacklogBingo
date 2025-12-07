@@ -1,8 +1,8 @@
 <script setup>
 	import { ref } from 'vue';
 
-	import DynamicCategory from '../components/DynamicCategory.vue';
 	import UIModal from '../components/UIModal.vue';
+	import DynamicCategory from '../components/DynamicCategory.vue';
 
 	const props = defineProps({
 		json: {

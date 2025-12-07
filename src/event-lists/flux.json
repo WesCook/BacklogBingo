@@ -1,7 +1,7 @@
 {
 	"version": 1,
 	"name": "Flux",
-	"description": "Unique conditions for a structured experience.",
+	"description": "Mixed goals in a structured format.",
 	"categories": [
 		{ "name": "Nominated for CHOOSE[a GDC Award|a Steam award|The Game Awards|any award]" },
 		{ "name": "Has CHOOSE[a female|a non-human|a robot] antagonist", "group": "Characters" },

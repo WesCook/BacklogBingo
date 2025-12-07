@@ -1,5 +1,6 @@
 <script setup>
 	import { ref, toRaw } from 'vue';
+
 	import { useBingo } from '../composables/bingo.js';
 	import { useGameRules } from '../composables/gamerules.js';
 

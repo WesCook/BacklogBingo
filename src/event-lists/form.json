@@ -1,7 +1,7 @@
 {
 	"version": 1,
 	"name": "Form",
-	"description": "A list of genres.  Choose games by their form.",
+	"description": "A genre list for diverse forms of gameplay.",
 	"categories": [
 		{ "name": "2D platformer" },
 		{ "name": "3D platformer" },
