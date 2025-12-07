@@ -171,26 +171,16 @@
 	// Generate Card //
 	///////////////////
 
-	// Skip determines if filters are used, or if Skip button was clicked
-	function generateCard(skip) {
-		// Collect all or only checked categories, then flatten into accessible structure (arr of objs)
+	function generateCard() {
+		// Collect the checked categories, then flatten into accessible structure (arr of objs)
 		let catSubset = [];
 
-		if (skip) {
-			catSubset = Array.from(categoryMap).map(([uuid, catObj]) => ({
-				uuid,
-				cat: catObj.name,
-				group: catObj.group,
-				dynamic: catObj.dynamic
-			}));
-		} else {
-			catSubset = categoryValues.value.map(uuid => ({
-				uuid,
-				cat: categoryMap.get(uuid).name,
-				group: categoryMap.get(uuid).group,
-				dynamic: categoryMap.get(uuid).dynamic
-			}));
-		}
+		catSubset = categoryValues.value.map(uuid => ({
+			uuid,
+			cat: categoryMap.get(uuid).name,
+			group: categoryMap.get(uuid).group,
+			dynamic: categoryMap.get(uuid).dynamic
+		}));
 
 		const success = generateBingoCard(categoryList.name, catSubset);
 		if (success) {
@@ -236,7 +226,7 @@
 		</RouterLink>
 	</nav>
 
-	<p>Now you can fine-tune the categories your bingo card will pick from.  Please uncheck any categories that you don't believe are possible for you to complete.</p>
+	<p>Finally, you may omit any categories that aren't possible for you.</p>
 
 	<!-- Group Toggles -->
 	<div class="groups-toggle">
@@ -279,21 +269,15 @@
 		/>
 	</ul>
 
-	<p>When you're ready, click <em>Generate Card</em> to create a unique bingo card from the selected categories, or click <em>Skip</em> to include all categories.</p>
-	<p>Your card will be saved locally, and no information is stored online.  To avoid data loss, <em>please do not delete your browser data</em>.</p>
+	<p>When you're ready, click <em>Generate Card</em> to create a unique bingo card from the selected categories.</p>
+	<p>Your card is kept on this device only.  Clearing your browser's saved data may delete it.</p>
 
 	<!-- Navigation Buttons -->
 	<nav class="nav-bar">
-		<button
-			class="left"
-			@click="generateCard(true)"
-		>
-			Skip this step
-		</button>
 		<span class="required-tally"><span>{{ currentCount }}</span> of <span>{{ minCategories }}</span> required</span>
 		<button
 			:disabled="buttonsDisabled"
-			@click="generateCard(false)"
+			@click="generateCard()"
 		>
 			Generate Card
 		</button>
