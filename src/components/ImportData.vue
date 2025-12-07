@@ -8,9 +8,9 @@
 	import { useBingo } from '../composables/bingo.js';
 
 	import UIModal from '../components/UIModal.vue';
-	import DynamicCategory from '../components/DynamicCategory.vue';
 	import CategoryListFile from '../components/CategoryListFile.vue';
 	import CategoryListURL from '../components/CategoryListURL.vue';
+	import ImportDataPreview from '../components/ImportDataPreview.vue';
 	import ErrorPanel from '../components/ErrorPanel.vue';
 	import IconUpload from '../components/icons/IconUpload.vue';
 	import { validateJSON } from '../utils/json-parse.js';
@@ -181,22 +181,7 @@
 					{{ successMessage }}
 				</p>
 
-				<!-- Import preview -->
-				<details class="preview-details">
-					<summary>Import Preview</summary>
-					<ol>
-						<li
-							v-for="(category, index) in categoryDisplay"
-							:key="index"
-						>
-							<DynamicCategory
-								v-if="category.dynamic"
-								:name="category.name"
-							/>
-							<span v-else>{{ category.name }}</span>
-						</li>
-					</ol>
-				</details>
+				<ImportDataPreview :list="categoryDisplay" />
 			</template>
 
 			<ErrorPanel v-if="error" />
@@ -246,25 +231,5 @@
 		background: #eaffea;
 		border: 1px solid #008000;
 		border-radius: 6px;
-	}
-
-	.preview-details {
-		margin-top: 1em;
-		max-height: 200px;
-		overflow-y: auto;
-		background-color: color-mix(in srgb, var(--background-shaded) 98%, var(--foreground-color));
-
-		summary {
-			background-color: color-mix(in srgb, var(--background-shaded) 96%, var(--foreground-color));
-			padding: 5px 5px 5px 11px;
-		}
-		summary:hover {
-			cursor: pointer;
-		}
-
-		ol {
-			list-style: decimal;
-			margin-top: 10px;
-		}
 	}
 </style>

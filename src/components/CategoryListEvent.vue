@@ -5,7 +5,7 @@
 	import { useGameRules } from '../composables/gamerules.js';
 	import { useCategories } from '../composables/categories.js';
 
-	import CategoryListPreview from '../components/CategoryListPreview.vue';
+	import CategoryListEventPreview from '../components/CategoryListEventPreview.vue';
 
 	const router = useRouter();
 	const { clearGameRules } = useGameRules();
@@ -52,7 +52,7 @@
 			class="icon"
 		/>
 
-		<CategoryListPreview
+		<CategoryListEventPreview
 			:json="json"
 		/>
 
