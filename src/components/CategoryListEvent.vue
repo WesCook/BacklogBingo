@@ -52,20 +52,24 @@
 			class="icon"
 		/>
 
-		<CategoryListEventPreview
-			:json="json"
-		/>
-
-		<button @click="selectList">
-			Select
-		</button>
-
 		<p>{{ json.description }}</p>
+
+		<div class="button-group">
+			<CategoryListEventPreview
+				:json="json"
+			/>
+
+			<button @click="selectList">
+				Select
+			</button>
+		</div>
 	</li>
 </template>
 
 <style scoped>
 	.category-list {
+		display: flex;
+		flex-direction: column;
 		padding: 0.8em;
 		text-align: center;
 		background-color: color-mix(in srgb, var(--background-color) 40%, var(--custom-color));
@@ -78,7 +82,10 @@
 
 		.icon {
 			margin: 0 auto;
-			margin-bottom: 0.8em;
+		}
+
+		.button-group {
+			margin-top: auto;
 		}
 
 		button {
