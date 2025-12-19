@@ -1,10 +1,6 @@
 <script setup>
 	defineProps({
-		uuid: {
-			type: String,
-			default: ''
-		},
-		friendlyName: {
+		groupName: {
 			type: String,
 			default: ''
 		},
@@ -20,7 +16,7 @@
 
 	defineEmits(['group-change']);
 
-	const model = defineModel({ type: Array });
+	const model = defineModel({ type: Boolean });
 </script>
 
 <template>
@@ -29,13 +25,12 @@
 			<input
 				v-model="model"
 				type="checkbox"
-				:value="uuid"
 				:indeterminate
-				@change="$emit('group-change', uuid, $event.target.checked)"
+				@change="$emit('group-change', groupName, $event.target.checked)"
 			>
 			<span
 				:style="{ color: color }"
-			>{{ friendlyName }}</span>
+			>{{ groupName }}</span>
 		</label>
 	</li>
 </template>

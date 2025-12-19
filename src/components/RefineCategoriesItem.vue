@@ -2,17 +2,9 @@
 	import DynamicCategory from './DynamicCategory.vue';
 
 	defineProps({
-		uuid: {
-			type: String,
-			default: ''
-		},
-		categoryName: {
-			type: String,
-			default: ''
-		},
-		dynamic: {
-			type: Boolean,
-			default: false
+		category: {
+			type: Object,
+			required: true
 		},
 		color: {
 			type: String,
@@ -22,7 +14,7 @@
 
 	defineEmits(['category-change']);
 
-	const model = defineModel({ type: Array });
+	const model = defineModel({ type: Boolean });
 </script>
 
 <template>
@@ -31,19 +23,18 @@
 			<input
 				v-model="model"
 				type="checkbox"
-				:value="uuid"
-				@change="$emit('category-change', uuid)"
+				@change="$emit('category-change')"
 			>
 
 			<DynamicCategory
-				v-if="dynamic"
+				v-if="category.dynamic"
 				:style="{ color }"
-				:name="categoryName"
+				:name="category.name"
 			/>
 			<span
 				v-else
 				:style="{ color }"
-			>{{ categoryName }}</span>
+			>{{ category.name }}</span>
 
 		</label>
 	</li>

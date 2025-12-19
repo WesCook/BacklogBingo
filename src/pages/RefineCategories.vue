@@ -18,111 +18,64 @@
 	const { getCategoryList, getCategoryNumber } = useCategories();
 	const { setRevealAnimation } = useBingo();
 
-	///////////////////
-	// Initial State //
-	///////////////////
-
 	const gamerules = getGameRules();
 	const categoryList = getCategoryList();
-	const { categoryMap, groupMap } = populateCategoryAndGroups();
 
-	// Group and category checkboxes - initialize with all values so they're checked by default
-	const groupValues = ref(getAllGroups());
-	const categoryValues = ref(getAllCategories());
+	///////////////////////
+	// Categories/Groups //
+	///////////////////////
 
-	// Build new list of categories and groups for easier manipulation
-	// Using UUIDs as keys.  Avoiding using raw values in template and v-for keys.
-	function populateCategoryAndGroups() {
-		const categoryMap = new Map();
-		const groupMap = new Map();
-		const groupUUIDMap = new Map(); // Reverse map of UUID to group name
+	// Holds all category data and state, with 'checked' property being v-modelled to page checkboxes
+	const categories = ref(categoryList.categories.map(cat => ({
+		...cat,
+		uuid: crypto.randomUUID(),
+		checked: true // All categories checked by default
+	})));
 
-		for (const catSource of categoryList.categories) {
-			// Create new, mutable category object
-			const category = {
-				name: catSource.name,
-				dynamic: catSource.dynamic
-			};
-
-			// Generate group UUID if needed, then add to object and Groups List
-			if (catSource.group) {
-				let groupID;
-				if (groupUUIDMap.has(catSource.group)) {
-					groupID = groupUUIDMap.get(catSource.group);
-				} else {
-					groupID = crypto.randomUUID();
-					groupMap.set(groupID, catSource.group);
-					groupUUIDMap.set(catSource.group, groupID);
-				}
-				category.group = groupID;
-			}
-
-			categoryMap.set(crypto.randomUUID(), category);
-		}
-
-		return { categoryMap, groupMap };
-	}
-
-	///////////////////////////
-	// Checkbox Manipulation //
-	///////////////////////////
-
-	function getAllGroups() {
-		return [...groupMap.keys()];
-	}
-
-	function getAllCategories() {
-		return [...categoryMap.keys()];
-	}
-
-	function selectAll() {
-		groupValues.value = getAllGroups();
-		categoryValues.value = getAllCategories();
-	}
-
-	function selectNone() {
-		groupValues.value = [];
-		categoryValues.value = [];
-	}
-
-	// Accepts array of category IDs to check
-	// Filter out those that are already included
-	function checkCategories(categories) {
-		categoryValues.value.push(...categories.filter(category => !categoryValues.value.includes(category)));
-	}
-
-	// Accepts array of category IDs to uncheck
-	function uncheckCategories(categories) {
-		categories.forEach(category => {
-			const index = categoryValues.value.indexOf(category);
-			if (index >= 0) {
-				categoryValues.value.splice(index, 1);
+	// Computed array of group names from categories
+	// eg. ["Characters", "Series", ...]
+	const groups = computed(() => {
+		const groupSet = new Set(); // Set only allows unique items, so no risk of dupes
+		categories.value.forEach(cat => {
+			if (cat.group) {
+				groupSet.add(cat.group);
 			}
 		});
-	}
+		return [...groupSet];
+	});
 
-	///////////////////////////////
-	// Get State from Checkboxes //
-	///////////////////////////////
+	// Computed array of all group states (checked/indeterminate) based on category checkboxes
+	// eg. [{ name: "characters", checked: false, indeterminate: true }, ...]
+	const groupStates = computed(() => {
+		return groups.value.map(groupName => {
+			const groupCategories = categories.value.filter(cat => cat.group === groupName); // Find all categories in this group
+			const total = groupCategories.length;
+			const checked = groupCategories.filter(cat => cat.checked).length;
 
-	// Get number of checked categories in a group
-	function getGroupCheckedCount(group) {
-		const groupsCategories = getCategoriesFromGroup(group);
-		return groupsCategories.reduce((count, catID) => categoryValues.value.includes(catID) ? count + 1 : count, 0);
-	}
+			return {
+				name: groupName,
+				checked: checked === total, // True if ALL categories in this group are checked
+				indeterminate: checked > 0 && checked < total // True if SOME categories in this group are checked
+			};
+		});
+	});
 
-	// When group checkboxes are neither full nor empty, they are indeterminate
-	function getIndeterminate(group) {
-		const groupsCategories = getCategoriesFromGroup(group);
-		const checkCount = getGroupCheckedCount(group);
-		return checkCount > 0 && checkCount < groupsCategories.length;
-	}
+	///////////////////
+	// Template Info //
+	///////////////////
 
-	// Returns all category UUIDs for a given group UUID
-	function getCategoriesFromGroup(group) {
-		return Array.from(categoryMap)
-			.filter(([_catID, category]) => category.group === group)
-			.map(([uuid, _cat]) => uuid);
+	// Track checked categories to meet minimum
+	const minCategories = ref(getCategoryNumber(gamerules.gridSize));
+	const currentCount = computed(() => categories.value.filter(cat => cat.checked).length);
+	const buttonsDisabled = computed(() => currentCount.value < minCategories.value);
+
+	// Returns array of CSS colors to be assigned in template
+	// eg. ["light-dark(hsl(72, 70%, 40%), hsl(72, 60%, 70%))", ...]
+	const groupColors = generateColors();
+	function generateColors() {
+		const groupCount = groups.value.length;
+		if (!groupCount) return [];
+		return getThemedColors(groupCount);
 	}
 
 	///////////////////////////
@@ -130,41 +83,18 @@
 	///////////////////////////
 
 	// Event from RefineCategoriesGroup when group checkbox changes
-	function groupChangeEvent(group, checked) {
-		const groupsCategories = getCategoriesFromGroup(group);
-		if (checked) {
-			checkCategories(groupsCategories);
-		} else {
-			uncheckCategories(groupsCategories);
-		}
+	function groupChangeEvent(groupName, checked) {
+		categories.value
+			.filter(cat => cat.group === groupName)
+			.forEach(cat => cat.checked = checked);
 	}
 
-	// Event from RefineCategoriesItem when category checkbox changes
-	function categoryChangeEvent(category) {
-		// Get group from category
-		const group = categoryMap.get(category).group;
+	function selectAll() {
+		categories.value.forEach(cat => cat.checked = true);
+	}
 
-		if (!group) {
-			return;
-		}
-
-		// Get all categories for group and count checked states
-		const groupsCategories = getCategoriesFromGroup(group);
-		const checkCount = getGroupCheckedCount(group);
-
-		// Update group checkbox based on state
-		if (checkCount === groupsCategories.length) {
-			// All cats checked
-			if (!groupValues.value.includes(group)) {
-				groupValues.value.push(group);
-			}
-		} else {
-			// Not all cats checked, so group is also unchecked
-			const index = groupValues.value.indexOf(group);
-			if (index >= 0) {
-				groupValues.value.splice(index, 1);
-			}
-		}
+	function selectNone() {
+		categories.value.forEach(cat => cat.checked = false);
 	}
 
 	///////////////////
@@ -172,17 +102,17 @@
 	///////////////////
 
 	function generateCard() {
-		// Collect the checked categories, then flatten into accessible structure (arr of objs)
-		let catSubset = [];
+		// Transform checked categories for bingo card generation
+		const checkedCategories = categories.value
+			.filter(cat => cat.checked)
+			.map(cat => ({
+				uuid: cat.uuid,
+				cat: cat.name,
+				group: cat.group,
+				dynamic: cat.dynamic
+			}));
 
-		catSubset = categoryValues.value.map(uuid => ({
-			uuid,
-			cat: categoryMap.get(uuid).name,
-			group: categoryMap.get(uuid).group,
-			dynamic: categoryMap.get(uuid).dynamic
-		}));
-
-		const success = generateBingoCard(categoryList.name, catSubset);
+		const success = generateBingoCard(categoryList.name, checkedCategories);
 		if (success) {
 			console.log('Bingo card generated!');
 			setRevealAnimation(true);
@@ -190,27 +120,6 @@
 		} else {
 			console.error('Could not generate bingo card');
 		}
-	}
-
-	///////////////////
-	// Template Data //
-	///////////////////
-
-	// Track selected categories to meet minimum
-	const minCategories = ref(getCategoryNumber(gamerules.gridSize));
-	const currentCount = computed(() => categoryValues.value.length);
-	const buttonsDisabled = computed(() => currentCount.value < minCategories.value);
-
-	// Generate colors to be assigned in template
-	const groupColors = generateColors();
-	function generateColors() {
-		const colors = getThemedColors(groupMap.size);
-		const groupColors = {};
-		Array.from(groupMap).forEach((groupArray, index) => {
-			groupColors[groupArray[0]] = colors[index];
-		});
-
-		return groupColors;
 	}
 </script>
 
@@ -232,17 +141,16 @@
 	<div class="groups-toggle">
 		<strong>Quick Toggle</strong>
 		<ul
-			v-if="groupMap.size"
+			v-if="groups.length"
 			class="groups-list"
 		>
 			<RefineCategoriesGroup
-				v-for="[uuid, group] of groupMap"
-				:key="uuid"
-				v-model="groupValues"
-				:uuid="uuid"
-				:friendly-name="group"
-				:indeterminate="getIndeterminate(uuid)"
-				:color="groupColors[uuid]"
+				v-for="(groupName, index) of groups"
+				:key="index"
+				v-model="groupStates.find(state => state.name === groupName).checked"
+				:group-name="groupName"
+				:indeterminate="groupStates.find(state => state.name === groupName).indeterminate"
+				:color="groupColors[index]"
 				@group-change="groupChangeEvent"
 			/>
 		</ul>
@@ -258,14 +166,11 @@
 	<!-- Category List -->
 	<ul class="categories-list">
 		<RefineCategoriesItem
-			v-for="[uuid, category] of categoryMap"
-			:key="uuid"
-			v-model="categoryValues"
-			:uuid="uuid"
-			:category-name="category.name"
-			:dynamic="category.dynamic"
-			:color="groupColors[categoryMap.get(uuid).group]"
-			@category-change="categoryChangeEvent"
+			v-for="category of categories"
+			:key="category.uuid"
+			v-model="category.checked"
+			:category="category"
+			:color="groupColors[groups.indexOf(category.group)]"
 		/>
 	</ul>
 
@@ -322,15 +227,15 @@
 		padding: 15px;
 		border: 1px solid var(--border-color);
 		background-color: var(--background-section);
-	}
-	@media (min-width: 700px) {
-		.categories-list {
+
+		.categories-list li {
+			margin-bottom: 2px;
+		}
+
+		@media (min-width: 700px) {
 			columns: 2;
 			column-gap: 24px;
 		}
-	}
-	.categories-list li {
-		margin-bottom: 2px;
 	}
 
 	.required-tally {

@@ -78,13 +78,13 @@ function chooseCategories(categories, rng) {
 
 		if (allowSimilar || !cat.group || !usedGroups.has(cat.group)) {
 			finalList.push(cat);
-			console.log(`Selected category '${cat.cat}'${(cat.group) ? ` from group ID ${cat.group}` : ''}.`);
+			console.log(`Selected category '${cat.cat}'${(cat.group) ? ` from group '${cat.group}'` : ''}.`);
 			if (cat.group) {
 				usedGroups.add(cat.group);
 			}
 		} else {
 			discardPool.push(cat);
-			console.log(`Discarded category '${cat.cat}' from group ID ${cat.group} (already used).`);
+			console.log(`Discarded category '${cat.cat}' from group '${cat.group}' (already used).`);
 		}
 	}
 	console.groupEnd();
