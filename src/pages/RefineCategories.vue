@@ -107,7 +107,7 @@
 			.filter(cat => cat.checked)
 			.map(cat => ({
 				uuid: cat.uuid,
-				cat: cat.name,
+				name: cat.name,
 				group: cat.group,
 				dynamic: cat.dynamic
 			}));

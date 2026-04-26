@@ -17,8 +17,8 @@ export function useCardOutput() {
 		const card = reactive([]);
 
 		// Iterate over each category in the bingo card
-		for (const { cat, entry, uuid } of bingoCard.categories) {
-			let catNew = cat;
+		for (const { name, entry, uuid } of bingoCard.categories) {
+			let category = name;
 			let entryNew = (entry === undefined) ? '' : entry;
 			const isStarTile = (uuid === starUUID && gamerules.star !== 'disabled');
 			const isSatisfied = (!!entry || (isStarTile && gamerules.star === 'free'));
@@ -28,16 +28,16 @@ export function useCardOutput() {
 			if (isStarTile) {
 				starType = gamerules.star;
 				if (gamerules.star === 'free') {
-					catNew = '★';
+					category = '★';
 					entryNew = '';
 				} else if (gamerules.star === 'wildcard') {
-					catNew = '★ Wildcard';
+					category = '★ Wildcard';
 				}
 			}
 
 			// Push the formatted category to the list
 			card.push({
-				category: catNew,
+				category,
 				entry: entryNew,
 				isStarTile,
 				isSatisfied,

@@ -77,7 +77,7 @@
 			</template>
 
 			<!-- Category -->
-			<span v-else>{{ data.cat }}</span>
+			<span v-else>{{ data.name }}</span>
 
 			<!-- Duplicate message -->
 			<span

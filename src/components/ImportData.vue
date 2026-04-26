@@ -48,8 +48,8 @@
 		loadedJson.value = json;
 
 		// Print nicely to console
-		console.groupCollapsed(`Loaded ${json.categories.length} categories...`);
-		categoryDisplay.value.forEach(cat => {
+		console.groupCollapsed(`Loaded ${loadedJson.value.categories.length} categories...`);
+		loadedJson.value.categories.forEach(cat => {
 			console.log(cat.name);
 		});
 		console.groupEnd();
@@ -119,25 +119,6 @@
 
 		return '';
 	});
-
-	// Helper function to pass along category list with consistent names from either category list or bingo card import
-	// This is only needed because the property varies between 'cat.cat' and 'cat.name'.
-	// TODO: Reconsider this, and prefer using 'name' everywhere (card localStorage, export file, schemas).  This will invalidate existing cards/imports though.
-	const categoryDisplay = computed(() => {
-		const json = loadedJson.value;
-		const list = json.categories;
-
-		if (determineType(json) == 'bingo-import') {
-			// Map cat.cat > cat.name
-			return list.map(({ cat, ...rest }) => ({
-				name: cat,
-				...rest
-			}));
-		}
-
-		// Type is 'category-list', so no alteration needed
-		return list;
-	});
 </script>
 
 <template>
@@ -181,7 +162,7 @@
 					{{ successMessage }}
 				</p>
 
-				<ImportDataPreview :list="categoryDisplay" />
+				<ImportDataPreview :list="loadedJson?.categories" />
 			</template>
 
 			<ErrorPanel v-if="error" />

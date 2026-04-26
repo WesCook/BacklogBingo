@@ -26,7 +26,7 @@ export function generateBingoCard(name, categories) {
 	// Evaluate dynamic categories
 	for (const cat of chosenCategories) {
 		if (cat.dynamic) {
-			cat.cat = parseDynamicCategory(cat.cat, rng).result;
+			cat.name = parseDynamicCategory(cat.name, rng).result;
 		}
 	}
 
@@ -78,13 +78,13 @@ function chooseCategories(categories, rng) {
 
 		if (allowSimilar || !cat.group || !usedGroups.has(cat.group)) {
 			finalList.push(cat);
-			console.log(`Selected category '${cat.cat}'${(cat.group) ? ` from group '${cat.group}'` : ''}.`);
+			console.log(`Selected category '${cat.name}'${(cat.group) ? ` from group '${cat.group}'` : ''}.`);
 			if (cat.group) {
 				usedGroups.add(cat.group);
 			}
 		} else {
 			discardPool.push(cat);
-			console.log(`Discarded category '${cat.cat}' from group '${cat.group}' (already used).`);
+			console.log(`Discarded category '${cat.name}' from group '${cat.group}' (already used).`);
 		}
 	}
 	console.groupEnd();

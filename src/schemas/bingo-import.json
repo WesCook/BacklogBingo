@@ -32,10 +32,10 @@
 			"minItems": 9,
 			"items": {
 				"type": "object",
-				"required": ["cat", "uuid"],
+				"required": ["name", "uuid"],
 				"properties": {
 					"uuid": { "type": "string" },
-					"cat": { "type": "string" },
+					"name": { "type": "string" },
 					"entry": { "type": "string" }
 				},
 				"additionalProperties": false

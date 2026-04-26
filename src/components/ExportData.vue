@@ -22,7 +22,7 @@
 		// Duplicate card data and add keys
 		const card = structuredClone(toRaw(bingoCard));
 		card.gamerules = gamerules;
-		card.version = 1;
+		card.version = 2;
 		card.exported = Date.now();
 
 		// Export and update UI with result
