@@ -15,6 +15,7 @@
 	import IconUpload from '../components/icons/IconUpload.vue';
 	import { validateJSON } from '../utils/json-parse.js';
 	import { determineType, validateDynamicCategories, markDynamicCategories } from '../utils/file-import.js';
+	import { migrate, getCurrentVersion } from '../utils/migrate.js';
 
 	const router = useRouter();
 	const { clearGameRules, resetGameRules, setGameRule } = useGameRules();
@@ -36,6 +37,9 @@
 
 		// Validate relevant schema
 		if (!validateJSON(json, type)) return;
+
+		// Apply any necessary data migrations
+		json = migrate(json);
 
 		// Validate any dynamic categories on custom category lists, and mark for later use
 		if (type == 'category-list') {
@@ -68,6 +72,7 @@
 			setBingoCard({
 				name: loadedJson.value.name,
 				categories: loadedJson.value.categories,
+				version: getCurrentVersion()
 			});
 
 			// Update gamerules - Start with standard, then apply overrides

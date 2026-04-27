@@ -4,6 +4,7 @@ import { useBingo } from '../composables/bingo.js';
 import { useErrors } from '../composables/errors.js';
 import { getHashFromString, createSeededRandom, shuffleArray } from '../utils/math-utils.js';
 import { parseDynamicCategory } from '../utils/json-parse.js';
+import { getCurrentVersion } from '../utils/migrate.js';
 
 const { getGameRules } = useGameRules();
 const { getCategoryNumber } = useCategories();
@@ -38,8 +39,9 @@ export function generateBingoCard(name, categories) {
 
 	// Create card
 	setBingoCard({
-		name: name,
-		categories: chosenCategories
+		name,
+		categories: chosenCategories,
+		version: getCurrentVersion()
 	});
 
 	localStorage.removeItem('categoryList');

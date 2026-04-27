@@ -1,5 +1,7 @@
 import { ref, reactive, computed, readonly } from 'vue';
 
+import { migrate } from '../utils/migrate.js';
+
 // Holds the categories and associated data for the generated bingo card
 const bingoCard = reactive({});
 
@@ -20,7 +22,12 @@ export function useBingo() {
 	function initializeData() {
 		const bingoCardStored = JSON.parse(localStorage.getItem('bingoCard'));
 		if (bingoCardStored) {
-			Object.assign(bingoCard, bingoCardStored);
+			const cardVersion = bingoCardStored.version || 1;
+			const migrated = migrate(bingoCardStored);
+			Object.assign(bingoCard, migrated);
+			if (cardVersion < migrated.version) {
+				saveToBrowser(); // Save after applying migration
+			}
 		}
 	}
 
@@ -50,6 +57,7 @@ export function useBingo() {
 		delete bingoCard.name;
 		delete bingoCard.win;
 		delete bingoCard.categories;
+		delete bingoCard.version;
 	}
 
 	function setRevealAnimation(state) {
