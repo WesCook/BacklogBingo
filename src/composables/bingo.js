@@ -37,6 +37,7 @@ export function useBingo() {
 
 	// Overwrite entire card with new data
 	function setBingoCard(bingoCardNew) {
+		clearBingoCard();
 		Object.assign(bingoCard, bingoCardNew);
 		saveToBrowser();
 	}
@@ -54,10 +55,8 @@ export function useBingo() {
 	}
 
 	function clearBingoCard() {
-		delete bingoCard.name;
-		delete bingoCard.win;
-		delete bingoCard.categories;
-		delete bingoCard.version;
+		Object.keys(bingoCard).forEach(key => delete bingoCard[key]);
+		localStorage.removeItem('bingoCard');
 	}
 
 	function setRevealAnimation(state) {
