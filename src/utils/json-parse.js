@@ -10,31 +10,6 @@ const ajv = new Ajv({ allErrors: true });
 const validateCategoryList = ajv.compile(categorySchema);
 const validateBingoImport = ajv.compile(bingoImportSchema);
 
-// Parses provided URL for json, local or remote
-// Reports network and JSON parsing errors.  Returns json on success, false on error.
-export async function downloadJSON(url) {
-	// Attempt to download from URL
-	try {
-		const res = await fetch(url);
-		if (!res.ok) {
-			setError(`There was an error downloading from the URL.  The status code was ${res.status}.`);
-			return false;
-		}
-
-		const json = await res.json();
-		return json;
-	} catch (err) {
-		if (err.name === 'SyntaxError') {
-			setError(`A file was downloaded, but it could not be read.  Is it a valid JSON file?\n\n${err.name}\n${err.message}`);
-		} else if (err.name === 'TypeError') {
-			setError(`There was an error downloading from the URL.  An unexpected response was received.\n\n${err.name}\n${err.message}`);
-		}
-		else {
-			setError(`An unknown error occurred.\n\n${err.name}\n${err.message}`);
-		}
-	}
-}
-
 // Validate JSON against appropriate schema validator
 // Returns true for valid, false for invalid
 export function validateJSON(json, type) {
@@ -61,9 +36,9 @@ function formatErrors(errors) {
 	return errors.map(error => {
 		// Convert from `/foo/bar/0/baz` to `foo.bar[0].baz`
 		const path = error.instancePath
-			.replace(/\//g, '.') // slash to dot
-			.replace(/^\./, '') // remove leading dot
-			.replace(/\.(\d+)(\.|$)/g, '[$1]$2'); // turn `.0.` into `[0].`
+			.replace(/\//g, '.') // Slash to dot
+			.replace(/^\./, '') // Remove leading dot
+			.replace(/\.(\d+)(\.|$)/g, '[$1]$2'); // Turn `.0.` into `[0].`
 
 		const context = path || 'Category list';
 

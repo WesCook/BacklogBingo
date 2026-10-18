@@ -14,25 +14,47 @@
 	import ErrorPanel from '../components/ErrorPanel.vue';
 	import IconUpload from '../components/icons/IconUpload.vue';
 	import { validateJSON } from '../utils/json-parse.js';
-	import { determineType, validateDynamicCategories, markDynamicCategories } from '../utils/file-import.js';
+	import { validateDynamicCategories, markDynamicCategories } from '../utils/file-import.js';
 	import { migrate, getCurrentVersion } from '../utils/migrate.js';
 
 	const router = useRouter();
 	const { clearGameRules, resetGameRules, setGameRule } = useGameRules();
 	const { setCategoryList } = useCategories();
 	const { setBingoCard } = useBingo();
-	const { getError, clearError } = useErrors();
+	const { getError, setError, clearError } = useErrors();
 
 	const error = getError();
 	const modalActive = ref();
 	const loadedJson = ref();
 
-	// Custom json is passed up via file or URL
-	function loadFile(json) {
+	// Determine whether JSON is an object and whether it is a category list or card export
+	function determineType(json) {
+		if (json === null || typeof json !== 'object' || Array.isArray(json)) {
+			return null;
+		}
+
+		return Object.hasOwn(json, 'exported') ? 'bingo-import' : 'category-list';
+	}
+
+	// Custom json text is passed up via file or URL
+	function loadFile(file) {
 		loadedJson.value = null;
+		let json;
+
+		try {
+			json = JSON.parse(file);
+		} catch (err) {
+			setError(`There was an error parsing the imported data. Is it valid JSON?\n\n${err.name}\n${err.message}`);
+			return;
+		}
 
 		// Determine if bingo card or custom category list
 		const type = determineType(json);
+		if (!type) {
+			setError('The imported JSON must be an object at the top level.');
+			return;
+		}
+
 		console.log('Found import of type', type);
 
 		// Validate relevant schema

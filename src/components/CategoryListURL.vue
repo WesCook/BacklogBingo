@@ -1,7 +1,6 @@
 <script setup>
 	import { ref } from 'vue';
 	import { useErrors } from '../composables/errors.js';
-	import { downloadJSON } from '../utils/json-parse.js';
 
 	const { setError } = useErrors();
 
@@ -26,11 +25,24 @@
 			return false;
 		}
 
-		// Otherwise, proceed
-		const json = await downloadJSON(urlInput.value);
-		if (json) {
-			emit('load-file', json);
+		// Validate network conditions
+		let file;
+		try {
+			// Unexpected network response code (eg. 404)
+			const response = await fetch(url);
+			if (!response.ok) {
+				setError(`There was an error downloading from the URL.  The status code was ${response.status}.`);
+				return;
+			}
+
+			file = await response.text();
+		} catch (err) {
+			// Fetch failed or the browser blocked access to the response (eg. offline or CORS)
+			setError(`There was an error downloading from the URL.  Check the URL, connection, or server CORS settings.  The error message was ${err}.`);
+			return;
 		}
+
+		emit('load-file', file);
 	}
 </script>
 

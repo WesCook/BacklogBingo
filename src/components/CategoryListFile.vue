@@ -5,27 +5,15 @@
 
 	const emit = defineEmits(['load-file']);
 
-	// Parses file contents into string
+	// Read in file contents and forward
 	function processFile(event) {
 		const file = event.target.files[0];
 		const reader = new FileReader();
 		reader.readAsText(file);
 		reader.onload = () => {
-			// Verify file is readable and not empty
-			if (!reader.result) {
-				setError('There was an error reading the file.');
-				return;
-			}
-
-			// Verify file is readable as JSON, and forward to next validator to hopefully be loaded
-			try {
-				const json = JSON.parse(reader.result);
-				emit('load-file', json);
-			} catch (err) {
-				setError(`There was an error parsing the file.  Is it a valid JSON file?\n\n${err}`);
-				return;
-			}
+			emit('load-file', reader.result);
 		};
+		reader.onerror = () => setError('There was an error reading the file.');
 	}
 </script>
 
