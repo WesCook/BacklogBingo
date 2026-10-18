@@ -43,6 +43,7 @@
 			v-model="urlInput"
 			class="url-input"
 			type="text"
+			aria-label="JSON URL to download"
 			placeholder="https://example.com/card.json"
 		>
 		<button class="btn">Fetch URL</button>

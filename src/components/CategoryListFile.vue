@@ -33,6 +33,7 @@
 	<input
 		class="file-picker"
 		type="file"
+		aria-label="JSON file to upload"
 		accept=".json"
 		@change="processFile"
 	>

@@ -40,13 +40,13 @@
 		<li
 			v-for="tab in tabs"
 			:key="tab.id"
-			role="tab"
-			:aria-controls="`panel-${tab.id}`"
-			:aria-selected="currentTab === tab.id"
 		>
 			<button
 				:id="`tab-${tab.id}`"
 				class="tab-button"
+				role="tab"
+				:aria-controls="`panel-${tab.id}`"
+				:aria-selected="currentTab === tab.id"
 				@click="setCurrentTab(tab.id)"
 			>
 				{{ tab.label }}
@@ -80,7 +80,7 @@
 		height: 100%;
 	}
 
-	.tab-list li[aria-selected="true"] .tab-button {
+	.tab-list .tab-button[aria-selected="true"] {
 		background-color: var(--background-shaded);
 	}
 

@@ -279,8 +279,8 @@
 		}
 
 		if (nextTile) {
-			const elem = document.querySelector(`.bingo-tile[data-uuid='${nextTile.uuid}']`);
-			elem.focus();
+			const elem = document.querySelector(`.bingo-tile[data-uuid='${nextTile.uuid}'] input`);
+			elem?.focus();
 		}
 	}
 

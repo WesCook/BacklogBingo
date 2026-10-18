@@ -12,7 +12,10 @@
 </script>
 
 <template>
-	<section class="error-panel">
+	<section
+		class="error-panel"
+		role="alert"
+	>
 		<button
 			class="close"
 			@click="close"
