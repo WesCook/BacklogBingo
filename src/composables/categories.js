@@ -85,7 +85,8 @@ export function useCategories() {
 				return 25;
 			case 'small':
 				return 9;
-			default: -1;
+			default:
+				return null;
 		}
 	}
 
@@ -98,7 +99,8 @@ export function useCategories() {
 				return 5;
 			case 'small':
 				return 3;
-			default: -1;
+			default:
+				return null;
 		}
 	}
 
