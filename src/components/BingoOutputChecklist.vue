@@ -2,13 +2,10 @@
 	import { ref, watch } from 'vue';
 
 	import { useCardOutput } from '../composables/card-output.js';
-
 	import CopyToClipboard from '../components/CopyToClipboard.vue';
+	import { sanitizeMarkdownTableCell as md } from '../utils/markdown.js';
 
 	const { getBingoCardOutput } = useCardOutput();
-
-	// Escape pipes in Markdown as they'll break table cells
-	const md = str => str.replaceAll('|', '\\|');
 
 	// Populate output with initial data and watch for changes
 	const output = ref();

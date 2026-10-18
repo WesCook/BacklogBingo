@@ -1,0 +1,60 @@
+{
+	"version": 1,
+	"exported": 1792310400000,
+	"name": "Markdown | Bingo Card\r\nTitle",
+	"gamerules": {
+		"winCondition": "row-col",
+		"star": "disabled",
+		"allowDuplicates": true,
+		"gridSize": "small",
+		"allowSimilar": false,
+		"seed": ""
+	},
+	"categories": [
+		{
+			"uuid": "00000000-0000-4000-8000-000000000001",
+			"cat": "Pipe | category",
+			"entry": "Game | title"
+		},
+		{
+			"uuid": "00000000-0000-4000-8000-000000000002",
+			"cat": "Newline category\ncontinuation",
+			"entry": "Entry first line\r\nEntry second line"
+		},
+		{
+			"uuid": "00000000-0000-4000-8000-000000000003",
+			"cat": "Inline **bold** and _italic_",
+			"entry": "Elden Ring (**FINALLY!**)"
+		},
+		{
+			"uuid": "00000000-0000-4000-8000-000000000004",
+			"cat": "Bullet - text",
+			"entry": "# Tag-like text"
+		},
+		{
+			"uuid": "00000000-0000-4000-8000-000000000005",
+			"cat": "Category with CRLF\r\ncontinuation",
+			"entry": "Use `inline code`"
+		},
+		{
+			"uuid": "00000000-0000-4000-8000-000000000006",
+			"cat": "Category with | and\nline break",
+			"entry": "Pipe | then line\nbreak"
+		},
+		{
+			"uuid": "00000000-0000-4000-8000-000000000007",
+			"cat": "Plain category seven",
+			"entry": "Plain entry seven"
+		},
+		{
+			"uuid": "00000000-0000-4000-8000-000000000008",
+			"cat": "Plain category eight",
+			"entry": "Plain entry eight"
+		},
+		{
+			"uuid": "00000000-0000-4000-8000-000000000009",
+			"cat": "Plain category nine",
+			"entry": "Plain entry nine"
+		}
+	]
+}

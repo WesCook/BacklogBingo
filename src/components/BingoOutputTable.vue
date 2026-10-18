@@ -5,8 +5,8 @@
 	import { useCategories } from '../composables/categories.js';
 	import { useBingo } from '../composables/bingo.js';
 	import { useCardOutput } from '../composables/card-output.js';
-
 	import CopyToClipboard from '../components/CopyToClipboard.vue';
+	import { sanitizeMarkdownTableCell as md } from '../utils/markdown.js';
 
 	const props = defineProps({
 		winState: {
@@ -24,9 +24,6 @@
 	const gamemode = calculateGameMode(shouldShrinkGrid());
 	const gridSize = gamerules.gridSize;
 	const rowLength = getRowLength(gridSize);
-
-	// Escape pipes in Markdown as they'll break table cells
-	const md = str => str.replaceAll('|', '\\|');
 
 	// Populate output with initial data and watch for changes
 	const output = ref();
@@ -56,7 +53,7 @@
 		for (let i = 0; i < rowLength; i++) {
 			// Category list name
 			if (i === centerCol - 1) {
-				header += ` ${getBingoCard().name} |`;
+				header += ` ${md(getBingoCard().name)} |`;
 			// Game mode
 			} else if (i === centerCol) {
 				header += ` ${capitalizeFirstLetter(gamemode)} bingo |`;

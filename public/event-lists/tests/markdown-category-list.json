@@ -1,0 +1,15 @@
+{
+	"version": 1,
+	"name": "Markdown | Category List\nTitle",
+	"categories": [
+		{ "name": "Pipe | category" },
+		{ "name": "Newline category\ncontinuation" },
+		{ "name": "Inline **bold** and _italic_" },
+		{ "name": "Bullet - text" },
+		{ "name": "# Tag-like text" },
+		{ "name": "Category with CRLF\r\ncontinuation" },
+		{ "name": "Category with | and\nline break" },
+		{ "name": "Use `inline code`" },
+		{ "name": "Elden Ring (**FINALLY!**)" }
+	]
+}
