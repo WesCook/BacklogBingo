@@ -169,7 +169,13 @@ input[type="checkbox"] {
 	}
 }
 
-/* Buttons with SVG icons */
+/* SVG Icons */
+/* Prevent shrinking in constrained containers */
+.icon {
+	flex: none;
+}
+
+/* Button icon layout */
 :is(button, .btn):has(> .icon) {
 	display: inline-flex;
 	flex-wrap: wrap;
