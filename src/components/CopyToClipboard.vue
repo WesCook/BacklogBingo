@@ -2,6 +2,7 @@
 	import { ref } from 'vue';
 
 	import IconClipboard from '../components/icons/IconClipboard.vue';
+	import { useErrors } from '../composables/errors.js';
 
 	const props = defineProps({
 		// The text to be copied
@@ -17,17 +18,21 @@
 		}
 	});
 
+	const { setError } = useErrors();
 	const status = ref(); // Template ref
 
-	function copy() {
-		// Play Copied! animation and pause at end of animation
-		status.value.style.animationPlayState = 'running';
-		status.value.addEventListener('animationiteration', () => {
-			status.value.style.animationPlayState = 'paused';
-		});
-
-		// Copy to clipboard
-		navigator.clipboard.writeText(props.text);
+	async function copy() {
+		try {
+			// Play Copied! CSS animation
+			await navigator.clipboard.writeText(props.text);
+			const animation = status.value.getAnimations()[0];
+			if (animation) {
+				animation.currentTime = 0;
+				animation.play();
+			}
+		} catch {
+			setError('Could not copy to the clipboard.  Please copy the text manually.');
+		}
 	}
 </script>
 
@@ -73,10 +78,9 @@
 		animation-name: fadeOut;
 		animation-duration: 3.5s;
 		animation-timing-function: linear;
-		animation-iteration-count: infinite; /* We catch it with an event instead */
+		animation-iteration-count: 1;
+		animation-fill-mode: forwards;
 		animation-play-state: paused;
-		visibility: hidden;
-		opacity: 0;
 	}
 
 	@media (width < 600px) {
