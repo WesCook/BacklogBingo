@@ -44,6 +44,7 @@
 		</div>
 
 		<textarea
+			id="output-plaintext"
 			:value="output"
 			class="textarea"
 			readonly

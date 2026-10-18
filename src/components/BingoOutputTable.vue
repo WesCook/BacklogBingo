@@ -125,6 +125,7 @@
 		</div>
 
 		<textarea
+			id="output-table"
 			:value="output"
 			class="textarea"
 			readonly

@@ -42,6 +42,7 @@
 		</div>
 
 		<textarea
+			id="output-checklist"
 			:value="output"
 			class="textarea"
 			readonly

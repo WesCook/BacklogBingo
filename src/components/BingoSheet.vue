@@ -279,7 +279,7 @@
 		}
 
 		if (nextTile) {
-			const elem = document.querySelector(`.bingo-tile[data-uuid='${nextTile.uuid}'] input`);
+			const elem = document.getElementById(`tile-${nextTile.uuid}`);
 			elem?.focus();
 		}
 	}

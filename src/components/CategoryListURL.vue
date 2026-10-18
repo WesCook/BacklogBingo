@@ -40,6 +40,7 @@
 		@submit.prevent="processDownload"
 	>
 		<input
+			id="json-url"
 			v-model="urlInput"
 			class="url-input"
 			type="text"

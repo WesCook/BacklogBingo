@@ -58,10 +58,10 @@
 </script>
 
 <template>
-	<label
+	<component
+		:is="star === 'free' ? 'div' : 'label'"
 		class="bingo-tile"
 		:class="{ valid, win, dupe, unrevealed }"
-		:data-uuid="data.uuid"
 	>
 		<!-- Free star -->
 		<IconStar
@@ -89,6 +89,7 @@
 
 			<!-- Entry -->
 			<input
+				:id="`tile-${data.uuid}`"
 				:value="data.entry"
 				@blur="submitEntryChange"
 				@keyup.enter="submitEntryChange"
@@ -96,7 +97,7 @@
 				@focus="$event.target.select()"
 			>
 		</template>
-	</label>
+	</component>
 </template>
 
 <style scoped>
@@ -153,11 +154,11 @@
 	}
 
 	/* Star centering */
-	label:has(> svg.star-free) {
+	.bingo-tile:has(> svg.star-free) {
 		place-content: center;
 		flex-wrap: wrap;
 	}
-	label > svg.star-wildcard {
+	.bingo-tile > svg.star-wildcard {
 		margin: 0 auto;
 	}
 
