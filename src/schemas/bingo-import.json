@@ -7,6 +7,7 @@
 		"exported": { "type": "number" },
 		"name": { "type": "string" },
 		"gamerules": {
+			"required": ["gridSize"],
 			"type": "object",
 			"properties": {
 				"winCondition": {
@@ -29,12 +30,11 @@
 		},
 		"categories": {
 			"type": "array",
-			"minItems": 9,
 			"items": {
 				"type": "object",
 				"required": ["uuid"],
 				"properties": {
-					"uuid": { "type": "string" },
+					"uuid": { "type": "string", "minLength": 1 },
 					"name": { "type": "string" },
 					"cat": { "type": "string" },
 					"entry": { "type": "string" }
@@ -47,5 +47,25 @@
 			}
 		}
 	},
+	"oneOf": [
+		{
+			"properties": {
+				"gamerules": { "type": "object", "properties": { "gridSize": { "const": "small" } } },
+				"categories": { "type": "array", "minItems": 9, "maxItems": 9 }
+			}
+		},
+		{
+			"properties": {
+				"gamerules": { "type": "object", "properties": { "gridSize": { "const": "medium" } } },
+				"categories": { "type": "array", "minItems": 25, "maxItems": 25 }
+			}
+		},
+		{
+			"properties": {
+				"gamerules": { "type": "object", "properties": { "gridSize": { "const": "large" } } },
+				"categories": { "type": "array", "minItems": 49, "maxItems": 49 }
+			}
+		}
+	],
 	"additionalProperties": false
 }
