@@ -1,16 +1,10 @@
 <script setup>
-	import { ref, computed } from 'vue';
+	import { ref, useId } from 'vue';
 
-	import { useFloating, autoUpdate, offset, flip, shift, arrow, hide } from '@floating-ui/vue';
-
-	const props = defineProps({
+	defineProps({
 		tooltip: {
 			type: String,
 			required: true
-		},
-		side: {
-			type: String,
-			default: 'top'
 		},
 		elemClass: {
 			type: String,
@@ -19,57 +13,15 @@
 	});
 
 	const visible = ref(false);
-	const placementReactive = computed(() => props.side);
-
-	// Template refs
-	const referenceElem = ref();
-	const tooltipElem = ref();
-	const tooltipArrowElem = ref();
-
-	// Instantiate Floating UI
-	const {floatingStyles, middlewareData, placement} = useFloating(
-		referenceElem,
-		tooltipElem,
-		{
-			whileElementsMounted: autoUpdate,
-			placement: placementReactive,
-			middleware: [
-				offset(12),
-				flip(),
-				shift({ padding: 5 }),
-				arrow({ element: tooltipArrowElem }),
-				hide()
-			]
-		}
-	);
-
-	// Arrow properties
-	// Explicit null check is required in case position value is 0 (falsy)
-	const arrowX = computed(() => (middlewareData.value.arrow?.x != null) ? `${middlewareData.value.arrow.x}px` : '');
-	const arrowY = computed(() => (middlewareData.value.arrow?.y != null) ? `${middlewareData.value.arrow.y}px` : '');
-	const arrowWidth = computed(() => tooltipArrowElem.value?.offsetWidth);
-	const arrowSidePosition = computed(() => `${-arrowWidth.value / 2}px`);
-
-	// Strip -start or -end suffixes
-	// Placement here may have been updated by flip()
-	const calculatedSide = computed(() => placement.value.split('-')[0]);
-
-	// Returns the placement side of the arrow, which is opposite the side of the tooltip
-	const arrowSide = computed(() => {
-		return {
-			top: 'bottom',
-			right: 'left',
-			bottom: 'top',
-			left: 'right',
-		}[calculatedSide.value];
-	});
+	const anchorName = `tooltip-anchor-${useId().replaceAll(':', '-')}`;
 </script>
 
 <template>
 	<button
-		ref="referenceElem"
 		class="btn"
 		:class="elemClass"
+		:style="{ anchorName: '--' + anchorName }"
+		:aria-describedby="visible ? anchorName : undefined"
 		@mouseover="visible = true"
 		@mouseleave="visible = false"
 		@focus="visible = true"
@@ -82,28 +34,13 @@
 	<transition>
 		<div
 			v-if="visible"
-			ref="tooltipElem"
+			:id="anchorName"
 			class="tooltip"
-			:style="{
-				...floatingStyles,
-				visibility: middlewareData.hide?.referenceHidden ? 'hidden' : 'visible'
-			}"
+			role="tooltip"
+			:style="{ positionAnchor: '--' + anchorName }"
 		>
-			<span role="tooltip">{{ tooltip }}</span>
-
-			<div
-				ref="tooltipArrowElem"
-				class="arrow"
-				:style="{
-					left: arrowX,
-					top: arrowY,
-					[arrowSide]: arrowSidePosition, // eg. right: -6px
-					'border-top-color': (calculatedSide === 'bottom' || calculatedSide === 'left') ? 'var(--foreground-color)' : 'transparent',
-					'border-right-color': (calculatedSide === 'top' || calculatedSide === 'left') ? 'var(--foreground-color)' : 'transparent',
-					'border-bottom-color': (calculatedSide === 'top' || calculatedSide === 'right') ? 'var(--foreground-color)' : 'transparent',
-					'border-left-color': (calculatedSide === 'bottom' || calculatedSide === 'right') ? 'var(--foreground-color)' : 'transparent'
-				}"
-			></div>
+			{{ tooltip }}
+			<div class="arrow"></div>
 		</div>
 	</transition>
 </template>
@@ -121,27 +58,51 @@
 	}
 
 	.tooltip {
-		width: max-content;
+		position: fixed; /* Use viewport as boundary for edge flips */
+		position-area: top; /* Place tooltip above anchor by default */
+		position-try-fallbacks: flip-block; /* Swap to bottom if this overflows */
+		container-type: anchored; /* Allow querying for fallback position */
+		white-space: pre-wrap; /* Allow newlines in tooltip text */
+
 		max-width: min(350px, calc(100vw - 10px));
-		white-space: pre-wrap;
+		margin-bottom: 12px;
+		padding: 5px;
+		border: 1px solid var(--foreground-color);
+		border-radius: 4px;
+
 		color: var(--foreground-color);
 		background-color: var(--background-shaded);
-		font-weight: bold;
-		padding: 5px;
-		border-radius: 4px;
-		border: 1px solid var(--foreground-color);
 		font-size: 0.8em;
+		font-weight: bold;
+
+		/* Disable tooltips if Anchor Positioning unsupported */
+		@supports not (position-area: top) {
+			display: none;
+		}
 	}
 
-	.arrow {
-		position: absolute;
-		background: var(--background-shaded);
-		border-width: 1px;
-		border-style: solid;
-		width: 12px;
-		height: 12px;
-		transform: rotate(45deg);
-		z-index: -5;
+	/* Draw arrows if Anchor Positioning Level 2 container queries are supported */
+	@supports (container-type: anchored) {
+		.arrow {
+			position: absolute;
+			width: 12px;
+			height: 12px;
+			background: var(--background-shaded);
+			border: 1px solid var(--foreground-color);
+			border-top-color: transparent;
+			border-left-color: transparent;
+
+			/* Top - Default */
+			transform: rotate(45deg);
+			left: calc(50% - 6px);
+			bottom: -6px;
+
+			/* Bottom - Flip arrow when fallback is invoked */
+			@container anchored(fallback: flip-block) {
+				top: -6px;
+				transform: rotate(225deg);
+			}
+		}
 	}
 
 	.v-enter-active,

@@ -11,7 +11,6 @@
 	},
 	"dependencies": {
 		"@fireworks-js/vue": "^2.10.8",
-		"@floating-ui/vue": "^2.0.1",
 		"ajv": "^8.20.0",
 		"vue": "^3.5.44",
 		"vue-router": "^5.4.0"
